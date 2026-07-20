@@ -317,20 +317,41 @@ function showError(m)   { const e=document.getElementById('errorMsg'); e.textCon
 function hideError()    { document.getElementById('errorMsg').style.display='none'; }
 function showDraft2()   { document.getElementById('draft2Section').classList.add('visible'); document.getElementById('draft2Section').scrollIntoView({behavior:'smooth'}); }
 
-function renderMarkdown(text) {
-  return text
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/【(.+?)】/g,'<h3>【$1】</h3>')
-    .replace(/「(.+?)」/g,'<span class="error-highlight">$1</span>')
-    .replace(/→\s*(.+?)$/gm,'<div class="suggestion">→ $1</div>')
-    .replace(/✓\s*(.+?)$/gm,'<div class="praise">✓ $1</div>')
-    .replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+  })[ch]);
 }
 
-function parseScores(text) {
-  const s1=text.match(/准确性[：:]\s*(\d+)/); const s2=text.match(/流利度[：:]\s*(\d+)/); const s3=text.match(/内容[：:]\s*(\d+)/);
-  if(!s1&&!s2&&!s3) return null;
-  return [{label:'准确性',val:s1?+s1[1]:0},{label:'流利度',val:s2?+s2[1]:0},{label:'内容',val:s3?+s3[1]:0}];
+function renderFeedback(feedback) {
+  const macro = feedback.macro;
+  const errors = feedback.micro || [];
+  const microHtml = errors.length
+    ? errors.map((item, index) => `<p>
+        <strong>${index + 1}. ${escapeHtml(item.type)}</strong><br>
+        原文：<span class="error-highlight">${escapeHtml(item.original)}</span>
+        <span class="suggestion">→ ${escapeHtml(item.correction)}</span>
+        说明：${escapeHtml(item.explanation)}
+      </p>`).join('')
+    : '<p>未发现需要优先修改的语序、量词、体标记、语体或搭配错误。</p>';
+
+  return `<h3>【宏观反馈】</h3>
+    <p><strong>整体评价：</strong>${escapeHtml(macro.summary)}</p>
+    <p><strong>内容：</strong>${escapeHtml(macro.content)}<br>
+    <strong>结构：</strong>${escapeHtml(macro.structure)}<br>
+    <strong>连贯性：</strong>${escapeHtml(macro.coherence)}</p>
+    <div class="praise">✓ ${escapeHtml(macro.strengths)}</div>
+    <h3>【微观反馈】</h3>${microHtml}`;
+}
+
+function getScores(feedback) {
+  const scores = feedback?.macro?.scores;
+  if (!scores) return null;
+  return [
+    {label:'准确性',val:scores.accuracy},
+    {label:'流利度',val:scores.fluency},
+    {label:'内容',val:scores.content}
+  ];
 }
 
 async function getFeedback(draft) {
@@ -357,25 +378,24 @@ async function getFeedback(draft) {
     const res = await fetch(WORKER_URL, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:1000,
-        system: mode.prompt,
-        messages:[{role:'user',content:`请批改以下华文作文：\n\n${essay}`}],
+        action:'feedback', essay, mode:currentMode,
         logData:{ sessionId:SESSION_ID, studentName, draft, mode:currentMode, essay }
       })
     });
     clearInterval(t);
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const feedback = data.content?.[0]?.text || '抱歉，请重试。';
+    if (!res.ok || data.error) throw new Error(data.error?.message || '请求失败，请重试。');
+    if (!data.feedback?.macro || !Array.isArray(data.feedback?.micro)) throw new Error('反馈格式无效，请重试。');
+    const feedback = data.feedback;
     loadingEl.classList.remove('visible');
 
-    const scores = parseScores(feedback);
+    const scores = getScores(feedback);
     if (draft===1) {
       draft1Scores = scores;
       const badge = document.getElementById('modeBadge');
       badge.textContent = mode.label; badge.className = 'mode-badge ' + mode.badge;
       document.getElementById('resultMeta').textContent = `共${essay.length}字`;
-      document.getElementById('resultContent').innerHTML = '<p>'+renderMarkdown(feedback)+'</p>';
+      document.getElementById('resultContent').innerHTML = renderFeedback(feedback);
       document.getElementById('scoreRow').innerHTML = scores
         ? scores.map(s=>`<div class="score-chip"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('') : '';
       document.getElementById('resultSection').classList.add('visible');
@@ -384,7 +404,7 @@ async function getFeedback(draft) {
       const badge2 = document.getElementById('modeBadge2');
       badge2.textContent = mode.label+'（二稿）'; badge2.className = 'mode-badge '+mode.badge;
       document.getElementById('resultMeta2').textContent = `共${essay.length}字`;
-      document.getElementById('resultContent2').innerHTML = '<p>'+renderMarkdown(feedback)+'</p>';
+      document.getElementById('resultContent2').innerHTML = renderFeedback(feedback);
       document.getElementById('scoreRow2').innerHTML = scores
         ? scores.map(s=>`<div class="score-chip"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('') : '';
       document.getElementById('result2Section').classList.add('visible');
