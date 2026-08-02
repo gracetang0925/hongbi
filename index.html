@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="红笔 HongBi——为华文二语学习者提供宏观写作反馈、微观纠错与手写作文识别。">
-<meta name="theme-color" content="#a63d32">
-<title>红笔 HongBi｜华文写作反馈</title>
+<title>华文写作批改工具</title>
 <style>
 :root {
   --teal:#0F6E56; --teal-light:#e6f4f1; --teal-dark:#0a5240;
@@ -159,232 +157,97 @@ textarea:focus{outline:none;border-color:var(--teal);}
 
 .footer{text-align:center;margin-top:3rem;color:var(--muted);font-size:.78rem;}
 
-/* ── HongBi editorial UI refresh ── */
+/* HongBi learner-friendly visual refresh — CSS only */
 :root{
-  --ink:#26332d;--ink-soft:#66736c;--paper:#fff;--paper-deep:#fff6ea;
-  --cinnabar:#c84a3d;--cinnabar-dark:#a63d32;--cinnabar-light:#fff0ed;
-  --jade:#2b7164;--jade-light:#e8f3ef;--line:#e5ded3;
-  --shadow-soft:0 12px 32px rgba(76,58,42,.09);
+  --teal:#2b7164;--teal-light:#e8f3ef;--teal-dark:#21584e;
+  --gold:#b27a13;--gold-light:#fff5d6;
+  --purple:#6d5db7;--purple-light:#f1eeff;
+  --red:#c84a3d;--red-light:#fff0ed;
+  --green:#2f8f68;--green-light:#eaf7f0;
+  --blue:#4b78b8;--blue-light:#edf3fb;
+  --bg:#fff9f2;--card:#fff;--text:#26332d;--muted:#66736c;--border:#e5ded3;
+  --shadow:0 12px 32px rgba(76,58,42,.09);
 }
 body{
   font-family:'Nunito Sans','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
-  color:var(--ink);background:
-    radial-gradient(circle at 12% 4%,rgba(200,74,61,.08),transparent 28rem),
-    radial-gradient(circle at 92% 16%,rgba(43,113,100,.07),transparent 30rem),
-    #fff9f2;
-  line-height:1.6;
+  line-height:1.65;
+  background:radial-gradient(circle at 12% 3%,rgba(200,74,61,.08),transparent 26rem),radial-gradient(circle at 90% 12%,rgba(43,113,100,.07),transparent 28rem),var(--bg);
 }
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;z-index:-1;
-  background-image:linear-gradient(rgba(96,77,58,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(96,77,58,.025) 1px,transparent 1px);
-  background-size:28px 28px;
-}
-.wrapper{max-width:1080px;padding:2rem 1.5rem 5rem;}
-.hero{
-  position:relative;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.55fr);
-  gap:3rem;align-items:center;min-height:330px;padding:3.4rem 3.6rem;margin-bottom:1.25rem;
-  background:var(--paper);border:1px solid rgba(128,105,82,.2);border-radius:28px;
-  box-shadow:var(--shadow-soft);overflow:hidden;
-}
-.hero::after{
-  content:"";position:absolute;width:260px;height:260px;border:52px solid rgba(166,61,50,.035);
-  border-radius:50%;left:-150px;bottom:-180px;
-}
-.brand-row{display:flex;align-items:center;gap:.8rem;margin-bottom:1.1rem;}
-.brand-mark{
-  display:grid;place-items:center;width:38px;height:38px;background:var(--cinnabar);color:white;
-  border-radius:11px;font:800 1.12rem/1 'Nunito Sans','Noto Sans SC','PingFang SC',sans-serif;
-  box-shadow:inset 0 0 0 2px rgba(255,255,255,.24);transform:rotate(-2deg);
-}
-.eyebrow{font-size:.73rem;font-weight:700;letter-spacing:.16em;color:var(--cinnabar);text-transform:uppercase;}
-.hero h1{font:800 clamp(2.25rem,4.7vw,3.8rem)/1.16 'Nunito Sans','Noto Sans SC','PingFang SC',sans-serif;letter-spacing:-.02em;color:var(--ink);max-width:680px;}
-.hero h1 span{display:block;color:var(--cinnabar);}
-.hero-copy>p{max-width:620px;margin:1.25rem 0 1.45rem;color:var(--ink-soft);font-size:1rem;line-height:1.9;}
-.feature-list{display:flex;gap:.55rem;flex-wrap:wrap;}
-.feature-list span{padding:.34rem .72rem;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:.76rem;color:var(--ink-soft);}
-.paper-visual{
-  position:relative;width:230px;height:258px;justify-self:center;padding:1.35rem 1.2rem;
-  background:#fff;border:1px solid #e5ddd0;border-radius:8px;transform:rotate(2.5deg);
-  box-shadow:0 20px 35px rgba(65,49,36,.13);
-}
-.paper-visual::before{content:"";position:absolute;inset:12px;border:1px solid #f1ece3;pointer-events:none;}
-.paper-top{position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.15rem;font-size:.72rem;font-weight:700;color:var(--ink-soft);}
-.paper-top i{width:45px;height:2px;background:var(--cinnabar);transform:rotate(-5deg);}
-.paper-line{height:7px;margin:.55rem 0;background:#ece8e0;border-radius:5px;}
-.paper-line.short{width:68%;}.paper-line.mid{width:84%;}
-.correction-note{position:absolute;right:-14px;top:92px;padding:.36rem .62rem;background:var(--cinnabar-light);border:1px solid #e7bcb7;border-radius:8px;color:var(--cinnabar);font-size:.7rem;font-weight:700;transform:rotate(-5deg);}
-.correction-note b{font-size:.95rem;}
-.paper-score{position:absolute;right:20px;bottom:25px;display:grid;place-items:center;width:48px;height:48px;border:2px solid var(--cinnabar);border-radius:50%;color:var(--cinnabar);font:700 1.2rem/1 Georgia,serif;transform:rotate(-8deg);}
-.red-pencil{position:absolute;width:120px;height:11px;right:-48px;bottom:18px;background:linear-gradient(90deg,#70322c 0 8%,var(--cinnabar) 8% 88%,#e0c09e 88%);border-radius:6px;transform:rotate(-52deg);box-shadow:0 5px 10px rgba(87,44,38,.18);}
-.journey{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-bottom:1.25rem;background:var(--line);border:1px solid var(--line);border-radius:15px;overflow:hidden;}
-.journey-step{display:flex;align-items:center;gap:.65rem;padding:.75rem 1rem;background:rgba(255,253,248,.88);font-size:.8rem;color:var(--ink-soft);}
-.journey-step b{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:var(--paper-deep);color:var(--cinnabar);font-size:.7rem;}
-.journey-step:first-child{color:var(--ink);font-weight:600;}
-.journey-step:first-child b{background:var(--cinnabar);color:white;}
-.workspace-grid{display:grid;grid-template-columns:310px minmax(0,1fr);gap:1.25rem;align-items:start;}
-.control-panel,.editor-card{background:var(--paper);border:1px solid rgba(128,105,82,.2);border-radius:24px;box-shadow:0 10px 30px rgba(64,48,35,.06);}
-.control-panel{padding:1.35rem;position:sticky;top:1rem;}
-.panel-label{margin:.1rem 0 .55rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#87796b;}
-.student-bar{gap:.7rem;margin:0 0 1.35rem;padding:.75rem .85rem;border:1px solid var(--line);border-radius:11px;background:#fff;}
-.student-bar:focus-within{border-color:var(--cinnabar);box-shadow:0 0 0 3px rgba(166,61,50,.08);}
-.student-icon{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--paper-deep);font-size:.82rem;color:var(--ink-soft);}
-.mode-tabs{display:flex;flex-direction:column;gap:.55rem;margin:0;}
-.mode-tab{position:relative;display:grid;grid-template-columns:38px 1fr 18px;gap:.7rem;align-items:center;min-width:0;min-height:66px;padding:.75rem;border:1px solid var(--line);border-radius:14px;text-align:left;background:#fff;}
-.mode-tab .tab-icon{display:grid;place-items:center;width:38px;height:38px;margin:0;border-radius:10px;background:var(--paper-deep);font-size:.75rem;font-weight:800;color:var(--ink-soft);}
-.mode-tab .tab-copy{display:block;font-size:.86rem;font-weight:650;color:var(--ink);}
-.mode-tab .tab-desc{display:block;margin:.08rem 0 0;font-size:.7rem;color:var(--ink-soft);font-weight:400;}
-.mode-check{display:grid;place-items:center;width:17px;height:17px;border:1px solid var(--line);border-radius:50%;font-size:0;}
-.mode-tab.active-teal,.mode-tab.active-gold,.mode-tab.active-purple{background:var(--cinnabar-light);border-color:#dca39d;color:var(--cinnabar);}
-.mode-tab.active-teal .tab-icon,.mode-tab.active-gold .tab-icon,.mode-tab.active-purple .tab-icon{background:var(--cinnabar);color:white;}
-.mode-tab.active-teal .mode-check,.mode-tab.active-gold .mode-check,.mode-tab.active-purple .mode-check{background:var(--cinnabar);border-color:var(--cinnabar);font-size:.65rem;color:white;}
-.privacy-note{display:flex;gap:.45rem;margin-top:1rem;padding-top:.85rem;border-top:1px solid #ece6dc;color:#8c8175;font-size:.68rem;line-height:1.55;}
-.editor-card{padding:1.55rem;}
-.editor-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.15rem;}
-.step-kicker{display:block;margin-bottom:.22rem;color:var(--cinnabar);font-size:.67rem;font-weight:800;letter-spacing:.15em;}
-.editor-head h2{font:800 1.35rem/1.35 'Nunito Sans','Noto Sans SC','PingFang SC',sans-serif;color:var(--ink);}
-#charCount,#charCount2{padding:.25rem .55rem;border-radius:7px;background:var(--paper-deep);color:#887b6d;font-size:.72rem;white-space:nowrap;}
-#charCount.ready,#charCount2.ready{background:var(--jade-light);color:var(--jade);}
-.sample-row{gap:.45rem;margin-bottom:.8rem;}
-.sample-label{font-size:.74rem;color:#8c8175;}
-.sample-btn{padding:.28rem .62rem;border:1px solid var(--line);background:#fffdf9;font-size:.72rem;color:var(--ink-soft);}
-.sample-btn:hover{border-color:var(--cinnabar);color:var(--cinnabar);background:var(--cinnabar-light);}
-.input-wrap{margin-bottom:.9rem;}
-.editor-card textarea{min-height:300px;padding:1.15rem 1.2rem 3.4rem;border:1px solid var(--line);border-radius:16px;background:#fff;font-size:1.05rem;line-height:2;box-shadow:inset 0 1px 4px rgba(65,49,36,.025);}
-.editor-card textarea:focus{border-color:var(--cinnabar);box-shadow:0 0 0 4px rgba(166,61,50,.08);}
-.camera-btn{bottom:.8rem;right:.8rem;min-height:44px;padding:.55rem 1rem;background:#f3efe7;color:var(--ink-soft);border:1px solid var(--line);}
-.camera-btn:hover{background:var(--jade-light);border-color:#a8c4ba;color:var(--jade);}
-.submit-row{margin:0;}
-.submit-btn{min-height:52px;padding:.88rem 1rem;background:var(--cinnabar);border-radius:14px;box-shadow:0 7px 16px rgba(200,74,61,.2);}
-.submit-btn:hover{background:var(--cinnabar-dark);transform:translateY(-1px);}
-.submit-arrow{display:inline-block;margin-left:.35rem;transition:transform .2s;}.submit-btn:hover .submit-arrow{transform:translateX(3px);}
-.clear-btn{min-height:52px;padding:.8rem 1.1rem;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--ink-soft);}
-.error-msg{border:1px solid #edc2bd;background:var(--cinnabar-light);color:var(--cinnabar);}
-.loading{margin-top:1.25rem;border:1px solid rgba(128,105,82,.18);border-radius:18px;box-shadow:var(--shadow-soft);background:var(--paper);}
-.brush-anim{filter:grayscale(1);}
-.result-section,.teacher-section,.comp-box{margin-top:1.25rem;border:1px solid rgba(128,105,82,.18);border-radius:20px;box-shadow:var(--shadow-soft);background:var(--paper);}
-.result-header{padding:1rem 1.45rem;background:#fcfaf5;border-bottom:1px solid var(--line);}
-.mode-badge{border-radius:8px;background:var(--cinnabar-light);color:var(--cinnabar);}
-.result-content{padding:1.6rem;line-height:1.75;}
-.feedback-block+.feedback-block{margin-top:1.75rem;padding-top:1.55rem;border-top:1px solid var(--line);}
-.feedback-heading{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;}
-.feedback-number{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--cinnabar);color:white;font:700 .75rem/1 Georgia,serif;}
-.feedback-heading strong{display:block;color:var(--ink);font:800 1.05rem/1.3 'Nunito Sans','Noto Sans SC','PingFang SC',sans-serif;}
-.feedback-heading small{display:block;margin-top:.12rem;color:#95887b;font-size:.67rem;font-weight:500;letter-spacing:.05em;}
-.macro-summary{padding:1rem 1.1rem;margin-bottom:.8rem;border-left:3px solid var(--cinnabar);border-radius:0 10px 10px 0;background:var(--cinnabar-light);color:#50302c;}
-.macro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;}
-.feedback-point{padding:.85rem;border:1px solid var(--line);border-radius:11px;background:#fff;}
-.feedback-point span{display:block;margin-bottom:.3rem;color:var(--jade);font-size:.7rem;font-weight:800;letter-spacing:.08em;}
-.feedback-point p{color:var(--ink-soft);font-size:.83rem;line-height:1.7;}
-.strength-note{display:flex;gap:.65rem;margin-top:.7rem;padding:.8rem .95rem;border-radius:11px;background:var(--jade-light);color:var(--jade);font-size:.84rem;}
-.error-list{display:grid;gap:.75rem;}
-.error-card{padding:1rem;border:1px solid var(--line);border-radius:13px;background:#fff;}
-.error-card-head{display:flex;align-items:center;gap:.45rem;margin-bottom:.7rem;}
-.error-index{color:#a79a8d;font:700 .7rem/1 Georgia,serif;}
-.error-type{padding:.17rem .5rem;border-radius:6px;background:var(--cinnabar-light);color:var(--cinnabar);font-size:.7rem;font-weight:700;}
-.correction-flow{display:grid;grid-template-columns:1fr auto 1fr;gap:.65rem;align-items:center;}
-.correction-cell{padding:.65rem .75rem;border-radius:9px;background:#f6f3ed;}
-.correction-cell.corrected{background:var(--jade-light);}
-.correction-cell small{display:block;margin-bottom:.18rem;color:#95887b;font-size:.62rem;letter-spacing:.08em;}
-.correction-cell p{font-size:.88rem;line-height:1.55;}
-.correction-arrow{color:var(--cinnabar);font-weight:800;}
-.error-explanation{margin-top:.7rem;color:var(--ink-soft);font-size:.8rem;}
-.empty-errors{padding:1rem;border:1px dashed #b9c9c2;border-radius:11px;background:var(--jade-light);color:var(--jade);font-size:.84rem;}
-.score-row{padding:1rem 1.45rem;gap:.7rem;border-top:1px solid var(--line);}
-.score-chip{padding:.75rem .85rem;background:#f7f3ec;border:1px solid #ece4d9;border-radius:11px;text-align:left;}
-.score-topline{display:flex;align-items:baseline;justify-content:space-between;}.score-val{font-size:1.2rem;color:var(--ink);}.score-label{font-size:.72rem;}
-.score-track{height:4px;margin-top:.45rem;background:#e5ded3;border-radius:4px;overflow:hidden;}.score-track span{display:block;height:100%;background:var(--cinnabar);border-radius:4px;}
-.action-row{padding:.9rem 1.45rem;border-top:1px solid var(--line);}
-.action-pill{border:1px solid var(--line);border-radius:8px;background:#fff;}.action-pill:hover{border-color:var(--cinnabar);color:var(--cinnabar);background:var(--cinnabar-light);}
-.action-pill.green{border-color:#b7ccc4;color:var(--jade);background:var(--jade-light);}
-.draft2-section{margin-top:1.25rem;}.draft2-header{background:var(--jade-light);border-color:#b7ccc4;border-radius:16px 16px 0 0;}.draft2-header span{color:var(--jade);}
-.draft2-body{border-color:#b7ccc4;border-radius:0 0 16px 16px;background:var(--paper);}.draft2-submit{background:var(--jade);}.draft2-submit:hover{background:#19483d;}
-.teacher-header{background:#fbf4df;}.comp-box{padding:1.4rem;}.footer{margin-top:2.4rem;color:#8f8376;letter-spacing:.03em;}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(166,61,50,.22);outline-offset:2px;}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important;}}
-@media (max-width:820px){
-  .hero{grid-template-columns:1fr;padding:2.6rem;}.paper-visual{display:none;}.workspace-grid{grid-template-columns:1fr;}.control-panel{position:static;}.mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);}.mode-tab{grid-template-columns:32px 1fr;padding:.65rem}.mode-tab .tab-icon{width:32px;height:32px}.mode-check{display:none}.privacy-note{display:none}
-}
+.wrapper{max-width:860px;padding:2.5rem 1.5rem 5rem;}
+.header{margin-bottom:2.2rem;}
+.header h1{color:var(--red);font-size:2.1rem;font-weight:800;letter-spacing:.02em;}
+.header p{font-size:.95rem;line-height:1.7;}
+.student-bar{border:1px solid var(--border);border-radius:16px;padding:1rem 1.2rem;box-shadow:0 5px 18px rgba(76,58,42,.05);}
+.student-bar:focus-within{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,74,61,.1);}
+.student-input{font-size:1rem;}
+.mode-tab{min-height:92px;border-width:1.5px;border-radius:16px;padding:.9rem;box-shadow:0 4px 14px rgba(76,58,42,.04);}
+.mode-tab:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(76,58,42,.08);}
+.mode-tab .tab-icon{font-size:1.45rem;}
+.sample-btn{min-height:36px;padding:.4rem .8rem;border-width:1px;}
+textarea{min-height:240px;border-width:1.5px;border-radius:16px;font-size:1.05rem;line-height:2;box-shadow:inset 0 1px 4px rgba(76,58,42,.03);}
+textarea:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,74,61,.1);}
+.camera-btn{min-height:44px;padding:.55rem 1rem;background:var(--teal);}
+.submit-btn{min-height:52px;background:var(--red);border-radius:14px;font-weight:700;box-shadow:0 7px 16px rgba(200,74,61,.2);}
+.submit-btn:hover{background:#a63d32;}
+.clear-btn{min-height:52px;border-width:1px;border-radius:14px;}
+.loading,.result-section,.teacher-section,.comp-box{border:1px solid var(--border);border-radius:20px;}
+.result-header{background:#fffdf9;}
+.score-chip{border:1px solid var(--border);border-radius:12px;}
+.action-pill{min-height:44px;border-width:1px;border-radius:12px;background:#fff;}
+.draft2-header{border-radius:16px 16px 0 0;}
+.draft2-body{border-radius:0 0 16px 16px;}
+.draft2-submit,.cam-btn{min-height:48px;border-radius:12px;}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(200,74,61,.24);outline-offset:2px;}
 @media (max-width:620px){
-  .wrapper{padding:1rem .85rem 3rem}.hero{min-height:0;padding:2rem 1.3rem;border-radius:20px}.hero h1{font-size:2.15rem}.hero-copy>p{font-size:.95rem}.journey-step{justify-content:center;padding:.65rem .35rem;font-size:.7rem}.journey-step span{display:none}.workspace-grid{gap:.8rem}.control-panel,.editor-card{border-radius:18px}.mode-tabs{grid-template-columns:1fr}.mode-tab{grid-template-columns:36px 1fr 18px}.mode-check{display:grid}.editor-card{padding:1rem}.editor-card textarea{min-height:260px}.editor-head{align-items:flex-start}.macro-grid{grid-template-columns:1fr}.correction-flow{grid-template-columns:1fr}.correction-arrow{transform:rotate(90deg);justify-self:center}.submit-row{flex-direction:column}.clear-btn{width:100%}.score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;padding:.8rem}.score-chip{min-width:0;padding:.6rem}.score-topline{display:block}.score-val{font-size:1.05rem}.action-row{display:grid;grid-template-columns:1fr 1fr}.action-pill{text-align:center}.modal-box{padding:1rem;border-radius:16px}
+  .wrapper{padding:1.5rem .9rem 3rem;}.header h1{font-size:1.75rem}.mode-tabs{display:grid;grid-template-columns:1fr}.mode-tab{min-height:76px}.submit-row{flex-direction:column}.clear-btn{width:100%}.action-pill{flex:1 1 calc(50% - .6rem)}
 }
 </style>
 </head>
 <body>
 <div class="wrapper">
-  <header class="hero">
-    <div class="hero-copy">
-      <div class="brand-row">
-        <span class="brand-mark">红</span>
-        <span class="eyebrow">HongBi · AI Chinese Writing Coach</span>
-      </div>
-      <h1>把每一次修改，<span>变成真正的进步。</span></h1>
-      <p>为华文二语学习者设计的分层写作反馈：先看内容、结构与连贯性，再逐句理解语序、量词、体标记、语体和搭配。</p>
-      <div class="feature-list" aria-label="功能特点">
-        <span>宏观反馈</span><span>微观纠错</span><span>手写识别</span><span>一稿二稿对比</span>
-      </div>
-    </div>
-    <div class="paper-visual" aria-hidden="true">
-      <div class="paper-top"><span>作文批注</span><i></i></div>
-      <div class="paper-line"></div><div class="paper-line mid"></div><div class="paper-line"></div>
-      <div class="paper-line short"></div><div class="paper-line mid"></div><div class="paper-line"></div>
-      <div class="correction-note">语序 <b>↗</b></div>
-      <div class="paper-score">A−</div><div class="red-pencil"></div>
-    </div>
-  </header>
-
-  <nav class="journey" aria-label="写作反馈流程">
-    <div class="journey-step"><b>1</b><span>提交作文</span></div>
-    <div class="journey-step"><b>2</b><span>阅读双层反馈</span></div>
-    <div class="journey-step"><b>3</b><span>完成二稿</span></div>
-  </nav>
-
-  <div class="workspace-grid">
-    <aside class="control-panel">
-      <div class="panel-label">学习者信息</div>
-      <div class="student-bar">
-        <label class="student-icon" for="studentName">我</label>
-        <input class="student-input" id="studentName" type="text" autocomplete="name" placeholder="姓名或学号（必填）" />
-      </div>
-
-      <div class="panel-label">选择反馈方式</div>
-      <div class="mode-tabs">
-        <button type="button" class="mode-tab active-teal" onclick="setMode('ai')" id="tab-ai" aria-pressed="true">
-          <span class="tab-icon">AI</span><span><span class="tab-copy">AI 反馈</span><span class="tab-desc">直接纠错，给出答案</span></span><span class="mode-check">✓</span>
-        </button>
-        <button type="button" class="mode-tab" onclick="setMode('teacher')" id="tab-teacher" aria-pressed="false">
-          <span class="tab-icon">师</span><span><span class="tab-copy">教师反馈</span><span class="tab-desc">启发引导，思考为主</span></span><span class="mode-check">✓</span>
-        </button>
-        <button type="button" class="mode-tab" onclick="setMode('hybrid')" id="tab-hybrid" aria-pressed="false">
-          <span class="tab-icon">协</span><span><span class="tab-copy">人机协同</span><span class="tab-desc">AI 分析 + 教师建议</span></span><span class="mode-check">✓</span>
-        </button>
-      </div>
-      <div class="privacy-note"><span>◇</span><span>作文内容只用于生成本次反馈与教师端学习记录。</span></div>
-    </aside>
-
-    <main class="editor-card">
-      <div class="editor-head">
-        <div><span class="step-kicker">STEP 01 · 写作</span><h2>写下你的华文作文</h2></div>
-        <span id="charCount">0 / 20+ 字</span>
-      </div>
-      <div class="sample-row">
-        <span class="sample-label">没有灵感？试试</span>
-        <button type="button" class="sample-btn" onclick="loadSample(0)">我的家庭 · 初级</button>
-        <button type="button" class="sample-btn" onclick="loadSample(1)">环境保护 · 中级</button>
-        <button type="button" class="sample-btn" onclick="loadSample(2)">城市生活 · 中高级</button>
-      </div>
-      <div class="input-wrap">
-        <textarea id="essayInput" aria-describedby="charCount" placeholder="在这里输入或粘贴作文……&#10;&#10;如果是手写稿，可以使用右下角的「扫描作文」。" oninput="updateCount()"></textarea>
-        <button type="button" class="camera-btn" onclick="openCamera()">▣ 扫描手写稿</button>
-      </div>
-      <div class="error-msg" id="errorMsg" role="alert"></div>
-      <div class="submit-row">
-        <button type="button" class="submit-btn" id="submitBtn" onclick="getFeedback(1)"><span id="btnText">开始批改</span><span class="submit-arrow">→</span></button>
-        <button type="button" class="clear-btn" onclick="clearAll()">清空</button>
-      </div>
-    </main>
+  <div class="header">
+    <h1>✍️ 华文写作批改工具</h1>
+    <p>Chinese Writing Feedback Tool · 三种反馈模式 · 适合二语学习者</p>
   </div>
 
-  <div class="loading" id="loading" aria-live="polite">
+  <div class="student-bar">
+    <label>👤</label>
+    <input class="student-input" id="studentName" type="text" placeholder="请输入姓名或学号（必填）" />
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active-teal" onclick="setMode('ai')" id="tab-ai">
+      <span class="tab-icon">🤖</span>AI 反馈<div class="tab-desc">直接纠错，给出答案</div>
+    </button>
+    <button class="mode-tab" onclick="setMode('teacher')" id="tab-teacher">
+      <span class="tab-icon">👩‍🏫</span>教师反馈<div class="tab-desc">启发引导，思考为主</div>
+    </button>
+    <button class="mode-tab" onclick="setMode('hybrid')" id="tab-hybrid">
+      <span class="tab-icon">🤝</span>人机协同<div class="tab-desc">AI批改 + 教师建议</div>
+    </button>
+  </div>
+
+  <div class="sample-row">
+    <span class="sample-label">试试样本 →</span>
+    <button class="sample-btn" onclick="loadSample(0)">我的家庭（初级）</button>
+    <button class="sample-btn" onclick="loadSample(1)">环境保护（中级）</button>
+    <button class="sample-btn" onclick="loadSample(2)">城市生活（中高级）</button>
+  </div>
+
+  <div class="input-wrap">
+    <div class="input-label"><span>粘贴或输入华文作文</span><span id="charCount">0 字</span></div>
+    <textarea id="essayInput" placeholder="在此输入华文作文……&#10;&#10;或点右下角「📷 扫描作文」拍照识别手写稿。" oninput="updateCount()"></textarea>
+    <button class="camera-btn" onclick="openCamera()">📷 扫描作文</button>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="submit-row">
+    <button class="submit-btn" id="submitBtn" onclick="getFeedback(1)"><span id="btnText">获取反馈</span></button>
+    <button class="clear-btn" onclick="clearAll()">清除</button>
+  </div>
+
+  <div class="loading" id="loading">
     <div class="brush-anim">✍️</div>
     <div class="loading-text" id="loadingText">正在批改中，请稍候…</div>
   </div>
@@ -419,7 +282,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   <div class="draft2-section" id="draft2Section">
     <div class="draft2-header"><span>📝</span><span>提交二稿 — 根据反馈修改后在此输入</span></div>
     <div class="draft2-body">
-      <div class="input-label"><span>二稿内容</span><span id="charCount2">0 / 20+ 字</span></div>
+      <div class="input-label"><span>二稿内容</span><span id="charCount2">0 字</span></div>
       <textarea id="essay2Input" placeholder="在此输入修改后的作文…" oninput="updateCount2()"></textarea>
       <button class="draft2-submit" id="draft2Btn" onclick="getFeedback(2)">获取二稿反馈</button>
     </div>
@@ -444,7 +307,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
     </div>
   </div>
 
-  <div class="footer">红笔 HongBi · 为华文二语学习者而设计 · Grace Tang · 2026</div>
+  <div class="footer">华文写作批改工具 · Grace Tang · 2026</div>
 </div>
 
 <!-- Camera modal -->
@@ -487,24 +350,14 @@ let currentSubId = null;
 
 function setMode(m) {
   currentMode = m;
-  document.querySelectorAll('.mode-tab').forEach(t => {
-    t.className = 'mode-tab';
-    t.setAttribute('aria-pressed', 'false');
-  });
+  document.querySelectorAll('.mode-tab').forEach(t => t.className = 'mode-tab');
+  ({ ai:'active-teal', teacher:'active-gold', hybrid:'active-purple' });
   const map = { ai:'active-teal', teacher:'active-gold', hybrid:'active-purple' };
-  const activeTab = document.getElementById('tab-'+m);
-  activeTab.classList.add(map[m]);
-  activeTab.setAttribute('aria-pressed', 'true');
+  document.getElementById('tab-'+m).classList.add(map[m]);
 }
 function loadSample(i) { document.getElementById('essayInput').value = SAMPLES[i]; updateCount(); }
-function updateCounter(inputId, counterId) {
-  const length = document.getElementById(inputId).value.length;
-  const counter = document.getElementById(counterId);
-  counter.textContent = `${length} / 20+ 字`;
-  counter.classList.toggle('ready', length >= 20);
-}
-function updateCount()  { updateCounter('essayInput', 'charCount'); }
-function updateCount2() { updateCounter('essay2Input', 'charCount2'); }
+function updateCount()  { document.getElementById('charCount').textContent  = document.getElementById('essayInput').value.length + ' 字'; }
+function updateCount2() { document.getElementById('charCount2').textContent = document.getElementById('essay2Input').value.length + ' 字'; }
 function showError(m)   { const e=document.getElementById('errorMsg'); e.textContent=m; e.style.display='block'; }
 function hideError()    { document.getElementById('errorMsg').style.display='none'; }
 function showDraft2()   { document.getElementById('draft2Section').classList.add('visible'); document.getElementById('draft2Section').scrollIntoView({behavior:'smooth'}); }
@@ -519,31 +372,21 @@ function renderFeedback(feedback) {
   const macro = feedback.macro;
   const errors = feedback.micro || [];
   const microHtml = errors.length
-    ? `<div class="error-list">${errors.map((item, index) => `<article class="error-card">
-        <div class="error-card-head"><span class="error-index">${String(index + 1).padStart(2, '0')}</span><span class="error-type">${escapeHtml(item.type)}</span></div>
-        <div class="correction-flow">
-          <div class="correction-cell"><small>原文</small><p>${escapeHtml(item.original)}</p></div>
-          <span class="correction-arrow">→</span>
-          <div class="correction-cell corrected"><small>建议修改</small><p>${escapeHtml(item.correction)}</p></div>
-        </div>
-        <p class="error-explanation">为什么：${escapeHtml(item.explanation)}</p>
-      </article>`).join('')}</div>`
-    : '<div class="empty-errors">✓ 没有发现需要优先修改的语序、量词、体标记、语体或搭配错误。</div>';
+    ? errors.map((item, index) => `<p>
+        <strong>${index + 1}. ${escapeHtml(item.type)}</strong><br>
+        原文：<span class="error-highlight">${escapeHtml(item.original)}</span>
+        <span class="suggestion">→ ${escapeHtml(item.correction)}</span>
+        说明：${escapeHtml(item.explanation)}
+      </p>`).join('')
+    : '<p>未发现需要优先修改的语序、量词、体标记、语体或搭配错误。</p>';
 
-  return `<section class="feedback-block">
-      <div class="feedback-heading"><span class="feedback-number">01</span><div><strong>宏观反馈</strong><small>内容 · 结构 · 连贯性</small></div></div>
-      <div class="macro-summary">${escapeHtml(macro.summary)}</div>
-      <div class="macro-grid">
-        <div class="feedback-point"><span>内容</span><p>${escapeHtml(macro.content)}</p></div>
-        <div class="feedback-point"><span>结构</span><p>${escapeHtml(macro.structure)}</p></div>
-        <div class="feedback-point"><span>连贯性</span><p>${escapeHtml(macro.coherence)}</p></div>
-      </div>
-      <div class="strength-note"><span>✦</span><span><strong>写得好的地方：</strong>${escapeHtml(macro.strengths)}</span></div>
-    </section>
-    <section class="feedback-block">
-      <div class="feedback-heading"><span class="feedback-number">02</span><div><strong>微观反馈</strong><small>原文 · 修改 · 原因</small></div></div>
-      ${microHtml}
-    </section>`;
+  return `<h3>【宏观反馈】</h3>
+    <p><strong>整体评价：</strong>${escapeHtml(macro.summary)}</p>
+    <p><strong>内容：</strong>${escapeHtml(macro.content)}<br>
+    <strong>结构：</strong>${escapeHtml(macro.structure)}<br>
+    <strong>连贯性：</strong>${escapeHtml(macro.coherence)}</p>
+    <div class="praise">✓ ${escapeHtml(macro.strengths)}</div>
+    <h3>【微观反馈】</h3>${microHtml}`;
 }
 
 function getScores(feedback) {
@@ -599,7 +442,7 @@ async function getFeedback(draft) {
       document.getElementById('resultMeta').textContent = `共${essay.length}字`;
       document.getElementById('resultContent').innerHTML = renderFeedback(feedback);
       document.getElementById('scoreRow').innerHTML = scores
-        ? scores.map(s=>`<div class="score-chip"><div class="score-topline"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:11px;font-weight:400;">/10</span></div></div><div class="score-track"><span style="width:${s.val * 10}%"></span></div></div>`).join('') : '';
+        ? scores.map(s=>`<div class="score-chip"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('') : '';
       document.getElementById('resultSection').classList.add('visible');
       document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
     } else {
@@ -608,7 +451,7 @@ async function getFeedback(draft) {
       document.getElementById('resultMeta2').textContent = `共${essay.length}字`;
       document.getElementById('resultContent2').innerHTML = renderFeedback(feedback);
       document.getElementById('scoreRow2').innerHTML = scores
-        ? scores.map(s=>`<div class="score-chip"><div class="score-topline"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:11px;font-weight:400;">/10</span></div></div><div class="score-track"><span style="width:${s.val * 10}%"></span></div></div>`).join('') : '';
+        ? scores.map(s=>`<div class="score-chip"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('') : '';
       document.getElementById('result2Section').classList.add('visible');
       if (draft1Scores && scores) showComparison(draft1Scores, scores);
       document.getElementById('result2Section').scrollIntoView({behavior:'smooth',block:'start'});
@@ -619,7 +462,7 @@ async function getFeedback(draft) {
     showError('错误：'+err.message);
   }
   btnEl.disabled = false;
-  if (btnTextEl) btnTextEl.textContent = '开始批改';
+  if (btnTextEl) btnTextEl.textContent = '获取反馈';
 }
 
 function showComparison(s1, s2) {
