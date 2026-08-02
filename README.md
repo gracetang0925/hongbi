@@ -82,6 +82,53 @@ Child mode rewards completion, reading support, and revision—not being the lea
 
 ![Writing garden rewards](assets/garden-rewards.png)
 
+## 小墨农场社交愿景 / Xiao Mo Farm social vision
+
+> **规划中的产品概念 / Planned product concept.** 当前 MVP 只有保存在本机的种子和水滴；好友、作品广场、留言与共同种树尚未上线。  
+> The current MVP only stores seeds and water locally. Friends, the writing gallery, messages, and collaborative planting are planned features.
+
+小墨农场把写作进步变成可以看见的成长，但不以“错误最少”或公开分数制造竞争。完成写作、查看拼音、理解错误原因和完成二稿都会触发类似语言学习应用的胜利页面，展示连续学习天数、获得的水滴或种子，以及植物的新变化。
+
+Xiao Mo Farm turns writing progress into visible growth without ranking children by errors or public scores. Completing a draft, opening pinyin, understanding an explanation, or finishing a revision triggers a celebratory completion screen with streaks, earned items, and visible plant growth.
+
+![Xiao Mo Farm low-fidelity social garden wireframe](assets/xiaomo-farm-wireframe.svg)
+
+### 学习行为与奖励 / Learning actions and rewards
+
+| 学习行为 / Learning action | 农场反馈 / Farm response |
+|---|---|
+| 完成一稿 / Complete a first draft | 获得种子并出现胜利动画 / Earn a seed and see a celebration |
+| 查看拼音 / Open pinyin support | 获得水滴 / Earn water |
+| 阅读错误原因 / Read an explanation | 获得阳光或经验 / Earn sunlight or learning XP |
+| 自己完成二稿 / Complete a revision | 植物成长或成熟 / Grow or harvest a plant |
+| 同类问题下一次写对 / Correct a recurring pattern | 解锁稀有植物、树木或徽章 / Unlock a rare plant, tree, or badge |
+| 帮好友浇水 / Water a friend's plant | 双方获得少量友情成长值 / Both learners receive a small friendship reward |
+
+### 受控的儿童社交 / Child-safe social design
+
+- 好友通过家长、教师或班级邀请码确认，不开放陌生人搜索。
+- 同题作品按年龄、中文水平和主题分类，并只展示经过授权和去身份化的内容。
+- 第一阶段留言只使用预设鼓励语和表情，例如“写得很清楚”“我也喜欢这个故事”“继续加油”。
+- 不开放陌生人私聊，也不显示真实姓名、学校、位置或联系方式。
+- “友情采摘”不会减少原主人的收获；家长可以关闭作品分享和全部社交功能。
+- Friends are approved through a parent, teacher, or classroom invite code; stranger search is disabled.
+- Same-topic writing is grouped by age, language level, and prompt, and is shown only with permission and identifying details removed.
+- Early messages use preset encouragement and reactions rather than unrestricted free text.
+- No stranger direct messages, public schools, locations, contact details, or loss-based stealing mechanics.
+
+```mermaid
+flowchart LR
+    A["完成写作或查看拼音"] --> B["胜利页面<br/>连续天数 · 水滴 · 种子"]
+    B --> C["自己的植物成长"]
+    C --> D{"下一步"}
+    D -->|"继续学习"| E["修改二稿或开始新作文"]
+    D -->|"安全社交"| F["访问已批准好友的农场"]
+    F --> G["浇水 · 种树 · 预设鼓励"]
+    D -->|"同题学习"| H["查看经授权的匿名作品"]
+    G --> E
+    H --> E
+```
+
 ## 教师端愿景 / Teacher experience
 
 教师端当前原型用于查看学习记录与错误观察。下一阶段计划提供结构化文字批改、异步语音评价和视频总结；语音与视频可自动生成字幕和双语文本。早期不开放教师与儿童的私人视频通话。
