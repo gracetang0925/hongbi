@@ -295,7 +295,8 @@ export default {
               score_accuracy: scores.accuracy,
               score_fluency:  scores.fluency,
               score_content:  scores.content,
-              status:         "pending",
+              // Only paid teacher/hybrid modes enter the human-review queue.
+              status:         mode === "teacher" || mode === "hybrid" ? "pending" : "ai_only",
             }),
           })
         );

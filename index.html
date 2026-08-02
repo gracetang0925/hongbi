@@ -34,6 +34,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 .mode-tab{flex:1;min-width:130px;padding:.8rem .9rem;border:2px solid var(--border);border-radius:12px;background:var(--card);cursor:pointer;font-size:.88rem;font-family:inherit;text-align:center;transition:all .2s;color:var(--muted);}
 .mode-tab .tab-icon{font-size:1.3rem;display:block;margin-bottom:.2rem;}
 .mode-tab .tab-desc{font-size:.74rem;margin-top:.15rem;opacity:.8;}
+.paid-badge{display:inline-flex;align-items:center;margin-left:.35rem;padding:.08rem .42rem;border-radius:999px;background:#fff0cf;color:#8a6510;border:1px solid #ecd492;font-size:.64rem;font-weight:800;vertical-align:middle;letter-spacing:.03em;}
 .mode-tab.active-teal  {border-color:var(--teal);  background:var(--teal-light);  color:var(--teal);  font-weight:600;}
 .mode-tab.active-gold  {border-color:var(--gold);  background:var(--gold-light);  color:var(--gold);  font-weight:600;}
 .mode-tab.active-purple{border-color:var(--purple);background:var(--purple-light);color:var(--purple);font-weight:600;}
@@ -148,6 +149,18 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .learning-goal{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:-.7rem 0 1.25rem;padding:.35rem;background:#f1ece4;border-radius:14px;}.goal-btn{padding:.7rem .8rem;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);font:600 .82rem/1.35 inherit;cursor:pointer;}.goal-btn span{display:block;font-size:.68rem;font-weight:400;}.goal-btn.active{background:#fff;border-color:var(--border);color:var(--teal);box-shadow:0 3px 10px rgba(76,58,42,.07);}.goal-btn.active-hsk{background:var(--gold-light);border-color:#ead39a;color:#8a6510;}
 .reward-toast{position:fixed;left:50%;bottom:1.5rem;z-index:1100;transform:translate(-50%,18px);padding:.7rem 1rem;background:#26332d;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
 .reward-toast.visible{opacity:1;transform:translate(-50%,0);}
+.xiaomo-companion{position:fixed;right:clamp(.7rem,2.4vw,2rem);bottom:clamp(.75rem,2vw,1.5rem);z-index:1050;display:flex;flex-direction:column;align-items:flex-end;filter:drop-shadow(0 12px 16px rgba(41,38,32,.16));}
+.xiaomo-bubble{position:relative;width:min(300px,calc(100vw - 2rem));margin:0 0 .2rem 0;padding:.8rem 2.2rem .8rem .9rem;background:#fff;border:1px solid #d8e7e1;border-radius:16px 16px 4px 16px;color:#3f5149;font-size:.82rem;line-height:1.55;box-shadow:0 10px 30px rgba(45,65,56,.14);transform-origin:bottom right;transition:opacity .2s,transform .2s;}
+.xiaomo-bubble[hidden]{display:block;opacity:0;transform:scale(.82);pointer-events:none;}
+.xiaomo-bubble strong{display:block;color:var(--teal);margin-bottom:.12rem;}.xiaomo-bubble-close{position:absolute;right:.55rem;top:.45rem;width:25px;height:25px;border:0;border-radius:50%;background:#f3f1ec;color:var(--muted);cursor:pointer;}
+.xiaomo-character{width:132px;height:150px;object-fit:contain;object-position:center bottom;cursor:pointer;transform-origin:50% 100%;animation:xiaomo-float 3.1s ease-in-out infinite;user-select:none;-webkit-user-drag:none;}
+.xiaomo-companion.speaking .xiaomo-character{animation:xiaomo-talk .38s ease-in-out infinite alternate;}
+.xiaomo-companion.celebrate .xiaomo-character{animation:xiaomo-celebrate .55s ease-in-out 3;}
+.xiaomo-controls{display:flex;gap:.45rem;margin-top:-.25rem;margin-right:.35rem;}
+.xiaomo-control{display:grid;place-items:center;width:39px;height:39px;border:1px solid #e1ded7;border-radius:50%;background:#fff;color:#32473e;font-size:1rem;cursor:pointer;box-shadow:0 5px 12px rgba(0,0,0,.1);}.xiaomo-control:hover{background:var(--teal-light);color:var(--teal);}.xiaomo-control:focus-visible{outline:3px solid rgba(43,113,100,.24);}
+@keyframes xiaomo-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes xiaomo-talk{from{transform:translateY(-3px) rotate(-2deg) scale(1)}to{transform:translateY(-7px) rotate(2deg) scale(1.025)}}
+@keyframes xiaomo-celebrate{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-18px) rotate(4deg)}}
 .pet-summary{display:grid;grid-template-columns:54px 1fr;gap:.85rem;align-items:start;margin:.7rem 0 1rem;padding:1rem;background:var(--teal-light);border:1px solid #c9e1d9;border-radius:14px;}
 .pet-avatar{display:grid;place-items:center;width:52px;height:52px;border:2px solid var(--teal);border-radius:50%;background:#fff;font-weight:800;color:var(--teal);font-size:1.05rem;box-shadow:inset 0 -5px 0 rgba(43,113,100,.07);}
 .pet-summary strong{display:block;margin-bottom:.25rem;color:var(--teal);}.pet-summary p{font-size:.86rem;line-height:1.65;color:#45564e;}
@@ -223,8 +236,9 @@ textarea:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,74,61,.1);}
 .draft2-submit,.cam-btn{min-height:48px;border-radius:12px;}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(200,74,61,.24);outline-offset:2px;}
 @media (max-width:620px){
-  .wrapper{padding:1.5rem .9rem 3rem;}.header h1{font-size:1.75rem}.mode-tabs{display:grid;grid-template-columns:1fr}.mode-tab{min-height:76px}.submit-row{flex-direction:column}.clear-btn{width:100%}.action-pill{flex:1 1 calc(50% - .6rem)}.garden-bar{align-items:flex-start;flex-direction:column}.garden-stats{align-self:stretch}.reward-pill{flex:1;text-align:center}.correction-row{grid-template-columns:1fr}.correction-arrow{transform:rotate(90deg);justify-self:center}.pet-summary{grid-template-columns:44px 1fr}.pet-avatar{width:44px;height:44px}
+  .wrapper{padding:1.5rem .9rem 7rem;}.header h1{font-size:1.75rem}.mode-tabs{display:grid;grid-template-columns:1fr}.mode-tab{min-height:76px}.submit-row{flex-direction:column}.clear-btn{width:100%}.action-pill{flex:1 1 calc(50% - .6rem)}.garden-bar{align-items:flex-start;flex-direction:column}.garden-stats{align-self:stretch}.reward-pill{flex:1;text-align:center}.correction-row{grid-template-columns:1fr}.correction-arrow{transform:rotate(90deg);justify-self:center}.pet-summary{grid-template-columns:44px 1fr}.pet-avatar{width:44px;height:44px}.xiaomo-character{width:92px;height:105px}.xiaomo-bubble{width:min(260px,calc(100vw - 1.4rem));font-size:.76rem}.xiaomo-control{width:36px;height:36px}
 }
+@media (prefers-reduced-motion:reduce){.xiaomo-character,.xiaomo-companion.speaking .xiaomo-character,.xiaomo-companion.celebrate .xiaomo-character{animation:none}.xiaomo-bubble{transition:none}}
 </style>
 </head>
 <body>
@@ -257,10 +271,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
       <span class="tab-icon">🤖</span>AI 反馈<div class="tab-desc">直接纠错，给出答案</div>
     </button>
     <button class="mode-tab" onclick="setMode('teacher')" id="tab-teacher" aria-pressed="false">
-      <span class="tab-icon">👩‍🏫</span>教师反馈<div class="tab-desc">启发引导，思考为主</div>
+      <span class="tab-icon">👩‍🏫</span>教师精批 <span class="paid-badge">付费</span><div class="tab-desc">AI 初审后进入教师队列</div>
     </button>
     <button class="mode-tab" onclick="setMode('hybrid')" id="tab-hybrid" aria-pressed="false">
-      <span class="tab-icon">🤝</span>人机协同<div class="tab-desc">AI批改 + 教师建议</div>
+      <span class="tab-icon">🤝</span>人机协同 <span class="paid-badge">付费</span><div class="tab-desc">AI 批改 + 教师深层建议</div>
     </button>
   </div>
 
@@ -349,6 +363,19 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 
 <div class="reward-toast" id="rewardToast" role="status" aria-live="polite"></div>
 
+<aside class="xiaomo-companion" id="xiaomoCompanion" aria-label="小墨写作伙伴">
+  <div class="xiaomo-bubble" id="xiaomoBubble" role="status" aria-live="polite">
+    <button type="button" class="xiaomo-bubble-close" onclick="toggleXiaomo(false)" aria-label="关闭小墨提示">×</button>
+    <strong id="xiaomoBubbleTitle">嗨，我是小墨！</strong>
+    <span id="xiaomoBubbleText">写完以后，我会陪你一起找亮点、看问题。</span>
+  </div>
+  <img class="xiaomo-character" id="xiaomoCharacter" src="assets/xiaomo-panda.png" alt="小墨熊猫拿着红笔" onclick="toggleXiaomo()" />
+  <div class="xiaomo-controls">
+    <button type="button" class="xiaomo-control" id="xiaomoSpeakBtn" onclick="speakXiaomo()" aria-label="让小墨读出提示" title="听小墨说">🔊</button>
+    <button type="button" class="xiaomo-control" onclick="toggleXiaomo()" aria-label="展开或收起小墨提示" title="展开或收起">⌄</button>
+  </div>
+</aside>
+
 <!-- Camera modal -->
 <div class="modal-overlay" id="cameraModal">
   <div class="modal-box">
@@ -377,11 +404,12 @@ const SAMPLES = [
 
 const MODES = {
   ai:      { label:'🐼 小墨 AI 反馈', badge:'badge-teal' },
-  teacher: { label:'👩‍🏫 教师式反馈', badge:'badge-gold' },
-  hybrid:  { label:'🤝 人机协同', badge:'badge-purple' },
+  teacher: { label:'👩‍🏫 教师精批 · 付费', badge:'badge-gold' },
+  hybrid:  { label:'🤝 人机协同 · 付费', badge:'badge-purple' },
 };
 
 let currentMode = 'ai';
+let submittedMode = null;
 let currentGoal = 'child';
 let draft1Feedback = null;
 let draft2Feedback = null;
@@ -389,6 +417,8 @@ let cameraStream = null;
 let capturedImage = null;
 let currentSubId = null;
 let rewardToastTimer = null;
+let xiaomoSpeechText = '嗨，我是小墨。写完以后，我会陪你一起找亮点、看问题。';
+let xiaomoBubbleOpen = true;
 
 const REWARD_KEY = 'hongbiGardenRewardsV1';
 let gardenRewards = loadGardenRewards();
@@ -421,6 +451,62 @@ function showRewardToast(message) {
   toast.classList.add('visible');
   clearTimeout(rewardToastTimer);
   rewardToastTimer = setTimeout(()=>toast.classList.remove('visible'), 2600);
+}
+
+function toggleXiaomo(force) {
+  const bubble = document.getElementById('xiaomoBubble');
+  xiaomoBubbleOpen = typeof force === 'boolean' ? force : !xiaomoBubbleOpen;
+  bubble.hidden = !xiaomoBubbleOpen;
+}
+
+function setXiaomoMessage(title, message, speech, celebrate = false) {
+  document.getElementById('xiaomoBubbleTitle').textContent = title;
+  document.getElementById('xiaomoBubbleText').textContent = message;
+  xiaomoSpeechText = speech || `${title}。${message}`;
+  toggleXiaomo(true);
+  const companion = document.getElementById('xiaomoCompanion');
+  if (celebrate) {
+    companion.classList.remove('celebrate');
+    void companion.offsetWidth;
+    companion.classList.add('celebrate');
+    setTimeout(()=>companion.classList.remove('celebrate'), 1800);
+  }
+}
+
+function speakXiaomo() {
+  if (!('speechSynthesis' in window)) {
+    setXiaomoMessage('暂时不能朗读', '这个浏览器不支持语音朗读，你仍然可以看文字提示。');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(xiaomoSpeechText);
+  utterance.lang = 'zh-CN';
+  utterance.rate = .9;
+  utterance.pitch = 1.08;
+  const voices = window.speechSynthesis.getVoices();
+  utterance.voice = voices.find(v => /zh[-_](CN|SG)|Chinese|普通话|中文/i.test(`${v.lang} ${v.name}`)) || null;
+  const companion = document.getElementById('xiaomoCompanion');
+  utterance.onstart = () => companion.classList.add('speaking');
+  utterance.onend = utterance.onerror = () => companion.classList.remove('speaking');
+  toggleXiaomo(true);
+  window.speechSynthesis.speak(utterance);
+}
+
+function updateXiaomoFromFeedback(feedback, draft) {
+  const firstIssue = feedback?.micro?.[0];
+  if (firstIssue) {
+    const hint = firstIssue.pet_hint || `“${firstIssue.original}”这里可以再自然一点。`;
+    const reason = firstIssue.explanation_zh || '';
+    setXiaomoMessage(
+      draft === 2 ? '二稿有新进步！' : '我发现一个可以变好的地方',
+      hint,
+      `${hint}${reason ? `。原因是：${reason}` : ''}`,
+      true
+    );
+  } else {
+    const encouragement = feedback?.macro?.encouragement || '这次表达很清楚，继续保持！';
+    setXiaomoMessage('写得很棒！', encouragement, encouragement, true);
+  }
 }
 
 function awardLocalReward(kind, amount, claimId, message) {
@@ -494,6 +580,11 @@ function setMode(m) {
   const activeTab = document.getElementById('tab-'+m);
   activeTab.classList.add(map[m]);
   activeTab.setAttribute('aria-pressed', 'true');
+  if (m === 'teacher' || m === 'hybrid') {
+    setXiaomoMessage('这是付费服务', m === 'teacher' ? 'AI 初审后，作文会进入认证教师的批改队列。' : '你会先收到 AI 反馈，再等待认证教师补充深层建议。');
+  } else {
+    setXiaomoMessage('小墨 AI 模式', '我会马上帮你找亮点、解释问题，儿童成长模式不显示总分。');
+  }
 }
 function loadSample(i) { document.getElementById('essayInput').value = SAMPLES[i]; updateCount(); }
 function updateCount()  { document.getElementById('charCount').textContent  = document.getElementById('essayInput').value.length + ' 字'; }
@@ -530,7 +621,7 @@ function renderFeedback(feedback, draft) {
             <div class="correction-box corrected"><small>可以这样写</small><p>${escapeHtml(item.correction)}</p></div>
           </div>
           <div class="reason-card"><b>为什么？</b><div>${escapeHtml(explanationZh)}</div><div class="reason-en" lang="en"><b>Why?</b> ${escapeHtml(explanationEn)}</div></div>
-          <div class="pet-tip"><span>墨</span><span>${escapeHtml(petHint)}</span></div>
+          <div class="pet-tip"><span>🐼</span><span>${escapeHtml(petHint)}</span></div>
           <button type="button" class="pinyin-toggle" aria-expanded="false" onclick="togglePinyin(this,'${draft}-${index}')">🔤 显示拼音</button>
           <div class="pinyin-panel" hidden><b>Pinyin</b> · ${escapeHtml(pinyin)}</div>
         </article>`;
@@ -538,7 +629,7 @@ function renderFeedback(feedback, draft) {
     : '<div class="no-errors">🌟 小墨没有发现需要优先修改的语言问题。继续保持清楚、自然的表达！</div>';
 
   return `<section>
-      <div class="pet-summary"><div class="pet-avatar">墨</div><div><strong>小墨读完啦！</strong><p>${escapeHtml(macro.summary)}</p><p>${escapeHtml(macro.encouragement || '你已经完成了很重要的一步，我们一起看看怎样写得更清楚。')}</p></div></div>
+      <div class="pet-summary"><div class="pet-avatar"><img src="assets/xiaomo-panda.png" alt="" style="width:100%;height:100%;object-fit:contain;"></div><div><strong>小墨读完啦！</strong><p>${escapeHtml(macro.summary)}</p><p>${escapeHtml(macro.encouragement || '你已经完成了很重要的一步，我们一起看看怎样写得更清楚。')}</p></div></div>
       <h3>写得好的地方 · What works well</h3>
       <div class="strength-card"><strong>✓ ${escapeHtml(macro.strengths)}</strong><span class="strength-en" lang="en">${escapeHtml(macro.strengths_en || 'You communicated your idea clearly.')}</span></div>
       <h3>文章整体 · The big picture</h3>
@@ -583,6 +674,7 @@ async function getFeedback(draft) {
     loadingEl.classList.remove('visible');
 
     if (draft===1) {
+      submittedMode = currentMode;
       draft1Feedback = feedback;
       const badge = document.getElementById('modeBadge');
       badge.textContent = mode.label; badge.className = 'mode-badge ' + mode.badge;
@@ -590,7 +682,11 @@ async function getFeedback(draft) {
       document.getElementById('resultContent').innerHTML = renderFeedback(feedback, draft);
       document.getElementById('resultSection').classList.add('visible');
       updateGoalResults();
+      updateXiaomoFromFeedback(feedback, draft);
       awardLocalReward('seeds', 1, 'draft:1', '🌰 完成一稿，获得 1 颗写作种子！');
+      if (currentMode === 'teacher' || currentMode === 'hybrid') {
+        setTimeout(()=>setXiaomoMessage('已进入教师队列', '你可以先根据 AI 提示修改；老师发回后，点击“查看教师批注”。', '作文已经进入教师队列。你可以先根据人工智能提示修改；老师发回后，点击查看教师批注。'), 1900);
+      }
       document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
     } else {
       draft2Feedback = feedback;
@@ -600,6 +696,7 @@ async function getFeedback(draft) {
       document.getElementById('resultContent2').innerHTML = renderFeedback(feedback, draft);
       document.getElementById('result2Section').classList.add('visible');
       updateGoalResults();
+      updateXiaomoFromFeedback(feedback, draft);
       awardLocalReward('water', 2, 'draft:2', '💧 完成二稿，获得 2 滴水，菜苗长大了！');
       document.getElementById('result2Section').scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -650,6 +747,10 @@ function showScoreComparison(firstFeedback, secondFeedback) {
 async function checkTeacherFeedback() {
   const studentName = document.getElementById('studentName').value.trim();
   if (!studentName) { alert('请先填写姓名。'); return; }
+  if (!submittedMode || submittedMode === 'ai') {
+    setXiaomoMessage('教师批注是付费服务', '请在新作文开始前选择“教师精批”或“人机协同”，提交后才会进入教师队列。');
+    return;
+  }
   try {
     const res = await fetch(`${WORKER_URL}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -683,7 +784,10 @@ function clearAll() {
   document.getElementById('loading').classList.remove('visible');
   draft1Feedback=null;
   draft2Feedback=null;
+  submittedMode=null;
   updateGoalResults();
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  setXiaomoMessage('准备好再开始', '写完以后，我会陪你一起找亮点、看问题。');
 }
 
 // ── Camera ──

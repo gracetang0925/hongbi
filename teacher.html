@@ -29,6 +29,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 .login-btn{width:100%;padding:.9rem;background:var(--teal);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;}
 .login-btn:hover{background:var(--teal-dark);}
 .login-err{color:var(--red);font-size:.85rem;margin-top:.5rem;display:none;}
+.login-note{margin-top:1rem;padding:.65rem .75rem;background:var(--gold-light);border-radius:9px;color:#765d19;font-size:.75rem;line-height:1.55;text-align:left;}
 
 /* ── App layout ── */
 .app{display:none;min-height:100vh;}
@@ -39,6 +40,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 }
 .topbar-title{color:#fff;font-weight:700;font-size:1rem;flex:1;}
 .topbar-badge{background:rgba(255,255,255,.2);color:#fff;padding:.2rem .7rem;border-radius:12px;font-size:.8rem;}
+.paid-service-badge{background:#fff0c8;color:#745712;padding:.2rem .65rem;border-radius:999px;font-size:.72rem;font-weight:800;white-space:nowrap;}
 .topbar-logout{background:none;border:1.5px solid rgba(255,255,255,.4);color:#fff;padding:.3rem .8rem;border-radius:8px;font-size:.82rem;font-family:inherit;cursor:pointer;}
 
 .sidebar{
@@ -71,6 +73,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
   margin-bottom:-2px;transition:all .15s;
 }
 .tab-btn.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600;}
+.inbox-tools{display:flex;gap:.65rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;}.search-input{flex:1;min-width:220px;padding:.65rem .85rem;border:1.5px solid var(--border);border-radius:10px;background:var(--card);font:inherit;font-size:.85rem;outline:none;}.search-input:focus{border-color:var(--teal);}.refresh-btn{padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:10px;background:var(--card);color:var(--teal);font:600 .82rem/1 inherit;cursor:pointer;}.refresh-btn:disabled{opacity:.6;cursor:wait;}.connection-status{font-size:.76rem;color:var(--muted);}.connection-status.ok{color:var(--green);}.connection-status.error{color:var(--red);}
 
 /* ── Submission cards ── */
 .sub-list{display:flex;flex-direction:column;gap:.7rem;}
@@ -213,6 +216,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 
 .empty-state{text-align:center;padding:3rem;color:var(--muted);}
 .empty-icon{font-size:2.5rem;margin-bottom:.8rem;}
+.empty-state.error-state{background:var(--red-light);border:1px solid #f1c6c1;border-radius:12px;color:var(--red);}.empty-action{display:inline-block;margin-top:.8rem;padding:.55rem .85rem;border:0;border-radius:8px;background:var(--red);color:#fff;font:600 .82rem/1 inherit;cursor:pointer;}
 
 /* loading spinner */
 .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
@@ -225,6 +229,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
   .modal-body{grid-template-columns:1fr;}
   .modal-col{max-height:none;}
   .stats-grid{grid-template-columns:1fr 1fr;}
+  .topbar{padding:0 .75rem;gap:.45rem}.topbar-title{font-size:.85rem}.topbar-badge{display:none}.paid-service-badge{font-size:.64rem}.main{padding:1rem}.inbox-tools{align-items:stretch}.search-input{min-width:100%}
 }
 </style>
 </head>
@@ -239,6 +244,7 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
     <input class="login-input" type="password" id="loginPwd" placeholder="请输入教师密码" onkeydown="if(event.key==='Enter')doLogin()" />
     <button class="login-btn" onclick="doLogin()">登录</button>
     <div class="login-err" id="loginErr">密码错误，请重试。</div>
+    <div class="login-note">🔐 当前是 MVP 教师入口。正式招募全球教师前，需要升级为 Supabase Auth 账户登录、资质审核和角色权限。</div>
   </div>
 </div>
 
@@ -247,7 +253,8 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 
   <!-- Top bar -->
   <div class="topbar">
-    <div class="topbar-title">✍️ 华文批改 · 教师后台</div>
+    <div class="topbar-title">✍️ 华文批改 · 认证教师工作台</div>
+    <span class="paid-service-badge">付费服务</span>
     <span class="topbar-badge" id="pendingBadge">待批改 0</span>
     <button class="topbar-logout" onclick="logout()">退出</button>
   </div>
@@ -278,6 +285,11 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
         <button class="tab-btn" onclick="switchTab('reviewed')" id="tab-reviewed">已批改 <span id="cnt-reviewed">0</span></button>
         <button class="tab-btn" onclick="switchTab('returned')" id="tab-returned">已发回 <span id="cnt-returned">0</span></button>
         <button class="tab-btn" onclick="switchTab('all')" id="tab-all">全部</button>
+      </div>
+      <div class="inbox-tools">
+        <input class="search-input" id="submissionSearch" type="search" placeholder="搜索学生姓名或作文内容…" oninput="setSubmissionSearch(this.value)" />
+        <button class="refresh-btn" id="refreshBtn" onclick="loadSubmissions(true)">↻ 刷新</button>
+        <span class="connection-status" id="connectionStatus">尚未连接</span>
       </div>
       <div class="sub-list" id="subList">
         <div class="empty-state"><div class="empty-icon">📭</div>暂无提交</div>
@@ -381,7 +393,8 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 // ══════════════════════════════════════
 const SUPABASE_URL  = "https://joeuvvmsbskfpmqydogs.supabase.co";
 const SUPABASE_KEY  = "sb_publishable_VL1jCjssrRIwSrDVPnfrzQ_QQkabVwG";
-const TEACHER_PASSWORD = "grace2026"; // ← 可以改成你自己的密码
+// MVP only: this client-side hash hides the plain-text demo password but is not production authentication.
+const TEACHER_PASSWORD_HASH = "15364102026489391938ac9eed936602c1520742890b410b4ca1a4f541fd1e9f";
 
 // ══════════════════════════════════════
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -391,6 +404,8 @@ let currentTab = 'pending';
 let currentSub = null;
 let currentAnnotations = [];
 let selectedType = '语用';
+let submissionSearch = '';
+let isLoadingSubmissions = false;
 
 let templates = JSON.parse(localStorage.getItem('anno_templates') || '[]');
 if (templates.length === 0) {
@@ -408,9 +423,23 @@ if (templates.length === 0) {
 }
 
 // ── Auth ──
-function doLogin() {
+async function sha256(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function doLogin() {
   const pwd = document.getElementById('loginPwd').value;
-  if (pwd === TEACHER_PASSWORD) {
+  const button = document.querySelector('.login-btn');
+  button.disabled = true;
+  button.textContent = '验证中…';
+  let matches = false;
+  try { matches = await sha256(pwd) === TEACHER_PASSWORD_HASH; } catch {}
+  button.disabled = false;
+  button.textContent = '登录';
+  if (matches) {
+    document.getElementById('loginErr').style.display = 'none';
     document.getElementById('loginWrap').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     loadSubmissions();
@@ -436,15 +465,36 @@ function showPage(name) {
 
 // ── Load submissions ──
 async function loadSubmissions() {
-  const { data, error } = await sb
-    .from('submissions')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) { console.error(error); return; }
-  allSubmissions = data || [];
-  renderInbox();
-  updateCounts();
+  if (isLoadingSubmissions) return;
+  isLoadingSubmissions = true;
+  const list = document.getElementById('subList');
+  const status = document.getElementById('connectionStatus');
+  const refresh = document.getElementById('refreshBtn');
+  list.innerHTML = '<div class="empty-state"><div class="spinner" style="border-color:#d7e9e3;border-top-color:var(--teal)"></div><div style="margin-top:.8rem">正在连接批改收件箱…</div></div>';
+  status.className = 'connection-status';
+  status.textContent = '连接中…';
+  refresh.disabled = true;
+  try {
+    const { data, error } = await sb
+      .from('submissions')
+      .select('*')
+      .in('mode', ['teacher', 'hybrid'])
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    allSubmissions = data || [];
+    status.className = 'connection-status ok';
+    status.textContent = `✓ 已连接 · ${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`;
+    renderInbox();
+    updateCounts();
+  } catch (error) {
+    console.error(error);
+    status.className = 'connection-status error';
+    status.textContent = '连接失败';
+    list.innerHTML = `<div class="empty-state error-state"><div class="empty-icon">⚠️</div><strong>无法读取教师收件箱</strong><div style="margin-top:.45rem;font-size:.82rem;line-height:1.6">${escapeHtml(error.message || '请检查网络、Supabase 表和访问权限。')}</div><button class="empty-action" onclick="loadSubmissions(true)">重新连接</button></div>`;
+  } finally {
+    isLoadingSubmissions = false;
+    refresh.disabled = false;
+  }
 }
 
 function updateCounts() {
@@ -468,13 +518,22 @@ function switchTab(tab) {
   renderInbox();
 }
 
+function setSubmissionSearch(value) {
+  submissionSearch = value.trim().toLowerCase();
+  renderInbox();
+}
+
 function renderInbox() {
-  const filtered = currentTab === 'all'
+  let filtered = currentTab === 'all'
     ? allSubmissions
     : allSubmissions.filter(s => s.status === currentTab);
+  if (submissionSearch) {
+    filtered = filtered.filter(s => `${s.student_name || ''} ${s.essay || ''}`.toLowerCase().includes(submissionSearch));
+  }
   const list = document.getElementById('subList');
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>暂无记录</div>';
+    const message = submissionSearch ? '没有找到匹配的作文' : (currentTab === 'pending' ? '目前没有等待教师批改的付费作文' : '暂无记录');
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div>${message}</div>`;
     return;
   }
   list.innerHTML = filtered.map(s => {
@@ -491,15 +550,15 @@ function renderInbox() {
     return `
       <div class="sub-card ${s.status}" onclick="openModal('${s.id}')">
         <div class="sub-card-top">
-          <span class="sub-name">${s.student_name || '匿名'}</span>
+          <span class="sub-name">${escapeHtml(s.student_name || '匿名')}</span>
           <span class="sub-draft-badge ${s.draft === 2 ? 'draft2-badge' : 'draft1-badge'}">
             ${s.draft === 2 ? '二稿' : '一稿'}
           </span>
           <span class="sub-mode">${modeLabel(s.mode)}</span>
           <span class="status-tag ${statusMap[s.status]}">${statusLabel[s.status]}</span>
-          <span class="sub-time">${time}</span>
+          <span class="sub-time">${escapeHtml(time)}</span>
         </div>
-        <div class="sub-preview">${(s.essay || '').slice(0, 80)}…</div>
+        <div class="sub-preview">${escapeHtml((s.essay || '').slice(0, 80))}${(s.essay || '').length > 80 ? '…' : ''}</div>
         ${scores}
       </div>`;
   }).join('');
@@ -574,7 +633,7 @@ function renderAnnoList() {
   list.innerHTML = currentAnnotations.map(a => `
     <div class="anno-item anno-border-${a.type}">
       <div class="anno-item-type type-${a.type}">● ${a.type}</div>
-      ${a.text}
+      ${escapeHtml(a.text)}
       <button class="anno-del" onclick="deleteAnnotation(${a.id})">✕</button>
     </div>`).join('');
 }
@@ -583,7 +642,7 @@ function renderAnnoList() {
 function renderModalTemplates() {
   const row = document.getElementById('modalTemplates');
   row.innerHTML = templates.slice(0, 6).map(t =>
-    `<span class="template-chip" onclick="insertTemplate('${t.text.replace(/'/g,"\\'")}','${t.type}')">${t.type}：${t.text.slice(0,18)}…</span>`
+    `<span class="template-chip" onclick="insertTemplate('${escapeJsString(t.text)}','${escapeJsString(t.type)}')">${escapeHtml(t.type)}：${escapeHtml(t.text.slice(0,18))}…</span>`
   ).join('');
 }
 
@@ -597,8 +656,8 @@ function renderTemplatesPage() {
   const list = document.getElementById('templateList');
   list.innerHTML = templates.map((t, i) => `
     <div style="display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;background:var(--bg);border-radius:8px;">
-      <span style="padding:.15rem .55rem;border-radius:8px;font-size:.75rem;font-weight:600;background:var(--teal-light);color:var(--teal);">${t.type}</span>
-      <span style="flex:1;font-size:.88rem;">${t.text}</span>
+      <span style="padding:.15rem .55rem;border-radius:8px;font-size:.75rem;font-weight:600;background:var(--teal-light);color:var(--teal);">${escapeHtml(t.type)}</span>
+      <span style="flex:1;font-size:.88rem;">${escapeHtml(t.text)}</span>
       <button onclick="deleteTemplate(${i})" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:.9rem;">✕</button>
     </div>`).join('');
 }
@@ -624,24 +683,26 @@ async function saveAnnotations() {
   if (!currentSub) return;
   const status = document.getElementById('modalStatus');
   status.textContent = '保存中…';
-  const { error } = await sb.from('submissions').update({
+  const { data, error } = await sb.from('submissions').update({
     teacher_annotations: currentAnnotations,
     status: 'reviewed',
-  }).eq('id', currentSub.id);
-  if (error) { status.textContent = '保存失败：' + error.message; return; }
+  }).eq('id', currentSub.id).select('id').maybeSingle();
+  if (error || !data) { status.textContent = '保存失败：' + (error?.message || '没有更新权限，请检查 Supabase RLS。'); return false; }
   currentSub.teacher_annotations = currentAnnotations;
   currentSub.status = 'reviewed';
   allSubmissions = allSubmissions.map(s => s.id === currentSub.id ? currentSub : s);
   updateCounts();
   renderInbox();
   status.textContent = '✓ 已保存';
+  return true;
 }
 
 async function returnToStudent() {
   if (!currentSub) return;
-  await saveAnnotations();
-  const { error } = await sb.from('submissions').update({ status: 'returned' }).eq('id', currentSub.id);
-  if (error) { document.getElementById('modalStatus').textContent = '发送失败'; return; }
+  const saved = await saveAnnotations();
+  if (!saved) return;
+  const { data, error } = await sb.from('submissions').update({ status: 'returned' }).eq('id', currentSub.id).select('id').maybeSingle();
+  if (error || !data) { document.getElementById('modalStatus').textContent = '发送失败：没有更新权限'; return; }
   currentSub.status = 'returned';
   allSubmissions = allSubmissions.map(s => s.id === currentSub.id ? currentSub : s);
   updateCounts();
@@ -710,10 +771,20 @@ function renderAnalytics() {
 
 // ── Helpers ──
 function renderMarkdown(text) {
-  return text
+  return escapeHtml(text)
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/【(.+?)】/g,'<h3 style="color:var(--teal);font-size:.88rem;margin:.7rem 0 .2rem;">【$1】</h3>')
     .replace(/\n/g,'<br>');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+  })[ch]);
+}
+
+function escapeJsString(value) {
+  return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' ');
 }
 
 // Auto-refresh every 30 seconds
