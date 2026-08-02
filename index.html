@@ -81,7 +81,9 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .error-highlight{background:var(--red-light);color:var(--red);border-radius:3px;padding:0 2px;}
 .suggestion{color:var(--teal);margin:.2rem 0;}
 .praise{color:var(--green);margin:.2rem 0;}
-.score-row{display:flex;gap:.8rem;padding:1rem 1.5rem;border-top:1px solid var(--border);flex-wrap:wrap;}
+.score-row{display:none;gap:.8rem;padding:1rem 1.5rem;border-top:1px solid var(--border);flex-wrap:wrap;}
+.score-row.visible{display:flex;}
+.score-note{flex-basis:100%;padding:.55rem .7rem;border-radius:9px;background:var(--gold-light);color:#7d6118;font-size:.75rem;line-height:1.5;}
 .score-chip{flex:1;min-width:85px;text-align:center;padding:.6rem;background:var(--bg);border-radius:10px;}
 .score-label{font-size:.75rem;color:var(--muted);}
 .score-val{font-size:1.5rem;font-weight:700;color:var(--teal);}
@@ -118,7 +120,7 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .draft2-submit:hover{background:#1e8449;}
 .draft2-submit:disabled{background:#aaa;}
 
-/* Score comparison */
+/* Growth comparison */
 .comparison{display:none;margin-top:1.2rem;}
 .comparison.visible{display:block;}
 .comp-box{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:1.3rem 1.5rem;}
@@ -127,7 +129,7 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .comp-label{width:50px;text-align:right;color:var(--muted);font-size:.8rem;}
 .comp-bars{flex:1;display:flex;flex-direction:column;gap:.25rem;}
 .bar-wrap{display:flex;align-items:center;gap:.4rem;}
-.bar-tag{width:22px;font-size:.7rem;color:var(--muted);}
+.bar-tag{width:34px;font-size:.7rem;color:var(--muted);}
 .bar-bg{flex:1;height:9px;background:#f0ece6;border-radius:4px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:4px;transition:width .8s ease;}
 .b1{background:#94c4ba;}.b2{background:var(--teal);}
@@ -137,6 +139,28 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .delta-same{background:#f0ece6;color:var(--muted);}
 .delta-down{background:var(--red-light);color:var(--red);}
 .comp-summary{text-align:center;margin-top:.8rem;font-size:.88rem;padding:.7rem;background:var(--teal-light);border-radius:10px;color:var(--teal);font-weight:500;}
+
+/* Child learning companion and local garden rewards */
+.garden-bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:-.7rem 0 1.35rem;padding:.8rem 1rem;background:linear-gradient(135deg,#fffdf7,#eef8f2);border:1px solid #d9e8df;border-radius:16px;box-shadow:0 5px 16px rgba(76,58,42,.05);}
+.garden-copy{display:flex;align-items:center;gap:.65rem;min-width:0;}
+.garden-copy>span{font-size:1.5rem;}.garden-copy strong{display:block;font-size:.86rem;color:var(--teal);}.garden-copy small{display:block;color:var(--muted);font-size:.7rem;}
+.garden-stats{display:flex;gap:.45rem;white-space:nowrap;}.reward-pill{padding:.38rem .62rem;background:#fff;border:1px solid var(--border);border-radius:999px;font-size:.78rem;color:#5c675f;}.reward-pill b{color:var(--teal);}
+.learning-goal{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin:-.7rem 0 1.25rem;padding:.35rem;background:#f1ece4;border-radius:14px;}.goal-btn{padding:.7rem .8rem;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted);font:600 .82rem/1.35 inherit;cursor:pointer;}.goal-btn span{display:block;font-size:.68rem;font-weight:400;}.goal-btn.active{background:#fff;border-color:var(--border);color:var(--teal);box-shadow:0 3px 10px rgba(76,58,42,.07);}.goal-btn.active-hsk{background:var(--gold-light);border-color:#ead39a;color:#8a6510;}
+.reward-toast{position:fixed;left:50%;bottom:1.5rem;z-index:1100;transform:translate(-50%,18px);padding:.7rem 1rem;background:#26332d;color:#fff;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
+.reward-toast.visible{opacity:1;transform:translate(-50%,0);}
+.pet-summary{display:grid;grid-template-columns:54px 1fr;gap:.85rem;align-items:start;margin:.7rem 0 1rem;padding:1rem;background:var(--teal-light);border:1px solid #c9e1d9;border-radius:14px;}
+.pet-avatar{display:grid;place-items:center;width:52px;height:52px;border:2px solid var(--teal);border-radius:50%;background:#fff;font-weight:800;color:var(--teal);font-size:1.05rem;box-shadow:inset 0 -5px 0 rgba(43,113,100,.07);}
+.pet-summary strong{display:block;margin-bottom:.25rem;color:var(--teal);}.pet-summary p{font-size:.86rem;line-height:1.65;color:#45564e;}
+.strength-card{margin:.8rem 0;padding:.9rem 1rem;background:var(--green-light);border-left:4px solid var(--green);border-radius:10px;color:#315d49;}
+.strength-card strong{display:block;color:var(--green);}.strength-en{display:block;margin-top:.25rem;color:#587066;font-size:.82rem;}
+.error-list{display:grid;gap:.9rem;margin-top:.7rem;}.error-card{padding:1rem;border:1px solid var(--border);border-radius:14px;background:#fff;box-shadow:0 4px 14px rgba(76,58,42,.04);}
+.error-card-head{display:flex;align-items:center;gap:.45rem;margin-bottom:.7rem;}.error-number{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:var(--red-light);color:var(--red);font-size:.72rem;font-weight:800;}.error-type{padding:.18rem .5rem;border-radius:7px;background:#f6f1e9;color:#755f4e;font-size:.72rem;font-weight:700;}.error-type-en{font-size:.7rem;color:var(--muted);}
+.correction-row{display:grid;grid-template-columns:1fr auto 1fr;gap:.55rem;align-items:center;}.correction-box{padding:.65rem .75rem;border-radius:9px;background:#f8f5ef;}.correction-box.corrected{background:var(--teal-light);}.correction-box small{display:block;margin-bottom:.15rem;color:var(--muted);font-size:.66rem;}.correction-box p{font-size:.9rem;line-height:1.55;}.correction-arrow{color:var(--red);font-weight:800;}
+.reason-card{margin-top:.7rem;padding:.75rem .85rem;border-radius:10px;background:#fbfaf7;font-size:.84rem;line-height:1.65;}.reason-card b{color:#38453f;}.reason-en{margin-top:.35rem;color:#53645c;}
+.pet-tip{display:flex;gap:.5rem;margin-top:.65rem;color:var(--teal);font-size:.8rem;line-height:1.55;}.pet-tip span:first-child{font-weight:800;}
+.pinyin-toggle{margin-top:.7rem;padding:.42rem .7rem;border:1px solid #bfd8d0;border-radius:9px;background:#fff;color:var(--teal);font:600 .78rem/1.2 inherit;cursor:pointer;}.pinyin-toggle:hover{background:var(--teal-light);}.pinyin-panel{margin-top:.45rem;padding:.6rem .75rem;border-radius:9px;background:#edf3fb;color:#3b6394;font-size:.86rem;letter-spacing:.02em;}.pinyin-panel[hidden]{display:none;}
+.no-errors{padding:1rem;background:var(--green-light);border:1px dashed #a8d2bd;border-radius:12px;color:var(--green);font-size:.88rem;}
+.growth-result{text-align:center;padding:.5rem;}.growth-icon{font-size:2.2rem;display:block;margin-bottom:.35rem;}.growth-result strong{display:block;color:var(--teal);font-size:1rem;}.growth-result p{margin-top:.25rem;color:var(--muted);font-size:.84rem;}
 
 /* Camera modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;}
@@ -199,15 +223,28 @@ textarea:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,74,61,.1);}
 .draft2-submit,.cam-btn{min-height:48px;border-radius:12px;}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(200,74,61,.24);outline-offset:2px;}
 @media (max-width:620px){
-  .wrapper{padding:1.5rem .9rem 3rem;}.header h1{font-size:1.75rem}.mode-tabs{display:grid;grid-template-columns:1fr}.mode-tab{min-height:76px}.submit-row{flex-direction:column}.clear-btn{width:100%}.action-pill{flex:1 1 calc(50% - .6rem)}
+  .wrapper{padding:1.5rem .9rem 3rem;}.header h1{font-size:1.75rem}.mode-tabs{display:grid;grid-template-columns:1fr}.mode-tab{min-height:76px}.submit-row{flex-direction:column}.clear-btn{width:100%}.action-pill{flex:1 1 calc(50% - .6rem)}.garden-bar{align-items:flex-start;flex-direction:column}.garden-stats{align-self:stretch}.reward-pill{flex:1;text-align:center}.correction-row{grid-template-columns:1fr}.correction-arrow{transform:rotate(90deg);justify-self:center}.pet-summary{grid-template-columns:44px 1fr}.pet-avatar{width:44px;height:44px}
 }
 </style>
 </head>
 <body>
 <div class="wrapper">
   <div class="header">
-    <h1>✍️ 华文写作批改工具</h1>
-    <p>Chinese Writing Feedback Tool · 三种反馈模式 · 适合二语学习者</p>
+    <h1>红笔 HongBi · 儿童华文写作</h1>
+    <p>小墨陪你发现问题、看懂原因，再亲手把作文写得更好。</p>
+  </div>
+
+  <div class="garden-bar" aria-label="我的写作菜园">
+    <div class="garden-copy"><span>🌱</span><div><strong>我的写作菜园</strong><small>完成写作得种子，查看拼音得水滴</small></div></div>
+    <div class="garden-stats">
+      <span class="reward-pill">🌰 种子 <b id="seedCount">0</b></span>
+      <span class="reward-pill">💧 水滴 <b id="waterCount">0</b></span>
+    </div>
+  </div>
+
+  <div class="learning-goal" aria-label="选择学习目标">
+    <button type="button" class="goal-btn active" id="goal-child" onclick="setLearningGoal('child')" aria-pressed="true">🌱 儿童成长模式<span>不评分，专注理解与修改</span></button>
+    <button type="button" class="goal-btn" id="goal-hsk" onclick="setLearningGoal('hsk')" aria-pressed="false">📝 HSK 备考模式<span>显示 AI 模拟评分与进步</span></button>
   </div>
 
   <div class="student-bar">
@@ -216,13 +253,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   </div>
 
   <div class="mode-tabs">
-    <button class="mode-tab active-teal" onclick="setMode('ai')" id="tab-ai">
+    <button class="mode-tab active-teal" onclick="setMode('ai')" id="tab-ai" aria-pressed="true">
       <span class="tab-icon">🤖</span>AI 反馈<div class="tab-desc">直接纠错，给出答案</div>
     </button>
-    <button class="mode-tab" onclick="setMode('teacher')" id="tab-teacher">
+    <button class="mode-tab" onclick="setMode('teacher')" id="tab-teacher" aria-pressed="false">
       <span class="tab-icon">👩‍🏫</span>教师反馈<div class="tab-desc">启发引导，思考为主</div>
     </button>
-    <button class="mode-tab" onclick="setMode('hybrid')" id="tab-hybrid">
+    <button class="mode-tab" onclick="setMode('hybrid')" id="tab-hybrid" aria-pressed="false">
       <span class="tab-icon">🤝</span>人机协同<div class="tab-desc">AI批改 + 教师建议</div>
     </button>
   </div>
@@ -301,7 +338,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   <!-- Comparison -->
   <div class="comparison" id="comparison">
     <div class="comp-box">
-      <div class="comp-title">📊 一稿 vs 二稿 · 进步对比</div>
+      <div class="comp-title">🌿 一稿 vs 二稿 · 看见自己的成长</div>
       <div id="compBars"></div>
       <div class="comp-summary" id="compSummary"></div>
     </div>
@@ -309,6 +346,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 
   <div class="footer">华文写作批改工具 · Grace Tang · 2026</div>
 </div>
+
+<div class="reward-toast" id="rewardToast" role="status" aria-live="polite"></div>
 
 <!-- Camera modal -->
 <div class="modal-overlay" id="cameraModal">
@@ -337,23 +376,124 @@ const SAMPLES = [
 ];
 
 const MODES = {
-  ai:      { label:'🤖 AI 反馈',  badge:'badge-teal',   prompt:`你是专业的华文二语写作批改助手。\n【语法与词汇错误】：找出所有错误并给出正确答案\n【句子结构】：指出改进之处\n【内容与逻辑】：评价文章组织\n【亮点】：指出写得好的地方\n【评分】：准确性：X分，流利度：X分，内容：X分（满分10分）\n语气专业友好。` },
-  teacher: { label:'👩‍🏫 教师反馈', badge:'badge-gold',   prompt:`你是经验丰富的华文教师，用启发式方式批改。\n【引导性提问】：通过提问引导思考，不直接给答案\n【鼓励与肯定】：先肯定亮点\n【举例说明】：通过举例帮助理解\n【反思问题】：结尾2-3个反思问题\n【整体评价】：描述性评价，不给分数\n语气温和鼓励。` },
-  hybrid:  { label:'🤝 人机协同',  badge:'badge-purple', prompt:`**第一部分：AI精确分析**\n列出所有错误及正确答案\n评分：准确性：X分，流利度：X分，内容：X分（满分10分）\n\n**第二部分：教师指导**\n个性化学习建议\n最值得优先改进的1-2方面\n1个具体练习建议\n鼓励性结尾` },
+  ai:      { label:'🐼 小墨 AI 反馈', badge:'badge-teal' },
+  teacher: { label:'👩‍🏫 教师式反馈', badge:'badge-gold' },
+  hybrid:  { label:'🤝 人机协同', badge:'badge-purple' },
 };
 
 let currentMode = 'ai';
-let draft1Scores = null;
+let currentGoal = 'child';
+let draft1Feedback = null;
+let draft2Feedback = null;
 let cameraStream = null;
 let capturedImage = null;
 let currentSubId = null;
+let rewardToastTimer = null;
+
+const REWARD_KEY = 'hongbiGardenRewardsV1';
+let gardenRewards = loadGardenRewards();
+
+function loadGardenRewards() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(REWARD_KEY) || '{}');
+    return {
+      seeds: Number.isFinite(saved.seeds) ? saved.seeds : 0,
+      water: Number.isFinite(saved.water) ? saved.water : 0,
+      claimed: Array.isArray(saved.claimed) ? saved.claimed.slice(-200) : [],
+    };
+  } catch {
+    return { seeds:0, water:0, claimed:[] };
+  }
+}
+
+function saveGardenRewards() {
+  try { localStorage.setItem(REWARD_KEY, JSON.stringify(gardenRewards)); } catch {}
+}
+
+function updateGardenUI() {
+  document.getElementById('seedCount').textContent = gardenRewards.seeds;
+  document.getElementById('waterCount').textContent = gardenRewards.water;
+}
+
+function showRewardToast(message) {
+  const toast = document.getElementById('rewardToast');
+  toast.textContent = message;
+  toast.classList.add('visible');
+  clearTimeout(rewardToastTimer);
+  rewardToastTimer = setTimeout(()=>toast.classList.remove('visible'), 2600);
+}
+
+function awardLocalReward(kind, amount, claimId, message) {
+  const fullClaimId = `${SESSION_ID}:${claimId}`;
+  if (gardenRewards.claimed.includes(fullClaimId)) return false;
+  gardenRewards.claimed.push(fullClaimId);
+  gardenRewards[kind] += amount;
+  saveGardenRewards();
+  updateGardenUI();
+  showRewardToast(message);
+  return true;
+}
+
+function togglePinyin(button, rewardId) {
+  const panel = button.nextElementSibling;
+  const willOpen = panel.hidden;
+  panel.hidden = !willOpen;
+  button.setAttribute('aria-expanded', String(willOpen));
+  button.textContent = willOpen ? '收起拼音' : '🔤 显示拼音';
+  if (willOpen) awardLocalReward('water', 1, `pinyin:${rewardId}`, '💧 你认真查看了拼音，获得 1 滴水！');
+}
+
+function setLearningGoal(goal) {
+  currentGoal = goal === 'hsk' ? 'hsk' : 'child';
+  ['child','hsk'].forEach(name => {
+    const button = document.getElementById(`goal-${name}`);
+    const active = name === currentGoal;
+    button.className = `goal-btn${active ? (name === 'hsk' ? ' active active-hsk' : ' active') : ''}`;
+    button.setAttribute('aria-pressed', String(active));
+  });
+  updateGoalResults();
+}
+
+function getScores(feedback) {
+  const scores = feedback?.macro?.scores;
+  if (!scores) return null;
+  return [
+    { label:'准确性', val:scores.accuracy },
+    { label:'流利度', val:scores.fluency },
+    { label:'内容', val:scores.content },
+  ];
+}
+
+function renderScoreCards(feedback) {
+  const scores = getScores(feedback);
+  if (!scores) return '';
+  return `<div class="score-note">HSK 备考参考：这是 AI 生成的模拟练习评分，用来观察修改方向，不是官方 HSK 成绩。</div>${scores.map(score => `<div class="score-chip"><div class="score-label">${score.label}</div><div class="score-val">${score.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('')}`;
+}
+
+function updateGoalResults() {
+  [['scoreRow',draft1Feedback],['scoreRow2',draft2Feedback]].forEach(([id, feedback]) => {
+    const row = document.getElementById(id);
+    if (currentGoal === 'hsk' && feedback) {
+      row.innerHTML = renderScoreCards(feedback);
+      row.classList.add('visible');
+    } else {
+      row.classList.remove('visible');
+      row.innerHTML = '';
+    }
+  });
+  if (draft1Feedback && draft2Feedback) {
+    if (currentGoal === 'hsk') showScoreComparison(draft1Feedback, draft2Feedback);
+    else showGrowthComparison(draft1Feedback, draft2Feedback);
+  }
+}
 
 function setMode(m) {
   currentMode = m;
-  document.querySelectorAll('.mode-tab').forEach(t => t.className = 'mode-tab');
-  ({ ai:'active-teal', teacher:'active-gold', hybrid:'active-purple' });
+  document.querySelectorAll('.mode-tab').forEach(t => { t.className = 'mode-tab'; t.setAttribute('aria-pressed', 'false'); });
   const map = { ai:'active-teal', teacher:'active-gold', hybrid:'active-purple' };
-  document.getElementById('tab-'+m).classList.add(map[m]);
+  const activeTab = document.getElementById('tab-'+m);
+  activeTab.classList.add(map[m]);
+  activeTab.setAttribute('aria-pressed', 'true');
 }
 function loadSample(i) { document.getElementById('essayInput').value = SAMPLES[i]; updateCount(); }
 function updateCount()  { document.getElementById('charCount').textContent  = document.getElementById('essayInput').value.length + ' 字'; }
@@ -368,35 +508,43 @@ function escapeHtml(value) {
   })[ch]);
 }
 
-function renderFeedback(feedback) {
+function renderFeedback(feedback, draft) {
   const macro = feedback.macro;
   const errors = feedback.micro || [];
+  const typeEnglish = {
+    '语序':'Word order', '量词':'Measure word', '体标记（了/过/着）':'Aspect marker',
+    '语体':'Register', '搭配':'Collocation'
+  };
   const microHtml = errors.length
-    ? errors.map((item, index) => `<p>
-        <strong>${index + 1}. ${escapeHtml(item.type)}</strong><br>
-        原文：<span class="error-highlight">${escapeHtml(item.original)}</span>
-        <span class="suggestion">→ ${escapeHtml(item.correction)}</span>
-        说明：${escapeHtml(item.explanation)}
-      </p>`).join('')
-    : '<p>未发现需要优先修改的语序、量词、体标记、语体或搭配错误。</p>';
+    ? `<div class="error-list">${errors.map((item, index) => {
+        const explanationZh = item.explanation_zh || item.explanation || '';
+        const explanationEn = item.explanation_en || 'This part needs a small change to sound natural in Chinese.';
+        const typeEn = item.type_en || typeEnglish[item.type] || 'Language use';
+        const pinyin = item.pinyin || '拼音提示正在准备中。';
+        const petHint = item.pet_hint || `小墨发现“${item.original}”可以说得更自然。你愿意试着改一改吗？`;
+        return `<article class="error-card">
+          <div class="error-card-head"><span class="error-number">${index + 1}</span><span class="error-type">${escapeHtml(item.type)}</span><span class="error-type-en" lang="en">${escapeHtml(typeEn)}</span></div>
+          <div class="correction-row">
+            <div class="correction-box"><small>你的原文</small><p>${escapeHtml(item.original)}</p></div>
+            <span class="correction-arrow">→</span>
+            <div class="correction-box corrected"><small>可以这样写</small><p>${escapeHtml(item.correction)}</p></div>
+          </div>
+          <div class="reason-card"><b>为什么？</b><div>${escapeHtml(explanationZh)}</div><div class="reason-en" lang="en"><b>Why?</b> ${escapeHtml(explanationEn)}</div></div>
+          <div class="pet-tip"><span>墨</span><span>${escapeHtml(petHint)}</span></div>
+          <button type="button" class="pinyin-toggle" aria-expanded="false" onclick="togglePinyin(this,'${draft}-${index}')">🔤 显示拼音</button>
+          <div class="pinyin-panel" hidden><b>Pinyin</b> · ${escapeHtml(pinyin)}</div>
+        </article>`;
+      }).join('')}</div>`
+    : '<div class="no-errors">🌟 小墨没有发现需要优先修改的语言问题。继续保持清楚、自然的表达！</div>';
 
-  return `<h3>【宏观反馈】</h3>
-    <p><strong>整体评价：</strong>${escapeHtml(macro.summary)}</p>
-    <p><strong>内容：</strong>${escapeHtml(macro.content)}<br>
-    <strong>结构：</strong>${escapeHtml(macro.structure)}<br>
-    <strong>连贯性：</strong>${escapeHtml(macro.coherence)}</p>
-    <div class="praise">✓ ${escapeHtml(macro.strengths)}</div>
-    <h3>【微观反馈】</h3>${microHtml}`;
-}
-
-function getScores(feedback) {
-  const scores = feedback?.macro?.scores;
-  if (!scores) return null;
-  return [
-    {label:'准确性',val:scores.accuracy},
-    {label:'流利度',val:scores.fluency},
-    {label:'内容',val:scores.content}
-  ];
+  return `<section>
+      <div class="pet-summary"><div class="pet-avatar">墨</div><div><strong>小墨读完啦！</strong><p>${escapeHtml(macro.summary)}</p><p>${escapeHtml(macro.encouragement || '你已经完成了很重要的一步，我们一起看看怎样写得更清楚。')}</p></div></div>
+      <h3>写得好的地方 · What works well</h3>
+      <div class="strength-card"><strong>✓ ${escapeHtml(macro.strengths)}</strong><span class="strength-en" lang="en">${escapeHtml(macro.strengths_en || 'You communicated your idea clearly.')}</span></div>
+      <h3>文章整体 · The big picture</h3>
+      <p><strong>内容：</strong>${escapeHtml(macro.content)}<br><strong>结构：</strong>${escapeHtml(macro.structure)}<br><strong>连贯性：</strong>${escapeHtml(macro.coherence)}</p>
+    </section>
+    <section><h3>小墨发现的问题 · Let's revise</h3>${microHtml}</section>`;
 }
 
 async function getFeedback(draft) {
@@ -423,7 +571,7 @@ async function getFeedback(draft) {
     const res = await fetch(WORKER_URL, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        action:'feedback', essay, mode:currentMode,
+        action:'feedback', essay, mode:currentMode, goal:currentGoal,
         logData:{ sessionId:SESSION_ID, studentName, draft, mode:currentMode, essay }
       })
     });
@@ -434,26 +582,25 @@ async function getFeedback(draft) {
     const feedback = data.feedback;
     loadingEl.classList.remove('visible');
 
-    const scores = getScores(feedback);
     if (draft===1) {
-      draft1Scores = scores;
+      draft1Feedback = feedback;
       const badge = document.getElementById('modeBadge');
       badge.textContent = mode.label; badge.className = 'mode-badge ' + mode.badge;
       document.getElementById('resultMeta').textContent = `共${essay.length}字`;
-      document.getElementById('resultContent').innerHTML = renderFeedback(feedback);
-      document.getElementById('scoreRow').innerHTML = scores
-        ? scores.map(s=>`<div class="score-chip"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('') : '';
+      document.getElementById('resultContent').innerHTML = renderFeedback(feedback, draft);
       document.getElementById('resultSection').classList.add('visible');
+      updateGoalResults();
+      awardLocalReward('seeds', 1, 'draft:1', '🌰 完成一稿，获得 1 颗写作种子！');
       document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
     } else {
+      draft2Feedback = feedback;
       const badge2 = document.getElementById('modeBadge2');
       badge2.textContent = mode.label+'（二稿）'; badge2.className = 'mode-badge '+mode.badge;
       document.getElementById('resultMeta2').textContent = `共${essay.length}字`;
-      document.getElementById('resultContent2').innerHTML = renderFeedback(feedback);
-      document.getElementById('scoreRow2').innerHTML = scores
-        ? scores.map(s=>`<div class="score-chip"><div class="score-label">${s.label}</div><div class="score-val">${s.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('') : '';
+      document.getElementById('resultContent2').innerHTML = renderFeedback(feedback, draft);
       document.getElementById('result2Section').classList.add('visible');
-      if (draft1Scores && scores) showComparison(draft1Scores, scores);
+      updateGoalResults();
+      awardLocalReward('water', 2, 'draft:2', '💧 完成二稿，获得 2 滴水，菜苗长大了！');
       document.getElementById('result2Section').scrollIntoView({behavior:'smooth',block:'start'});
     }
   } catch(err) {
@@ -465,28 +612,37 @@ async function getFeedback(draft) {
   if (btnTextEl) btnTextEl.textContent = '获取反馈';
 }
 
-function showComparison(s1, s2) {
-  const labels = ['准确性','流利度','内容'];
-  const bars = labels.map((l,i) => {
-    const v1=s1[i]?.val||0, v2=s2[i]?.val||0;
-    const diff=v2-v1;
-    const dc = diff>0?'delta-up':diff<0?'delta-down':'delta-same';
-    const da = diff>0?`↑${diff}`:diff<0?`↓${Math.abs(diff)}`:'→';
-    return `<div class="comp-row">
-      <div class="comp-label">${l}</div>
-      <div class="comp-bars">
-        <div class="bar-wrap"><div class="bar-tag">一</div><div class="bar-bg"><div class="bar-fill b1" style="width:${v1/10*100}%"></div></div><div class="bar-num">${v1}</div></div>
-        <div class="bar-wrap"><div class="bar-tag">二</div><div class="bar-bg"><div class="bar-fill b2" style="width:${v2/10*100}%"></div></div><div class="bar-num">${v2}</div></div>
-      </div>
-      <span class="comp-delta ${dc}">${da}</span>
-    </div>`;
+function showGrowthComparison(firstFeedback, secondFeedback) {
+  const firstIssues = firstFeedback.micro?.length || 0;
+  const secondIssues = secondFeedback.micro?.length || 0;
+  const resolved = Math.max(0, firstIssues - secondIssues);
+  const message = resolved > 0
+    ? `你在二稿里减少了 ${resolved} 个需要优先修改的问题。`
+    : '你完成了二稿并重新检查了自己的表达，这就是写作成长。';
+  document.getElementById('compBars').innerHTML = `<div class="growth-result"><span class="growth-icon">🥬</span><strong>菜苗又长高了一点！</strong><p>${escapeHtml(message)}</p></div>`;
+  document.getElementById('compSummary').textContent = '没有分数，只有你真正完成的每一次修改。';
+  document.getElementById('comparison').classList.add('visible');
+}
+
+function showScoreComparison(firstFeedback, secondFeedback) {
+  const firstScores = getScores(firstFeedback);
+  const secondScores = getScores(secondFeedback);
+  if (!firstScores || !secondScores) return showGrowthComparison(firstFeedback, secondFeedback);
+  const bars = firstScores.map((score, index) => {
+    const first = score.val;
+    const second = secondScores[index].val;
+    const diff = second - first;
+    const deltaClass = diff > 0 ? 'delta-up' : diff < 0 ? 'delta-down' : 'delta-same';
+    const deltaText = diff > 0 ? `↑${diff}` : diff < 0 ? `↓${Math.abs(diff)}` : '→';
+    return `<div class="comp-row"><div class="comp-label">${score.label}</div><div class="comp-bars"><div class="bar-wrap"><div class="bar-tag">一稿</div><div class="bar-bg"><div class="bar-fill b1" style="width:${first * 10}%"></div></div><div class="bar-num">${first}</div></div><div class="bar-wrap"><div class="bar-tag">二稿</div><div class="bar-bg"><div class="bar-fill b2" style="width:${second * 10}%"></div></div><div class="bar-num">${second}</div></div></div><span class="comp-delta ${deltaClass}">${deltaText}</span></div>`;
   }).join('');
-  const total1=s1.reduce((a,s)=>a+s.val,0), total2=s2.reduce((a,s)=>a+s.val,0), diff=total2-total1;
-  const summary = diff>0 ? `🎉 总分提升 ${diff} 分！从 ${total1}/30 → ${total2}/30，修改很有成效！`
-    : diff===0 ? `总分保持 ${total1}/30，继续努力！`
-    : `总分从 ${total1}/30 → ${total2}/30，还有提升空间，加油！`;
+  const firstTotal = firstScores.reduce((sum, score)=>sum + score.val, 0);
+  const secondTotal = secondScores.reduce((sum, score)=>sum + score.val, 0);
+  const change = secondTotal - firstTotal;
   document.getElementById('compBars').innerHTML = bars;
-  document.getElementById('compSummary').textContent = summary;
+  document.getElementById('compSummary').textContent = change > 0
+    ? `AI 模拟总分提升 ${change} 分：${firstTotal}/30 → ${secondTotal}/30。`
+    : `AI 模拟评分：${firstTotal}/30 → ${secondTotal}/30。请结合具体反馈继续修改。`;
   document.getElementById('comparison').classList.add('visible');
 }
 
@@ -525,7 +681,9 @@ function clearAll() {
     document.getElementById(id).classList.remove('visible');
   });
   document.getElementById('loading').classList.remove('visible');
-  draft1Scores=null;
+  draft1Feedback=null;
+  draft2Feedback=null;
+  updateGoalResults();
 }
 
 // ── Camera ──
@@ -595,6 +753,8 @@ function closeCamera() {
   document.getElementById('camBtns').style.display='flex';
   capturedImage=null;
 }
+
+updateGardenUI();
 </script>
 </body>
 </html>

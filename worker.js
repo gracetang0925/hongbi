@@ -13,13 +13,18 @@ const MODE_GUIDANCE = {
   hybrid: "兼顾精确分析和教师指导，并在宏观反馈中指出最值得优先改进的方面。",
 };
 
-const FEEDBACK_INSTRUCTIONS = `你是专业的华文二语写作批改助手。请面向第二语言中文学习者批改作文。
+const GOAL_GUIDANCE = {
+  child: "儿童成长模式：不在文字反馈中提及分数，优先帮助孩子理解原因、自己修改并建立信心。",
+  hsk: "HSK 备考模式：评分用于 AI 模拟练习参考，应相对严格、一致；不得声称是官方 HSK 成绩。文字反馈仍要清楚、具体、可执行。",
+};
+
+const FEEDBACK_INSTRUCTIONS = `你是专业、温暖的华文二语写作教练“小墨”。主要学习者是 6–12 岁、家庭中缺少华文环境的孩子。
 
 反馈必须严格分成两个部分：
-1. 宏观反馈：评价内容、结构和连贯性，并指出整体亮点。使用简单、友好的中文。
-2. 微观反馈：逐条列出具体错误。每条必须包含错误类型、作文中的原文片段、建议修改和一句简单中文解释。错误类型只能是：语序、量词、体标记（了/过/着）、语体、搭配。不要虚构原文中不存在的错误；如果没有这些类型的明显错误，返回空数组。
+1. 宏观反馈：评价内容、结构和连贯性。必须具体指出至少一个真正写得好的地方，用简单中文和简短英文说明，并给孩子一句具体、不夸张的鼓励。
+2. 微观反馈：优先列出 3–5 个最值得修改的问题。每条必须包含错误类型及英文名称、作文中的原文片段、建议修改、简单中文原因、简短英文原因、修改后表达的拼音，以及一句由宠物“小墨”说的提示。错误类型只能是：语序、量词、体标记（了/过/着）、语体、搭配。不要虚构原文中不存在的错误；如果没有这些类型的明显错误，返回空数组。
 
-所有建议都应适合学习者当前作文，不要重写整篇作文。按给定 JSON schema 返回结果，不要输出 schema 之外的文字。`;
+所有建议都应适合学习者当前作文，不要重写整篇作文。中文解释尽量避免专业术语；英文解释要让零基础儿童也能看懂。拼音使用带声调符号的汉语拼音。评分只用于教师端学习记录，不得写进面向儿童的文字反馈。按给定 JSON schema 返回结果，不要输出 schema 之外的文字。`;
 
 const FEEDBACK_SCHEMA = {
   type: "object",
@@ -31,7 +36,9 @@ const FEEDBACK_SCHEMA = {
         content: { type: "string", description: "对内容充实度和切题程度的反馈" },
         structure: { type: "string", description: "对文章组织和段落结构的反馈" },
         coherence: { type: "string", description: "对句段衔接和逻辑连贯性的反馈" },
-        strengths: { type: "string", description: "作文最值得肯定的亮点" },
+        strengths: { type: "string", description: "具体指出作文中真正写得好的地方，用简单中文说明为什么好" },
+        strengths_en: { type: "string", description: "用简短、儿童易懂的英文解释这个亮点" },
+        encouragement: { type: "string", description: "小墨给孩子的一句具体鼓励，不提分数" },
         scores: {
           type: "object",
           properties: {
@@ -43,7 +50,7 @@ const FEEDBACK_SCHEMA = {
           additionalProperties: false,
         },
       },
-      required: ["summary", "content", "structure", "coherence", "strengths", "scores"],
+      required: ["summary", "content", "structure", "coherence", "strengths", "strengths_en", "encouragement", "scores"],
       additionalProperties: false,
     },
     micro: {
@@ -55,11 +62,18 @@ const FEEDBACK_SCHEMA = {
             type: "string",
             enum: ["语序", "量词", "体标记（了/过/着）", "语体", "搭配"],
           },
+          type_en: {
+            type: "string",
+            enum: ["Word order", "Measure word", "Aspect marker", "Register", "Collocation"],
+          },
           original: { type: "string", description: "作文中的原文片段" },
           correction: { type: "string", description: "建议修改后的文字" },
-          explanation: { type: "string", description: "一句简单中文解释" },
+          explanation_zh: { type: "string", description: "一句儿童易懂的简单中文原因" },
+          explanation_en: { type: "string", description: "One short child-friendly English explanation" },
+          pinyin: { type: "string", description: "建议修改文字的带声调拼音" },
+          pet_hint: { type: "string", description: "小墨用简单中文指出这个问题并邀请孩子自己修改" },
         },
-        required: ["type", "original", "correction", "explanation"],
+        required: ["type", "type_en", "original", "correction", "explanation_zh", "explanation_en", "pinyin", "pet_hint"],
         additionalProperties: false,
       },
     },
@@ -92,13 +106,15 @@ function extractOutputText(data) {
 
 function formatFeedbackText(feedback) {
   const macro = feedback.macro;
-  const scores = macro.scores;
   const micro = feedback.micro.length
     ? feedback.micro.map((item, index) => [
-        `${index + 1}. **${item.type}**`,
+        `${index + 1}. **${item.type} · ${item.type_en}**`,
         `原文：「${item.original}」`,
         `→ ${item.correction}`,
-        `说明：${item.explanation}`,
+        `原因：${item.explanation_zh}`,
+        `Why: ${item.explanation_en}`,
+        `拼音：${item.pinyin}`,
+        `小墨提示：${item.pet_hint}`,
       ].join("\n")).join("\n\n")
     : "未发现需要优先修改的语序、量词、体标记、语体或搭配错误。";
 
@@ -109,7 +125,8 @@ function formatFeedbackText(feedback) {
     `结构：${macro.structure}`,
     `连贯性：${macro.coherence}`,
     `✓ 亮点：${macro.strengths}`,
-    `评分：准确性：${scores.accuracy}分，流利度：${scores.fluency}分，内容：${scores.content}分（满分10分）`,
+    `Why it works: ${macro.strengths_en}`,
+    `小墨鼓励：${macro.encouragement}`,
     "",
     "【微观反馈】",
     micro,
@@ -224,9 +241,10 @@ export default {
       if (!essay) return jsonResponse({ error: { message: "缺少作文内容。" } }, 400);
 
       const mode = body.mode || body.logData?.mode || "ai";
+      const goal = body.goal === "hsk" ? "hsk" : "child";
       const result = await callOpenAI(env, {
         model: OPENAI_MODEL,
-        instructions: `${FEEDBACK_INSTRUCTIONS}\n\n本次反馈方式：${MODE_GUIDANCE[mode] || MODE_GUIDANCE.ai}`,
+        instructions: `${FEEDBACK_INSTRUCTIONS}\n\n本次反馈方式：${MODE_GUIDANCE[mode] || MODE_GUIDANCE.ai}\n本次学习目标：${GOAL_GUIDANCE[goal]}`,
         input: `请批改以下华文作文：\n\n${essay}`,
         max_output_tokens: 3000,
         text: {
