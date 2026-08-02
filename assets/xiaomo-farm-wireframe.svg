@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1016" height="774" viewBox="0 0 1016 774" role="img" aria-labelledby="title desc">
+  <title id="title">小墨农场社交菜园低保真界面</title>
+  <desc id="desc">展示连续学习、今日任务、写作植物、好友浇水和作品动态的产品概念图。</desc>
+  <rect width="1016" height="774" fill="#f8f8f6"/>
+  <rect x="110" y="38" width="796" height="698" rx="26" fill="#ffffff" stroke="#252525" stroke-width="3"/>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#242424">
+    <text x="152" y="91" font-size="31" font-weight="700">小墨农场</text>
+    <text x="368" y="91" font-size="25">🔥 连续 3 天</text>
+    <text x="610" y="91" font-size="25">💧 12</text>
+    <text x="748" y="91" font-size="25">🌱 8</text>
+    <line x1="110" y1="118" x2="906" y2="118" stroke="#252525" stroke-width="2"/>
+
+    <text x="152" y="165" font-size="26" font-weight="700">今日任务</text>
+    <rect x="150" y="188" width="306" height="58" rx="14" fill="#f1f6f2" stroke="#252525" stroke-width="2"/>
+    <text x="176" y="226" font-size="22">✓ 完成一次写作</text>
+    <rect x="480" y="188" width="276" height="58" rx="14" fill="#f1f6f2" stroke="#252525" stroke-width="2"/>
+    <text x="506" y="226" font-size="22">✓ 查看 3 次拼音</text>
+    <line x1="110" y1="272" x2="906" y2="272" stroke="#252525" stroke-width="2"/>
+
+    <text x="152" y="318" font-size="26" font-weight="700">我的菜园</text>
+    <g text-anchor="middle">
+      <rect x="150" y="342" width="202" height="142" rx="18" fill="#f6faf4" stroke="#252525" stroke-width="2"/>
+      <text x="251" y="406" font-size="44">🌳</text>
+      <text x="251" y="452" font-size="22" font-weight="600">我的写作树</text>
+      <rect x="406" y="342" width="202" height="142" rx="18" fill="#fff9ee" stroke="#252525" stroke-width="2"/>
+      <text x="507" y="406" font-size="44">🥕</text>
+      <text x="507" y="452" font-size="22" font-weight="600">已成熟</text>
+      <rect x="662" y="342" width="202" height="142" rx="18" fill="#f3f8ff" stroke="#252525" stroke-width="2" stroke-dasharray="8 7"/>
+      <text x="763" y="406" font-size="44">🌱</text>
+      <text x="763" y="452" font-size="22" font-weight="600">等待浇水</text>
+    </g>
+    <line x1="110" y1="512" x2="906" y2="512" stroke="#252525" stroke-width="2"/>
+
+    <text x="152" y="558" font-size="26" font-weight="700">好友动态</text>
+    <circle cx="178" cy="600" r="23" fill="#eef5f2" stroke="#252525" stroke-width="2"/>
+    <text x="178" y="608" font-size="21" text-anchor="middle">🐼</text>
+    <text x="218" y="608" font-size="21">Amy 的作文树需要水</text>
+    <rect x="694" y="577" width="158" height="48" rx="14" fill="#ffffff" stroke="#252525" stroke-width="2"/>
+    <text x="773" y="608" font-size="20" text-anchor="middle">帮她浇水</text>
+
+    <circle cx="178" cy="660" r="23" fill="#fff4ea" stroke="#252525" stroke-width="2"/>
+    <text x="178" y="668" font-size="21" text-anchor="middle">🦊</text>
+    <text x="218" y="668" font-size="21">Leo 完成了《我的周末》</text>
+    <rect x="694" y="637" width="158" height="48" rx="14" fill="#ffffff" stroke="#252525" stroke-width="2"/>
+    <text x="773" y="668" font-size="20" text-anchor="middle">看看作品</text>
+
+    <line x1="110" y1="700" x2="906" y2="700" stroke="#252525" stroke-width="2"/>
+    <text x="194" y="727" font-size="20" text-anchor="middle" font-weight="700">写作</text>
+    <text x="350" y="727" font-size="20" text-anchor="middle">菜园</text>
+    <text x="508" y="727" font-size="20" text-anchor="middle">作品</text>
+    <text x="666" y="727" font-size="20" text-anchor="middle">好友</text>
+    <text x="824" y="727" font-size="20" text-anchor="middle">我的</text>
+  </g>
+</svg>
