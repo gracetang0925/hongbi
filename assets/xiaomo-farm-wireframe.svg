@@ -6,9 +6,11 @@
 
   <g font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans CJK SC', sans-serif" fill="#242424">
     <text x="152" y="91" font-size="31" font-weight="700">小墨农场</text>
-    <text x="368" y="91" font-size="25">🔥 连续 3 天</text>
-    <text x="610" y="91" font-size="25">💧 12</text>
-    <text x="748" y="91" font-size="25">🌱 8</text>
+    <rect x="319" y="55" width="128" height="44" rx="22" fill="#f4f0fb" stroke="#5d4b92" stroke-width="2"/>
+    <text x="383" y="84" font-size="17" text-anchor="middle" font-weight="700" fill="#5d4b92">待上线</text>
+    <text x="476" y="91" font-size="23">🔥 连续 3 天</text>
+    <text x="680" y="91" font-size="23">💧 12</text>
+    <text x="796" y="91" font-size="23">🌱 8</text>
     <line x1="110" y1="118" x2="906" y2="118" stroke="#252525" stroke-width="2"/>
 
     <text x="152" y="165" font-size="26" font-weight="700">今日任务</text>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">红笔 HongBi 当前产品与后续愿景</title>
+  <desc id="desc">展示学生端、AI反馈、付费教师服务以及待上线的安全菜园社交。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#fff8f0"/><stop offset="1" stop-color="#edf8f4"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="9" stdDeviation="12" flood-color="#3d473f" flood-opacity=".12"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#628174"/></marker>
+  </defs>
+  <rect width="1400" height="760" rx="36" fill="url(#bg)"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif" fill="#26332d">
+    <text x="700" y="78" text-anchor="middle" font-size="40" font-weight="800" fill="#c84a3d">红笔 HongBi · 从 AI 即时反馈到认证教师服务</text>
+    <text x="700" y="118" text-anchor="middle" font-size="20" fill="#68766f">儿童成长模式不评分 · HSK 模式可选模拟评分 · 教师精批与人机协同为付费服务</text>
+
+    <g filter="url(#shadow)">
+      <rect x="70" y="180" width="300" height="400" rx="26" fill="#fff" stroke="#e3ddd4" stroke-width="2"/>
+      <rect x="405" y="180" width="300" height="400" rx="26" fill="#e9f6f1" stroke="#7bb2a0" stroke-width="2"/>
+      <rect x="740" y="180" width="300" height="400" rx="26" fill="#fff8df" stroke="#d9b95f" stroke-width="2"/>
+      <rect x="1075" y="180" width="255" height="400" rx="26" fill="#f4f0fb" stroke="#a99cce" stroke-width="2" stroke-dasharray="10 8"/>
+    </g>
+
+    <circle cx="220" cy="245" r="42" fill="#f7e8e4"/><text x="220" y="258" text-anchor="middle" font-size="42">✍️</text>
+    <text x="220" y="325" text-anchor="middle" font-size="28" font-weight="800">学生写作端</text>
+    <text x="105" y="372" font-size="19">• 输入作文或拍照 OCR</text><text x="105" y="412" font-size="19">• 儿童 / HSK 双路径</text><text x="105" y="452" font-size="19">• AI / 教师 / 协同模式</text><text x="105" y="492" font-size="19">• 一稿、二稿与成长奖励</text>
+    <rect x="116" y="525" width="208" height="35" rx="18" fill="#eaf7f0"/><text x="220" y="549" text-anchor="middle" font-size="16" font-weight="700" fill="#2f8064">已上线 · LIVE</text>
+
+    <circle cx="555" cy="245" r="42" fill="#d8efe7"/><text x="555" y="258" text-anchor="middle" font-size="42">🐼</text>
+    <text x="555" y="325" text-anchor="middle" font-size="28" font-weight="800" fill="#176c55">小墨 AI 反馈</text>
+    <text x="440" y="372" font-size="19">• 宏观：内容、结构、连贯</text><text x="440" y="412" font-size="19">• 微观：原文、改法与原因</text><text x="440" y="452" font-size="19">• 中英文解释与按需拼音</text><text x="440" y="492" font-size="19">• 悬浮动画与浏览器朗读</text>
+    <rect x="451" y="525" width="208" height="35" rx="18" fill="#fff"/><text x="555" y="549" text-anchor="middle" font-size="16" font-weight="700" fill="#2f8064">已上线 · LIVE</text>
+
+    <circle cx="890" cy="245" r="42" fill="#f6e7b7"/><text x="890" y="258" text-anchor="middle" font-size="42">👩‍🏫</text>
+    <text x="890" y="325" text-anchor="middle" font-size="28" font-weight="800" fill="#806310">付费教师工作台</text>
+    <text x="775" y="372" font-size="19">• 教师精批 / 人机协同队列</text><text x="775" y="412" font-size="19">• 搜索、刷新与连接状态</text><text x="775" y="452" font-size="19">• 文字批注、保存与发回</text><text x="775" y="492" font-size="19">• 模板与学习数据分析</text>
+    <rect x="786" y="525" width="208" height="35" rx="18" fill="#fff"/><text x="890" y="549" text-anchor="middle" font-size="16" font-weight="700" fill="#806310">MVP 已上线</text>
+
+    <circle cx="1203" cy="245" r="42" fill="#eae4f7"/><text x="1203" y="258" text-anchor="middle" font-size="42">🌳</text>
+    <text x="1203" y="325" text-anchor="middle" font-size="26" font-weight="800" fill="#5d4b92">安全社交菜园</text>
+    <text x="1105" y="372" font-size="18">• 家长 / 教师批准好友</text><text x="1105" y="412" font-size="18">• 同题匿名作品</text><text x="1105" y="452" font-size="18">• 浇水、种树、预设鼓励</text><text x="1105" y="492" font-size="18">• 无陌生人私聊</text>
+    <rect x="1110" y="525" width="186" height="35" rx="18" fill="#fff"/><text x="1203" y="549" text-anchor="middle" font-size="16" font-weight="700" fill="#5d4b92">待上线 · COMING SOON</text>
+
+    <path d="M370 380 H395" stroke="#628174" stroke-width="4" marker-end="url(#arrow)"/><path d="M705 380 H730" stroke="#628174" stroke-width="4" marker-end="url(#arrow)"/><path d="M1040 380 H1065" stroke="#8c7bbd" stroke-width="4" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+    <rect x="215" y="635" width="970" height="70" rx="22" fill="#26332d"/>
+    <text x="700" y="678" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">目标：让没有家庭华文环境的孩子也能看懂原因、自己修改，并愿意继续写</text>
+  </g>
+</svg>

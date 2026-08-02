@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520" role="img" aria-labelledby="title desc">
+  <title id="title">小墨互动反馈闭环</title><desc id="desc">从发现亮点和问题，到双语解释、拼音朗读、学生修改与奖励。</desc>
+  <defs><linearGradient id="bg" x1="0" x2="1"><stop stop-color="#fff9f2"/><stop offset="1" stop-color="#edf8f4"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity=".12"/></filter><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#387966"/></marker></defs>
+  <rect width="1400" height="520" rx="30" fill="url(#bg)"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'PingFang SC','Noto Sans SC',sans-serif" fill="#26332d">
+    <text x="700" y="68" text-anchor="middle" font-size="36" font-weight="800" fill="#176c55">小墨如何陪孩子把“看见问题”变成“自己会改”</text>
+    <text x="700" y="103" text-anchor="middle" font-size="18" fill="#68766f">Xiao Mo feedback loop · 动画和文字自动出现，声音由学习者主动点击播放</text>
+    <g filter="url(#s)">
+      <rect x="55" y="165" width="280" height="230" rx="24" fill="#fff" stroke="#e5ded3" stroke-width="2"/><rect x="390" y="165" width="280" height="230" rx="24" fill="#eaf7f0" stroke="#9fcfbe" stroke-width="2"/><rect x="725" y="165" width="280" height="230" rx="24" fill="#edf3fb" stroke="#a7bfdf" stroke-width="2"/><rect x="1060" y="165" width="280" height="230" rx="24" fill="#fff6dc" stroke="#e2ca81" stroke-width="2"/>
+    </g>
+    <text x="195" y="225" text-anchor="middle" font-size="43">🌟</text><text x="195" y="275" text-anchor="middle" font-size="25" font-weight="800">先发现亮点与问题</text><text x="195" y="313" text-anchor="middle" font-size="17">具体表扬写对的地方</text><text x="195" y="342" text-anchor="middle" font-size="17">只选 3–5 个优先问题</text>
+    <text x="530" y="225" text-anchor="middle" font-size="43">💬</text><text x="530" y="275" text-anchor="middle" font-size="25" font-weight="800">解释为什么</text><text x="530" y="313" text-anchor="middle" font-size="17">简单中文 + 儿童英文</text><text x="530" y="342" text-anchor="middle" font-size="17">原文 → 建议改法</text>
+    <text x="865" y="225" text-anchor="middle" font-size="43">🔤</text><text x="865" y="275" text-anchor="middle" font-size="25" font-weight="800">需要时再听、再看</text><text x="865" y="313" text-anchor="middle" font-size="17">按需显示拼音</text><text x="865" y="342" text-anchor="middle" font-size="17">点击小墨朗读反馈</text>
+    <text x="1200" y="225" text-anchor="middle" font-size="43">✍️</text><text x="1200" y="275" text-anchor="middle" font-size="25" font-weight="800">自己完成修改</text><text x="1200" y="313" text-anchor="middle" font-size="17">提交二稿，看见成长</text><text x="1200" y="342" text-anchor="middle" font-size="17">获得种子与水滴</text>
+    <path d="M335 280H380" stroke="#387966" stroke-width="4" marker-end="url(#a)"/><path d="M670 280H715" stroke="#387966" stroke-width="4" marker-end="url(#a)"/><path d="M1005 280H1050" stroke="#387966" stroke-width="4" marker-end="url(#a)"/>
+    <path d="M1200 402C1200 475 195 475 195 405" fill="none" stroke="#c84a3d" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#a)"/><text x="700" y="474" text-anchor="middle" font-size="17" font-weight="700" fill="#a4493e">下一次写作继续应用已经学会的表达</text>
+  </g>
+</svg>
