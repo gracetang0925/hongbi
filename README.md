@@ -5,21 +5,21 @@
 
 [在线体验 Live demo](https://gracetang0925.github.io/hongbi/) · [学生端 Learner view](https://gracetang0925.github.io/hongbi/) · [教师端 Teacher view](https://gracetang0925.github.io/hongbi/teacher.html)
 
-![HongBi product vision](assets/hongbi-product-overview.png)
+![HongBi current product and coming-soon vision](assets/hongbi-product-overview-v2.svg)
 
 红笔面向全球华文二语学习者，重点服务 **6–12 岁、家庭中缺少华文环境的儿童**，以及准备 HSK 或希望系统提升中文写作的学习者。产品把 AI 即时反馈、中英文解释、按需拼音、逐步修改、成长奖励和全球认证教师服务连接在同一条学习路径中。
 
 HongBi is designed for Chinese-as-a-second-language learners worldwide—especially children ages 6–12 with little Chinese support at home, plus HSK and writing-improvement learners. It combines instant AI feedback, bilingual explanations, on-demand pinyin, guided revision, meaningful rewards, and verified teacher support.
 
 > [!IMPORTANT]
-> 本 README 同时记录当前 MVP 和产品愿景。标注为“规划中 / planned”的功能尚未上线；概念图不代表已经完成的教师端功能。
+> 本 README 同时记录当前 MVP 和产品愿景。标注为“待上线 / Coming soon”的功能尚未开放；示意图用于说明产品方向，不代表功能已经完成。
 
 ## 当前 MVP / Current MVP
 
 | 已实现 / Implemented | 学习价值 / Learner value |
 |---|---|
 | 输入作文或拍照识别手写稿 / Type or scan handwriting | 保留 OCR 写作入口 / Keeps the handwriting workflow |
-| AI、教师式、人机协同三种反馈模式 / Three feedback modes | 适配不同教学场景 / Supports different teaching contexts |
+| AI 即时反馈，以及标有“付费”的教师精批、人机协同入口 / Free AI feedback plus clearly labelled paid teacher and hybrid options | 先体验 AI，再按需选择真人服务 / Try AI first, then add human support when needed |
 | 宏观反馈：内容、结构、连贯性 / Macro feedback | 先看文章整体 / Revise the whole text first |
 | 微观反馈：语序、量词、了/过/着、语体、搭配 / Micro feedback | 找到具体可修改的问题 / Identify actionable issues |
 | 简单中文 + 英文原因 / Simple Chinese + English reasons | 没有家庭华文支持也能理解 / Works without Chinese support at home |
@@ -29,6 +29,8 @@ HongBi is designed for Chinese-as-a-second-language learners worldwide—especia
 | HSK 备考模式主动开启 AI 模拟评分 / Optional HSK simulation | 有考试目标时查看练习分数 / Practice scoring when the learner chooses it |
 | 本地种子与水滴奖励 / Local seed and water rewards | 奖励完成、阅读与修改行为 / Rewards learning behaviors |
 | 一稿、二稿与 Supabase 记录 / Draft history and Supabase records | 观察长期进步 / Tracks progress over time |
+| 会动的小墨与点击朗读 / Animated Xiao Mo with click-to-speak | 用儿童友好的方式陪伴阅读反馈 / Makes feedback easier and friendlier to read |
+| 教师端文字批改队列 / Teacher text-review queue | 搜索、刷新、状态提示、批注、模板、保存与发回 / Search, refresh, annotate, save, and return work |
 
 当前技术栈：OpenAI Responses API（`gpt-5.6-terra`）· Cloudflare Workers · Supabase/Postgres · 原生 HTML/CSS/JavaScript。
 
@@ -40,7 +42,7 @@ Current stack: OpenAI Responses API (`gpt-5.6-terra`) · Cloudflare Workers · S
 
 Child growth mode is selected by default. It focuses on understanding, revising, and encouragement—without a total score.
 
-![HongBi live student child mode](assets/student-mvp-live.jpg)
+![HongBi live student view with paid options and Xiao Mo](assets/student-live-xiaomo-paid.png)
 
 ### HSK 备考模式：学习者主动开启模拟评分
 
@@ -54,26 +56,25 @@ HSK learners can explicitly switch modes to see AI-simulated practice scores and
 
 Each priority issue contains the original span, a suggested correction, simple Chinese, short English, on-demand pinyin, and a hint from Xiao Mo. HongBi identifies a genuine strength before surfacing three to five useful revision priorities.
 
-![Bilingual step-by-step feedback](assets/bilingual-feedback.png)
+小墨目前会在页面右侧轻轻活动；学生点击语音按钮后，可使用浏览器的朗读功能听反馈。受浏览器自动播放规则影响，首次朗读需要学生主动点击。
 
-![Student writing with an AI pet companion](assets/student-pet-writing.png)
+Xiao Mo currently animates beside the page. After the learner taps the audio button, browser-native speech reads the feedback aloud. The first playback requires a user gesture because of browser autoplay rules.
+
+![Xiao Mo bilingual feedback loop](assets/xiaomo-feedback-loop.svg)
 
 ## 学习流程 / Learning flow
 
 ```mermaid
 flowchart TD
-    A["选择目标<br/>儿童成长 / HSK 备考"] --> B["输入作文或上传手写稿"]
-    B --> C["小墨陪写<br/>回答问题但不代写"]
-    C --> D["完成一稿<br/>获得种子"]
-    D --> E["先发现真正的亮点"]
-    E --> F["宏观反馈<br/>内容 · 结构 · 连贯性"]
-    F --> G["微观反馈<br/>中英原因 · 按需拼音 · 修改建议"]
-    G --> H["学生自己完成二稿"]
-    H --> I{"需要真人教师吗？"}
-    I -- "否" --> J["保存进步与个人错误模式"]
-    I -- "是" --> K["匹配认证教师"]
-    K --> L["文字 · 异步语音 · 视频反馈"]
-    L --> J
+    A["选择目标<br/>儿童成长 / HSK 备考"] --> B["选择服务<br/>AI / 教师精批 / 人机协同"]
+    B --> C["输入作文或上传手写稿"]
+    C --> D["AI 结构化反馈<br/>亮点 · 宏观 · 微观"]
+    D --> E["简单中文 + 英文原因<br/>按需拼音 · 点击朗读"]
+    E --> F["学生自己完成二稿"]
+    B -- "付费教师服务" --> G["进入教师批改队列"]
+    G --> H["教师文字批注<br/>保存并发回"]
+    H --> F
+    F --> I["保存进步与本地奖励"]
 ```
 
 儿童模式不以“错误最少”作为奖励标准：完成一稿获得种子，打开拼音获得水滴，完成二稿获得更多成长资源。未来的菜园社交只考虑帮助浇水、访问和低冲突互动，不开放陌生人私聊。
@@ -82,10 +83,10 @@ Child mode rewards completion, reading support, and revision—not being the lea
 
 ![Writing garden rewards](assets/garden-rewards.png)
 
-## 小墨农场社交愿景 / Xiao Mo Farm social vision
+## 小墨农场社交愿景（待上线）/ Xiao Mo Farm social vision (Coming soon)
 
-> **规划中的产品概念 / Planned product concept.** 当前 MVP 只有保存在本机的种子和水滴；好友、作品广场、留言与共同种树尚未上线。  
-> The current MVP only stores seeds and water locally. Friends, the writing gallery, messages, and collaborative planting are planned features.
+> **待上线 / Coming soon.** 当前 MVP 只有保存在本机的种子和水滴；好友农场、同题作品、帮助浇水、共同种树和安全留言尚未开放。  
+> The current MVP only stores seeds and water locally. Friend gardens, same-topic writing, helpful watering, shared planting, and safe messages are not live yet.
 
 小墨农场把写作进步变成可以看见的成长，但不以“错误最少”或公开分数制造竞争。完成写作、查看拼音、理解错误原因和完成二稿都会触发类似语言学习应用的胜利页面，展示连续学习天数、获得的水滴或种子，以及植物的新变化。
 
@@ -129,17 +130,21 @@ flowchart LR
     H --> E
 ```
 
-## 教师端愿景 / Teacher experience
+## 教师端 MVP 与待上线愿景 / Teacher MVP and coming-soon vision
 
-教师端当前原型用于查看学习记录与错误观察。下一阶段计划提供结构化文字批改、异步语音评价和视频总结；语音与视频可自动生成字幕和双语文本。早期不开放教师与儿童的私人视频通话。
+教师端已具备可试用的付费文字批改流程：付费作文进入待批改队列，教师可查看连接状态、搜索和刷新作文，使用文字批注与评语模板，保存草稿并把反馈发回学生。当前登录仅为 MVP 访问门槛，不是正式账号系统。
 
-The current teacher prototype focuses on learning records and error review. The planned studio adds structured text, asynchronous audio, and video summaries with transcripts and bilingual text. Early versions will not support private live video calls between teachers and children.
+The teacher MVP now supports a testable paid text-review workflow: paid submissions enter a queue, teachers can see connection state, search and refresh work, use annotations and comment templates, save drafts, and return feedback. The current login is only an MVP access gate—not production authentication.
 
-> 下图是产品概念图 / The image below is a planned product concept.
+![Paid teacher review workflow](assets/teacher-paid-workflow.svg)
 
-![Teacher text, audio and video feedback studio](assets/teacher-feedback-studio.png)
+> **待上线 / Coming soon：**正式 Supabase Auth 教师账号、资质审核与接单权限、异步语音评价、视频总结、字幕和双语文本。早期版本不会开放教师与儿童私人视频通话。
+>
+> Production teacher accounts, credential-based order access, asynchronous audio feedback, video summaries, captions, and bilingual transcripts are coming soon. Early versions will not enable private live video calls between teachers and children.
 
-### 全球认证教师网络 / Verified global teacher network
+### 全球认证教师网络（待上线）/ Verified global teacher network (Coming soon)
+
+![Verified global teacher network coming-soon workflow](assets/global-teacher-network.svg)
 
 | 等级 / Level | 质量机制 / Quality control |
 |---|---|
@@ -180,10 +185,10 @@ flowchart LR
     S["学生提交作文"] --> A["AI 初步分析"]
     A --> Q{"选择服务"}
     Q -->|"AI 即时反馈"| R["学生自己修改"]
-    Q -->|"认证教师"| M["教师匹配"]
+    Q -->|"教师精批（付费）"| M["教师批改队列"]
     Q -->|"人机协同"| M
-    M --> T["文字 / 语音 / 视频反馈"]
-    T --> V["质量抽查与家长可见记录"]
+    M --> T["教师文字批注与评语"]
+    T --> V["保存并发回学生"]
     V --> R
 ```
 
@@ -203,14 +208,35 @@ HongBi is not only an AI correction tool. It is a learning pathway that moves fr
 | 华文教师 / Chinese teachers | 提高批改效率、建立专业信誉 | AI 助手、模板、数据、认证与订单 |
 | 学校与项目 / Schools and programs | 规模化写作练习与教学洞察 | 班级分析、教师管理、课程版本 |
 
-### 会员与收入假设 / Membership hypotheses
+### 会员、教师收入与抽成假设 / Membership, teacher pay, and take-rate hypotheses
 
 > 价格需要通过早期用户访谈和付费实验验证。前三个月免费更适合作为限量“创始用户计划”，而不是永久承诺。
 
-- **学生成长会员 / Learner Growth — US$29.90/month**：AI 写作练习、双语解释、拼音、一稿二稿对比、个人错误档案、儿童或 HSK 路径，以及明确数量的教师批改额度。
-- **教师专业会员 / Teacher Pro — US$9.90/month**：可选的 AI 批改助手、结构化模板、语音/视频字幕、学生错误整理、教师主页、培训与认证工具。基础注册和实习阶段建议免费，教师付费购买效率与职业成长工具，而不是购买接单资格。
+- **学生成长会员 / Learner Growth — US$29.90/month**：AI 写作练习、双语解释、拼音、一稿二稿对比、个人错误档案、儿童或 HSK 路径；试运营建议每月包含 **2 篇 300 字以内标准教师精批**，超出后按篇购买。真人额度不可无限使用。
+- **教师专业会员 / Teacher Pro — US$9.90/month**：建议作为可选效率工具包，包含 AI 预分析、结构化模板、错误归档、个人主页和培训资源。**注册、资质审核和接单不应以付费为前提**；教师不能因为不购买会员就被降低基础稿酬。
 - **真人批改 / Human review**：按篇、按额度包或会员附带额度收费；平台从完成并通过质量标准的订单中收取服务费。
-- **机构方案 / School plans（规划中）**：按班级、教师席位或年度授权收费，提供班级分析、管理和隐私控制。
+- **机构方案 / School plans（待上线）**：按班级、教师席位或年度授权收费，提供班级分析、管理和隐私控制。
+
+#### 建议的试运营按篇价格 / Suggested pilot per-essay pricing
+
+按“中文字数 + 反馈深度”分档比单纯逐字计费更适合儿童作文。以下价格包含 AI 预分析、教师复核、结构化文字反馈和一次简短追问；教师完成一篇后获得固定稿酬，平台差额用于支付、客服、退款风险、AI 和质量审核。
+
+Charging by Chinese-character band plus feedback depth is easier for families than a pure per-word rate. Each price includes AI pre-analysis, teacher review, structured written feedback, and one short follow-up.
+
+| 作文字数 / Chinese characters | 学生单篇价 / Learner price | 认证教师收入 / Teacher payout | 建议用时 / Target time |
+|---|---:|---:|---:|
+| 150 字以内 / Up to 150 | US$7.90 | US$4.50 | 10–12 分钟 |
+| 151–300 字 / 151–300 | US$11.90 | US$7.00 | 15–18 分钟 |
+| 301–600 字 / 301–600 | US$18.90 | US$11.00 | 25–30 分钟 |
+| 601–1,000 字 / 601–1,000 | US$29.90 | US$17.50 | 40–50 分钟 |
+
+- 实习批改员由导师复核，建议获得相应认证教师稿酬的 60%–70%，导师另得 US$1.50–3.00 审核费。
+- 资深教师、IB/AP/HSK 高阶写作可在基础稿酬上增加 20%–40%。
+- 异步语音讲解建议学生加购 US$4.90，教师增加 US$3.00；视频总结待上线后建议加购 US$9.90，教师增加 US$6.00。
+- 24 小时加急可加价 30%，其中至少 70% 的加急费支付给教师。
+- 试运营目标不是追求最高平台抽成，而是保证教师有效时薪大致达到 US$22–30，并以真实完成时间、返工率和续费率每月调价。
+
+这个目标时薪属于保守试点区间：Preply 当前列出的中文教师平均价格约为 US$23/小时，Wyzant 展示的中文家教常见价格约为 US$35–59/小时。红笔是异步、AI 辅助批改，不等同于一对一直播课，因此先以 US$22–30 的有效时薪验证供需，再根据教师所在地、资质、质量和留存调整。[Preply 中文教师价格](https://preply.com/en/online/chinese-tutors) · [Wyzant 中文教师价格](https://www.wyzant.com/Chinese_tutors.aspx)
 
 ### 商业飞轮 / Growth flywheel
 
@@ -292,7 +318,8 @@ wrangler deploy
 ### Phase 2 — 真人教师试点 / Human teacher pilot
 
 - [ ] 邀请制认证教师 / Invite-only verified teachers
-- [ ] 结构化文字与异步语音 / Structured text and asynchronous audio
+- [x] 教师端结构化文字批改框架 / Structured teacher text-review workflow
+- [ ] 异步语音评价 / Asynchronous audio feedback
 - [ ] 自动字幕与双语文本 / Transcripts and bilingual text
 - [ ] 一稿、二稿与教师反馈历史 / Draft and teacher-feedback history
 
