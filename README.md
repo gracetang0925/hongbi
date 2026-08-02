@@ -3,7 +3,7 @@
 > 让孩子把学过的中文，真正写出来。  
 > Helping learners turn the Chinese they know into writing they can be proud of.
 
-[在线体验 Live demo](https://gracetang0925.github.io/hongbi/) · [学生端 Learner view](https://gracetang0925.github.io/hongbi/) · [教师端 Teacher view](https://gracetang0925.github.io/hongbi/teacher.html)
+[在线体验 Live demo](https://gracetang0925.github.io/hongbi/) · [学生端 Learner view](https://gracetang0925.github.io/hongbi/) · [教师端 Teacher view](https://gracetang0925.github.io/hongbi/teacher.html) · [学生端演示视频 Learner demo video](#学生端演示视频--learner-demo-video)
 
 ![HongBi current product and coming-soon vision](assets/hongbi-product-overview-v2.svg)
 
@@ -346,10 +346,13 @@ HongBi's feedback design is informed by Grace Tang's M.A. thesis research at NTU
 
 Earlier Claude-based research prototype: [`chinese-writing-feedback`](https://github.com/gracetang0925/chinese-writing-feedback)
 
-## 产品演示视频 / Product demo video
+## 学生端演示视频 / Learner demo video
 
-产品演示视频将在 Cloudflare Worker 和主要学习流程稳定后，使用真实产品操作录制。  
-The demo video will be recorded from the real product after the Worker and the main learning flow are stable.
+这段 89 秒的真实产品录屏展示学生端写作流程、小墨互动、儿童成长模式、付费教师入口与 AI 反馈操作。演示使用虚构姓名和测试作文，不包含真实儿童资料。
+
+This 89-second product walkthrough demonstrates the learner writing flow, Xiao Mo interaction, child growth mode, paid teacher options, and AI feedback. It uses a fictional name and test essay; no real child data is shown.
+
+https://github.com/user-attachments/assets/1d4009e8-9b93-4771-a774-027b3b71ea76
 
 ## 关于 / About
 
