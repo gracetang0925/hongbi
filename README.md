@@ -36,6 +36,14 @@ HongBi is designed for Chinese-as-a-second-language learners worldwide—especia
 
 Current stack: OpenAI Responses API (`gpt-5.6-terra`) · Cloudflare Workers · Supabase/Postgres · vanilla HTML/CSS/JavaScript.
 
+## DeepTutor 启发的写作辅导 / DeepTutor-inspired tutoring
+
+本分支将 [DeepTutor](https://github.com/HKUDS/DeepTutor) 的能力路由、有上限的记忆和分步练习思想适配到红笔现有技术栈：每次反馈多一道双语短练习，先自己尝试、按需看提示，再对照参考写法并应用到二稿；当前随机会话最多参考最近 8 次反馈中的问题类别。练习不自动判分，也不声称已经掌握。
+
+The integration is independently implemented for HongBi's Worker and static pages. It does not install or run the full DeepTutor Python/Next.js application. [集成说明、API 与部署 / Integration, API and deployment](docs/DEEPTUTOR_INTEGRATION.md) · [贡献指引 / Contributing](CONTRIBUTING.md)
+
+教师端通过 Worker 校验邀请令牌，数据库凭证只保存在服务端。此版本仍是邀请制 MVP，不是正式教师账号系统。部署需要配置 Worker secrets，并执行现有 submissions 表的访问权限迁移。
+
 ## 学生端演示 / Learner demo
 
 ### 儿童成长模式：默认不显示分数
@@ -132,9 +140,9 @@ flowchart LR
 
 ## 教师端 MVP 与待上线愿景 / Teacher MVP and coming-soon vision
 
-教师端已具备可试用的付费文字批改流程：付费作文进入待批改队列，教师可查看连接状态、搜索和刷新作文，使用文字批注与评语模板，保存草稿并把反馈发回学生。当前登录仅为 MVP 访问门槛，不是正式账号系统。
+教师端已具备可试用的付费文字批改流程：付费作文进入待批改队列，教师可查看连接状态、搜索和刷新作文，使用文字批注与评语模板，保存草稿并把反馈发回学生。当前使用 Worker 验证的教师邀请令牌，不是正式账号系统。
 
-The teacher MVP now supports a testable paid text-review workflow: paid submissions enter a queue, teachers can see connection state, search and refresh work, use annotations and comment templates, save drafts, and return feedback. The current login is only an MVP access gate—not production authentication.
+The teacher MVP now supports a testable paid text-review workflow: paid submissions enter a queue, teachers can see connection state, search and refresh work, use annotations and comment templates, save drafts, and return feedback. The current login verifies an invite token at the Worker; individual teacher accounts remain planned.
 
 ![Paid teacher review workflow](assets/teacher-paid-workflow.svg)
 
@@ -288,20 +296,25 @@ flowchart LR
 
 Security rule: keep `OPENAI_API_KEY` only as an encrypted Cloudflare Worker secret. Never place it in source code or GitHub.
 
-## 部署 / Deployment
+## 部署与验证 / Deployment and checks
 
-1. 在 Cloudflare Dashboard 打开 `Workers & Pages`，选择现有 Worker。
-2. 在 `Settings → Variables and Secrets` 添加 Secret：`OPENAI_API_KEY`。
-3. 粘贴并部署本仓库中的 `worker.js`，保持 `index.html` 已使用的 Worker 地址不变。
-4. 确认 CORS、OCR、三种反馈模式和 Supabase 记录正常。
-5. 在 GitHub `Settings → Pages` 中使用 `main` 分支部署静态网页。
-
-Wrangler 方式：
+此版本使用 Worker 模块导入，请通过 Wrangler 打包部署。完整配置、数据库权限迁移、上线检查及回滚限制见 [DEEPTUTOR_INTEGRATION.md](docs/DEEPTUTOR_INTEGRATION.md)。
 
 ```bash
+npm ci --ignore-scripts
+npm run check
+npm test
+cp wrangler.toml.example wrangler.toml
+# 核对 Worker 名称、Supabase URL 与允许来源后配置服务端 secrets：
 wrangler secret put OPENAI_API_KEY
+wrangler secret put SUPABASE_SECRET_KEY
+wrangler secret put TEACHER_ACCESS_TOKEN
 wrangler deploy
 ```
+
+同时发布 `config.js`、`index.html`、`teacher.html`，并由数据库管理员执行 `supabase/migrations/20261031_worker_only_submissions.sql`，关闭旧的浏览器直连权限。不要把 secrets 写入页面或提交到 GitHub。`config.js` 只放公开 Worker 地址。
+
+The automated checks use mocked services and synthetic essays; they do not deploy, rotate secrets, run database migrations, or verify live provider access. Configure the backend and run the documented deployment smoke check before considering the integration live.
 
 ## 路线图 / Roadmap
 

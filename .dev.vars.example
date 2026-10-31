@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local Wrangler development only. Do not commit real values.
+OPENAI_API_KEY=replace-with-your-openai-key
+SUPABASE_SECRET_KEY=replace-with-server-only-sb_secret-key
+TEACHER_ACCESS_TOKEN=replace-with-a-random-token-of-at-least-32-characters

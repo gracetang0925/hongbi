@@ -1,0 +1,11 @@
+# Copy to wrangler.toml and verify this Worker name belongs to your account.
+name = "chinese-feedback-proxy"
+main = "worker.js"
+compatibility_date = "2026-10-31"
+
+[vars]
+SUPABASE_URL = "https://joeuvvmsbskfpmqydogs.supabase.co"
+ALLOWED_ORIGINS = "https://gracetang0925.github.io"
+OPENAI_MODEL = "gpt-5.6-terra"
+# Store OPENAI_API_KEY, SUPABASE_SECRET_KEY and TEACHER_ACCESS_TOKEN with
+# `wrangler secret put`; never add their values here or in config.js.

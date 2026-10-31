@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>华文写作批改工具</title>
+<script src="config.js"></script>
 <style>
 :root {
   --teal:#0F6E56; --teal-light:#e6f4f1; --teal-dark:#0a5240;
@@ -93,6 +94,15 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .action-pill:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light);}
 .action-pill.green{border-color:var(--green);color:var(--green);}
 .action-pill.green:hover{background:var(--green-light);}
+
+.memory-choice{display:block;margin:0 0 1rem;font-size:.84rem;line-height:1.7;color:var(--teal-dark)}
+.memory-choice small{color:#666}
+.practice-card{margin-top:1.2rem;padding:1rem;border:1px solid #b5e2c8;border-radius:12px;background:var(--green-light)}
+.practice-card textarea{min-height:85px;padding:.7rem;margin:.5rem 0;background:white}
+.practice-card details{margin:.5rem 0;font-size:.88rem}
+.practice-card .practice-note{font-size:.8rem;color:#555;line-height:1.6}
+.practice-status{font-size:.85rem;color:var(--red);min-height:1.4em}
+.practice-example{margin-top:.8rem;border-top:1px solid #b5e2c8;padding-top:.7rem}
 
 /* Teacher annotations */
 .teacher-section{display:none;margin-top:1rem;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
@@ -239,6 +249,386 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   .wrapper{padding:1.5rem .9rem 7rem;}.header h1{font-size:1.75rem}.mode-tabs{display:grid;grid-template-columns:1fr}.mode-tab{min-height:76px}.submit-row{flex-direction:column}.clear-btn{width:100%}.action-pill{flex:1 1 calc(50% - .6rem)}.garden-bar{align-items:flex-start;flex-direction:column}.garden-stats{align-self:stretch}.reward-pill{flex:1;text-align:center}.correction-row{grid-template-columns:1fr}.correction-arrow{transform:rotate(90deg);justify-self:center}.pet-summary{grid-template-columns:44px 1fr}.pet-avatar{width:44px;height:44px}.xiaomo-character{width:92px;height:105px}.xiaomo-bubble{width:min(260px,calc(100vw - 1.4rem));font-size:.76rem}.xiaomo-control{width:36px;height:36px}
 }
 @media (prefers-reduced-motion:reduce){.xiaomo-character,.xiaomo-companion.speaking .xiaomo-character,.xiaomo-companion.celebrate .xiaomo-character{animation:none}.xiaomo-bubble{transition:none}}
+
+/* ============================================================
+   HongBi North American × Nordic education UI layer
+   Append inside the original style element. Keep legacy CSS.
+   ============================================================ */
+:root{
+  --hb-paper:#faf7f1;
+  --hb-card:#fffdfc;
+  --hb-ink:#22313a;
+  --hb-muted:#66758c;
+  --hb-line:#e7ddce;
+  --hb-line-strong:#d8cbb8;
+  --hb-spruce:#2f6f5e;
+  --hb-spruce-dark:#24584b;
+  --hb-spruce-soft:#e9f3ef;
+  --hb-sky:#5b8def;
+  --hb-sky-soft:#eef4ff;
+  --hb-saffron:#f2b950;
+  --hb-saffron-soft:#fff4d8;
+  --hb-clay:#c96b5a;
+  --hb-clay-soft:#fff0ec;
+  --hb-good:#34835f;
+  --hb-good-soft:#eaf7f0;
+  --hb-danger:#b4473f;
+  --hb-danger-soft:#fff0ee;
+  --hb-shadow:0 16px 42px rgba(34,49,58,.10);
+  --hb-shadow-sm:0 8px 22px rgba(34,49,58,.08);
+  --hb-r-lg:24px;
+  --hb-r-md:16px;
+  --hb-r-sm:12px;
+}
+
+html{scroll-behavior:smooth;}
+body{
+  color:var(--hb-ink);
+  background:
+    radial-gradient(circle at 10% -6%,rgba(242,185,80,.16),transparent 26rem),
+    radial-gradient(circle at 92% 4%,rgba(91,141,239,.10),transparent 28rem),
+    linear-gradient(180deg,#fbf8f2 0%,#faf7f1 46%,#f6f3ec 100%);
+  background-attachment:fixed;
+  font-size:16px;
+}
+.wrapper{max-width:920px;}
+
+/* Header */
+.header{
+  position:relative;
+  margin:0 auto 1.55rem;
+  padding:1.35rem 1.25rem 1.15rem;
+  border:1px solid rgba(231,221,206,.95);
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(255,253,252,.96),rgba(255,244,216,.70));
+  box-shadow:var(--hb-shadow);
+  overflow:hidden;
+}
+.header:before{
+  content:"";
+  position:absolute;
+  width:190px;height:190px;border-radius:50%;
+  right:-70px;top:-84px;
+  background:radial-gradient(circle,rgba(47,111,94,.14),transparent 70%);
+}
+.header:after{
+  content:"✎";
+  position:absolute;right:1.25rem;top:1rem;
+  color:var(--hb-clay);opacity:.20;font-size:2.1rem;transform:rotate(-10deg);
+}
+.header h1{
+  position:relative;
+  color:var(--hb-spruce-dark);
+  font-size:clamp(1.95rem,4vw,2.6rem);
+  line-height:1.15;
+  letter-spacing:.01em;
+}
+.header p{
+  position:relative;
+  max-width:650px;
+  margin:.5rem auto 0;
+  color:var(--hb-muted);
+  font-size:1rem;
+}
+
+/* Cards and controls */
+.garden-bar,.student-bar,.learning-goal,.mode-tab,.sample-btn,textarea,
+.loading,.result-section,.teacher-section,.comp-box,.draft2-header,.draft2-body{
+  border-color:var(--hb-line);
+}
+.garden-bar{
+  margin-top:-1rem;
+  background:linear-gradient(135deg,#fffdfc,#eef7f2);
+  box-shadow:var(--hb-shadow-sm);
+}
+.garden-copy strong{color:var(--hb-spruce-dark);}
+.reward-pill{background:#fffdfc;border-color:var(--hb-line);color:var(--hb-muted);}
+.reward-pill b{color:var(--hb-spruce);}
+
+.student-bar{
+  background:rgba(255,253,252,.94);
+  border-radius:20px;
+  box-shadow:var(--hb-shadow-sm);
+}
+.student-bar:focus-within{
+  border-color:var(--hb-spruce);
+  box-shadow:0 0 0 4px rgba(47,111,94,.12),var(--hb-shadow-sm);
+}
+.student-input{color:var(--hb-ink);}
+
+.learning-goal{
+  background:#f3ecdf;
+  border:1px solid var(--hb-line);
+  border-radius:20px;
+  padding:.42rem;
+}
+.goal-btn{
+  min-height:56px;
+  border-radius:15px;
+  color:var(--hb-muted);
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease;
+}
+.goal-btn:hover{transform:translateY(-1px);}
+.goal-btn.active{
+  background:#fffdfc;
+  border-color:var(--hb-line-strong);
+  color:var(--hb-spruce-dark);
+  box-shadow:0 10px 20px rgba(34,49,58,.10);
+}
+.goal-btn.active-hsk{
+  background:var(--hb-saffron-soft);
+  border-color:#ecd28f;
+  color:#7a5b17;
+}
+
+.mode-tabs{gap:.75rem;}
+.mode-tab{
+  min-height:96px;
+  border-width:1.5px;
+  border-radius:20px;
+  background:rgba(255,253,252,.90);
+  color:var(--hb-muted);
+  box-shadow:0 8px 20px rgba(34,49,58,.05);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+}
+.mode-tab:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(34,49,58,.09);}
+.mode-tab.active-teal{
+  border-color:var(--hb-spruce);
+  background:linear-gradient(180deg,#fffdfc,var(--hb-spruce-soft));
+  color:var(--hb-spruce-dark);
+}
+.mode-tab.active-gold{
+  border-color:var(--hb-saffron);
+  background:linear-gradient(180deg,#fffdfc,var(--hb-saffron-soft));
+  color:#7a5b17;
+}
+.mode-tab.active-purple{
+  border-color:#7a68c9;
+  background:linear-gradient(180deg,#fffdfc,#f1efff);
+  color:#5743a8;
+}
+.paid-badge{
+  background:#fff3cf;
+  border-color:#ead28f;
+  color:#7a5b17;
+}
+
+.sample-label,.input-label{color:var(--hb-muted);}
+.sample-btn{
+  min-height:38px;
+  border-radius:999px;
+  background:#fffdfc;
+  border-color:var(--hb-line);
+  color:var(--hb-ink);
+}
+.sample-btn:hover{
+  border-color:var(--hb-sky);
+  color:var(--hb-sky);
+  background:var(--hb-sky-soft);
+}
+
+textarea{
+  min-height:250px;
+  border-radius:20px;
+  border-width:1.5px;
+  background:linear-gradient(180deg,#fffdfc,#fffaf3);
+  color:var(--hb-ink);
+  box-shadow:inset 0 2px 8px rgba(34,49,58,.04),0 10px 24px rgba(34,49,58,.04);
+}
+textarea::placeholder{color:#9aa8b2;}
+textarea:focus{
+  border-color:var(--hb-spruce);
+  box-shadow:0 0 0 4px rgba(47,111,94,.12);
+}
+.camera-btn{
+  min-height:44px;
+  background:var(--hb-spruce);
+  border-radius:999px;
+}
+.camera-btn:hover{background:var(--hb-spruce-dark);}
+
+.submit-btn{
+  min-height:54px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#3b826f,var(--hb-spruce));
+  box-shadow:0 14px 28px rgba(47,111,94,.22);
+}
+.submit-btn:hover{background:linear-gradient(180deg,#2f6f5e,var(--hb-spruce-dark));transform:translateY(-1px);}
+.submit-btn:disabled{background:#aeb8c2;box-shadow:none;}
+.clear-btn{
+  min-height:54px;
+  border-radius:16px;
+  background:#fffdfc;
+  border-color:var(--hb-line-strong);
+  color:var(--hb-muted);
+}
+.clear-btn:hover{border-color:var(--hb-muted);color:var(--hb-ink);}
+
+/* Feedback result */
+.loading,.result-section,.teacher-section,.comp-box{
+  border-radius:var(--hb-r-lg);
+  background:rgba(255,253,252,.97);
+  box-shadow:var(--hb-shadow);
+}
+.loading-text{color:var(--hb-muted);}
+.result-header{
+  background:linear-gradient(90deg,#fffdfc,#fff4d8);
+  border-bottom-color:var(--hb-line);
+}
+.mode-badge.badge-teal{background:var(--hb-spruce-soft);color:var(--hb-spruce-dark);}
+.mode-badge.badge-gold{background:var(--hb-saffron-soft);color:#7a5b17;}
+.mode-badge.badge-purple{background:#f1efff;color:#5743a8;}
+.result-content{color:var(--hb-ink);}
+.result-content h3{color:var(--hb-spruce-dark);}
+
+.pet-summary{
+  grid-template-columns:58px 1fr;
+  background:linear-gradient(135deg,var(--hb-spruce-soft),#fbfbf7);
+  border:1px solid #cfe4da;
+  border-radius:18px;
+}
+.pet-avatar{
+  border-color:var(--hb-spruce);
+  color:var(--hb-spruce-dark);
+  background:#fffdfc;
+}
+.pet-summary strong{color:var(--hb-spruce-dark);}
+.pet-summary p{color:#496057;}
+
+.strength-card{
+  background:linear-gradient(135deg,var(--hb-good-soft),#fffdf5);
+  border-left:5px solid var(--hb-good);
+  border-radius:14px;
+  color:#335c49;
+}
+.strength-card strong{color:var(--hb-good);}
+.strength-en{color:#607b6e;}
+
+.error-list{gap:1rem;}
+.error-card{
+  border:1px solid var(--hb-line);
+  border-top:5px solid #efd0cb;
+  border-radius:18px;
+  background:#fffdfc;
+  box-shadow:0 12px 26px rgba(34,49,58,.06);
+}
+.error-number{background:var(--hb-clay-soft);color:var(--hb-clay);}
+.error-type{background:#f4ead2;color:#74591f;}
+.error-type-en{color:var(--hb-muted);}
+.correction-box{background:#f8f2e8;border-radius:12px;}
+.correction-box.corrected{
+  background:var(--hb-spruce-soft);
+  border:1px solid #cfe4da;
+}
+.correction-arrow{color:var(--hb-clay);}
+.reason-card{
+  background:#fffaf0;
+  border:1px dashed #e7d2ac;
+  border-radius:12px;
+}
+.reason-en{color:#607086;}
+.pet-tip{color:var(--hb-spruce-dark);}
+.pinyin-toggle{
+  border-color:#c9ddd4;
+  color:var(--hb-spruce-dark);
+  background:#fffdfc;
+}
+.pinyin-toggle:hover{background:var(--hb-spruce-soft);}
+.pinyin-panel{background:var(--hb-sky-soft);color:#315f9e;}
+.no-errors{
+  background:var(--hb-good-soft);
+  border-color:#bfe0cf;
+  color:var(--hb-good);
+}
+
+/* Scores and actions */
+.score-row{border-top-color:var(--hb-line);}
+.score-note{background:var(--hb-saffron-soft);color:#715515;}
+.score-chip{background:#fffaf0;border:1px solid var(--hb-line);border-radius:14px;}
+.score-val{color:var(--hb-spruce-dark);}
+.action-row{border-top-color:var(--hb-line);}
+.action-pill{
+  min-height:44px;
+  border-radius:14px;
+  background:#fffdfc;
+  border-color:var(--hb-line);
+  color:var(--hb-ink);
+}
+.action-pill:hover{border-color:var(--hb-spruce);color:var(--hb-spruce-dark);background:var(--hb-spruce-soft);}
+.action-pill.green{border-color:var(--hb-good);color:var(--hb-good);}
+.action-pill.green:hover{background:var(--hb-good-soft);}
+
+/* Teacher annotations */
+.teacher-header{background:linear-gradient(90deg,var(--hb-saffron-soft),#fffdf7);border-bottom-color:#ecd28f;}
+.teacher-header strong{color:#7a5b17;}
+
+/* Draft 2 */
+.draft2-header{background:linear-gradient(90deg,var(--hb-good-soft),#fffdf6);border-color:#bfe0cf;}
+.draft2-header span{color:var(--hb-good);}
+.draft2-body{border-color:#bfe0cf;}
+.draft2-body textarea:focus{border-color:var(--hb-good);}
+.draft2-submit{background:var(--hb-good);border-radius:14px;}
+.draft2-submit:hover{background:#27694d;}
+
+/* Comparison */
+.bar-bg{background:#eee7db;}
+.b1{background:#a9c8bd;}
+.b2{background:var(--hb-spruce);}
+.comp-summary{background:var(--hb-spruce-soft);color:var(--hb-spruce-dark);}
+.delta-up{background:#dff0e5;color:#27694d;}
+.delta-same{background:#eee7db;color:var(--hb-muted);}
+.delta-down{background:var(--hb-danger-soft);color:var(--hb-danger);}
+
+/* Xiao Mo */
+.reward-toast{background:#26343a;border:1px solid rgba(255,255,255,.12);}
+.xiaomo-bubble{
+  background:rgba(255,253,252,.98);
+  border:1px solid #d6e5de;
+  box-shadow:0 20px 44px rgba(34,49,58,.16);
+}
+.xiaomo-bubble strong{color:var(--hb-spruce-dark);}
+.xiaomo-control{background:#fffdfc;border-color:var(--hb-line);color:var(--hb-ink);}
+.xiaomo-control:hover{background:var(--hb-spruce-soft);color:var(--hb-spruce-dark);}
+
+/* Modal */
+.modal-box{background:#fffdfc;border:1px solid var(--hb-line);box-shadow:var(--hb-shadow);}
+.cam-snap{background:var(--hb-spruce);}
+.cam-use{background:var(--hb-good);}
+.cam-retake,.cam-cancel{background:#f6f1e8;border-color:var(--hb-line-strong);color:var(--hb-ink);}
+
+/* Focus, selection, motion */
+button,input,textarea{transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease,color .16s ease;}
+button:active{transform:scale(.985);}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
+  outline:3px solid rgba(91,141,239,.38);
+  outline-offset:2px;
+}
+::selection{background:rgba(91,141,239,.20);}
+.error-msg{
+  background:var(--hb-danger-soft);
+  border-color:#efc7c2;
+  color:var(--hb-danger);
+  border-radius:12px;
+}
+
+/* Mobile calm layout */
+@media (max-width:620px){
+  body{font-size:15.5px;}
+  .wrapper{padding:1rem .9rem 7.5rem;}
+  .header{padding:1.05rem .95rem;border-radius:22px;}
+  .header:after{display:none;}
+  .garden-bar{margin-top:-.35rem;align-items:flex-start;}
+  .student-bar,.mode-tab,.loading,.result-section,.teacher-section,.comp-box{border-radius:18px;}
+  .learning-goal{grid-template-columns:1fr;}
+  .mode-tab{min-height:82px;}
+  textarea{min-height:220px;border-radius:18px;}
+  .submit-row{position:sticky;bottom:.75rem;z-index:900;background:linear-gradient(180deg,rgba(250,247,241,0),rgba(250,247,241,.92) 30%);padding-top:.8rem;}
+  .submit-btn{box-shadow:0 16px 32px rgba(47,111,94,.26);}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}
+}
 </style>
 </head>
 <body>
@@ -285,6 +675,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
     <button class="sample-btn" onclick="loadSample(2)">城市生活（中高级）</button>
   </div>
 
+  <label class="memory-choice"><input type="checkbox" id="useMemory" checked> 参考本次会话最近的问题，让练习更贴合我<br><small>关闭后本次不读取历史；“重新开始”会开启新会话。</small></label>
   <div class="input-wrap">
     <div class="input-label"><span>粘贴或输入华文作文</span><span id="charCount">0 字</span></div>
     <textarea id="essayInput" placeholder="在此输入华文作文……&#10;&#10;或点右下角「📷 扫描作文」拍照识别手写稿。" oninput="updateCount()"></textarea>
@@ -393,8 +784,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 </div>
 
 <script>
-const WORKER_URL = "https://chinese-feedback-proxy.tangxiazhen94.workers.dev";
-const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const WORKER_URL = globalThis.HONGBI_CONFIG.workerUrl;
+let SESSION_ID = crypto.randomUUID();
+let sessionStudentName = null;
+let feedbackPending = false;
 
 const SAMPLES = [
   `我的家庭有四个人。我的爸爸是一个医生，他每天都很忙。我的妈妈在家里工作，她很爱我。我有一个哥哥，他比我大三岁，我们经常一起玩游戏。我很爱我的家庭，我们的关系很好。周末的时候，我们一家人会去公园散步或者去餐厅吃饭。`,
@@ -599,6 +992,35 @@ function escapeHtml(value) {
   })[ch]);
 }
 
+function renderPractice(practice, draft) {
+  if (!practice) return '';
+  return `<section class="practice-card">
+    <h3>🐼 小墨陪你练一句 · ${escapeHtml(practice.focus)}</h3>
+    <p>${escapeHtml(practice.question_zh)}</p><p lang="en">${escapeHtml(practice.question_en)}</p>
+    <label for="practiceAnswer${draft}">先写下你的尝试</label>
+    <textarea id="practiceAnswer${draft}" maxlength="1000" placeholder="试着写一句，答案只留在当前页面。"></textarea>
+    <details><summary>需要一点提示 / Hint</summary><p>${escapeHtml(practice.hint_zh)}</p><p lang="en">${escapeHtml(practice.hint_en)}</p></details>
+    <button type="button" class="action-pill green" onclick="showPracticeExample(this,${draft})">对照参考写法</button>
+    <div class="practice-status" role="status"></div>
+    <div class="practice-example" hidden><strong>一种参考写法</strong><p>${escapeHtml(practice.sample_answer)}</p>
+      <p>${escapeHtml(practice.explanation_zh)}</p><p lang="en">${escapeHtml(practice.explanation_en)}</p>
+      <p class="practice-note">这是一种参考写法，不是自动评分。想想你的句子表达了什么，再把练过的表达用到二稿里。</p>
+      <button type="button" class="action-pill green" onclick="showDraft2()">把练习用到二稿</button>
+    </div>
+  </section>`;
+}
+
+function showPracticeExample(button, draft) {
+  const card = button.closest('.practice-card');
+  if (!document.getElementById('practiceAnswer' + draft).value.trim()) {
+    card.querySelector('.practice-status').textContent = '先试着写一句，再来对照。也可以先打开提示。';
+    return;
+  }
+  card.querySelector('.practice-status').textContent = '';
+  card.querySelector('.practice-example').hidden = false;
+  button.setAttribute('aria-expanded', 'true');
+}
+
 function renderFeedback(feedback, draft) {
   const macro = feedback.macro;
   const errors = feedback.micro || [];
@@ -635,16 +1057,26 @@ function renderFeedback(feedback, draft) {
       <h3>文章整体 · The big picture</h3>
       <p><strong>内容：</strong>${escapeHtml(macro.content)}<br><strong>结构：</strong>${escapeHtml(macro.structure)}<br><strong>连贯性：</strong>${escapeHtml(macro.coherence)}</p>
     </section>
-    <section><h3>小墨发现的问题 · Let's revise</h3>${microHtml}</section>`;
+    <section><h3>小墨发现的问题 · Let's revise</h3>${microHtml}</section>${renderPractice(feedback.practice, draft)}`;
 }
 
 async function getFeedback(draft) {
+  if (feedbackPending) return;
   const essay = draft===1 ? document.getElementById('essayInput').value.trim() : document.getElementById('essay2Input').value.trim();
   const studentName = document.getElementById('studentName').value.trim();
   if (!studentName) { showError('请先填写姓名或学号。'); return; }
   if (!essay)       { showError('请先输入作文内容。'); return; }
+  if (essay.length > 6000) { showError('作文请控制在6000字以内。'); return; }
   if (essay.length < 20) { showError('作文太短，请输入至少20个字。'); return; }
   hideError();
+  if (sessionStudentName !== null && sessionStudentName !== studentName) {
+    clearAll();
+    document.getElementById(draft === 1 ? 'essayInput' : 'essay2Input').value = essay;
+  }
+  sessionStudentName = studentName;
+  feedbackPending = true;
+  document.getElementById('studentName').disabled = true;
+  const requestMode = currentMode;
 
   const loadingEl = document.getElementById('loading');
   const btnEl     = document.getElementById(draft===1?'submitBtn':'draft2Btn');
@@ -657,13 +1089,13 @@ async function getFeedback(draft) {
   let li=0;
   const t = setInterval(()=>{ document.getElementById('loadingText').textContent=msgs[li++%msgs.length]; },1800);
 
-  const mode = MODES[currentMode];
+  const mode = MODES[requestMode];
   try {
     const res = await fetch(WORKER_URL, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        action:'feedback', essay, mode:currentMode, goal:currentGoal,
-        logData:{ sessionId:SESSION_ID, studentName, draft, mode:currentMode, essay }
+        action:'feedback', essay, mode:requestMode, goal:currentGoal, useMemory:document.getElementById('useMemory').checked,
+        logData:{ sessionId:SESSION_ID, studentName, draft }
       })
     });
     clearInterval(t);
@@ -674,7 +1106,7 @@ async function getFeedback(draft) {
     loadingEl.classList.remove('visible');
 
     if (draft===1) {
-      submittedMode = currentMode;
+      submittedMode = requestMode;
       draft1Feedback = feedback;
       const badge = document.getElementById('modeBadge');
       badge.textContent = mode.label; badge.className = 'mode-badge ' + mode.badge;
@@ -684,7 +1116,7 @@ async function getFeedback(draft) {
       updateGoalResults();
       updateXiaomoFromFeedback(feedback, draft);
       awardLocalReward('seeds', 1, 'draft:1', '🌰 完成一稿，获得 1 颗写作种子！');
-      if (currentMode === 'teacher' || currentMode === 'hybrid') {
+      if (data.storage?.teacherQueued && (requestMode === 'teacher' || requestMode === 'hybrid')) {
         setTimeout(()=>setXiaomoMessage('已进入教师队列', '你可以先根据 AI 提示修改；老师发回后，点击“查看教师批注”。', '作文已经进入教师队列。你可以先根据人工智能提示修改；老师发回后，点击查看教师批注。'), 1900);
       }
       document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
@@ -700,11 +1132,16 @@ async function getFeedback(draft) {
       awardLocalReward('water', 2, 'draft:2', '💧 完成二稿，获得 2 滴水，菜苗长大了！');
       document.getElementById('result2Section').scrollIntoView({behavior:'smooth',block:'start'});
     }
+    if (data.storage && !data.storage.saved) {
+      showError('AI 反馈已完成，但作文未能保存；如选择教师服务，本次尚未进入教师队列。请稍后重试。');
+    }
   } catch(err) {
     clearInterval(t);
     loadingEl.classList.remove('visible');
     showError('错误：'+err.message);
   }
+  feedbackPending = false;
+  document.getElementById('studentName').disabled = false;
   btnEl.disabled = false;
   if (btnTextEl) btnTextEl.textContent = '获取反馈';
 }
@@ -714,7 +1151,7 @@ function showGrowthComparison(firstFeedback, secondFeedback) {
   const secondIssues = secondFeedback.micro?.length || 0;
   const resolved = Math.max(0, firstIssues - secondIssues);
   const message = resolved > 0
-    ? `你在二稿里减少了 ${resolved} 个需要优先修改的问题。`
+    ? `这次反馈列出的重点问题少了 ${resolved} 个。我们继续练习，把表达用熟。`
     : '你完成了二稿并重新检查了自己的表达，这就是写作成长。';
   document.getElementById('compBars').innerHTML = `<div class="growth-result"><span class="growth-icon">🥬</span><strong>菜苗又长高了一点！</strong><p>${escapeHtml(message)}</p></div>`;
   document.getElementById('compSummary').textContent = '没有分数，只有你真正完成的每一次修改。';
@@ -757,11 +1194,12 @@ async function checkTeacherFeedback() {
       body: JSON.stringify({ action:'getTeacherFeedback', sessionId: SESSION_ID })
     });
     const data = await res.json();
-    if (data.annotations && data.annotations.length > 0) {
+    if (!res.ok || data.error) throw new Error(data.error?.message || '查询失败');
+    if (Array.isArray(data.annotations) && data.annotations.length > 0) {
       const body = document.getElementById('teacherBody');
       body.innerHTML = data.annotations.map(a => `
         <div class="anno-item">
-          <span class="anno-tag tag-${a.type}">${a.type}</span><br>${a.text}
+          <span class="anno-tag tag-${escapeHtml(a.type)}">${escapeHtml(a.type)}</span><br>${escapeHtml(a.text)}
         </div>`).join('');
       document.getElementById('teacherSection').classList.add('visible');
       document.getElementById('teacherSection').scrollIntoView({behavior:'smooth'});
@@ -776,6 +1214,11 @@ function copyResult(id) {
 }
 
 function clearAll() {
+  if (feedbackPending) return;
+  SESSION_ID = crypto.randomUUID();
+  sessionStudentName = null;
+  document.getElementById('essay2Input').value = '';
+  updateCount2();
   document.getElementById('essayInput').value='';
   updateCount(); hideError();
   ['resultSection','result2Section','draft2Section','comparison','teacherSection'].forEach(id=>{
@@ -838,6 +1281,7 @@ async function usePhoto() {
     });
     const data = await res.json();
     closeCamera();
+    if (!res.ok || data.error) throw new Error(data.error?.message || '识别失败');
     if (data.text && !data.text.includes('无法识别')) {
       document.getElementById('essayInput').value = data.text;
       updateCount();

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>教师后台 · 华文写作批改</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <style>
 :root {
   --teal:#0F6E56; --teal-light:#e6f4f1; --teal-dark:#0a5240;
@@ -241,10 +241,10 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
     <div style="font-size:2.5rem;margin-bottom:.5rem;">👩‍🏫</div>
     <h1>教师后台</h1>
     <p>华文写作批改系统 · Teacher Dashboard</p>
-    <input class="login-input" type="password" id="loginPwd" placeholder="请输入教师密码" onkeydown="if(event.key==='Enter')doLogin()" />
+    <input class="login-input" type="password" id="loginPwd" placeholder="请输入教师访问令牌" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()" />
     <button class="login-btn" onclick="doLogin()">登录</button>
-    <div class="login-err" id="loginErr">密码错误，请重试。</div>
-    <div class="login-note">🔐 当前是 MVP 教师入口。正式招募全球教师前，需要升级为 Supabase Auth 账户登录、资质审核和角色权限。</div>
+    <div class="login-err" id="loginErr">访问令牌无效，请重试。</div>
+    <div class="login-note">🔐 邀请制教师入口，令牌由管理员单独提供，不保存在浏览器中。正式招募全球教师前，需要升级为 Supabase Auth 账户登录、资质审核和角色权限。</div>
   </div>
 </div>
 
@@ -288,7 +288,8 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
       </div>
       <div class="inbox-tools">
         <input class="search-input" id="submissionSearch" type="search" placeholder="搜索学生姓名或作文内容…" oninput="setSubmissionSearch(this.value)" />
-        <button class="refresh-btn" id="refreshBtn" onclick="loadSubmissions(true)">↻ 刷新</button>
+        <button type="button" class="refresh-btn" id="loadMoreBtn" hidden onclick="loadSubmissions(true)">加载更多</button>
+        <button class="refresh-btn" id="refreshBtn" onclick="loadSubmissions()">↻ 刷新</button>
         <span class="connection-status" id="connectionStatus">尚未连接</span>
       </div>
       <div class="sub-list" id="subList">
@@ -388,16 +389,24 @@ body{font-family:'PingFang SC','Noto Sans SC','Microsoft YaHei',sans-serif;backg
 </div>
 
 <script>
-// ══════════════════════════════════════
-//  CONFIG — 填入你的 Supabase 信息
-// ══════════════════════════════════════
-const SUPABASE_URL  = "https://joeuvvmsbskfpmqydogs.supabase.co";
-const SUPABASE_KEY  = "sb_publishable_VL1jCjssrRIwSrDVPnfrzQ_QQkabVwG";
-// MVP only: this client-side hash hides the plain-text demo password but is not production authentication.
-const TEACHER_PASSWORD_HASH = "15364102026489391938ac9eed936602c1520742890b410b4ca1a4f541fd1e9f";
+// The shared invite token is kept only in this page's memory, never browser storage.
+const WORKER_URL = globalThis.HONGBI_CONFIG.workerUrl;
+let teacherToken = '';
+let nextOffset = null;
+let authGeneration = 0;
 
-// ══════════════════════════════════════
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function teacherRequest(action, extra = {}) {
+  const response = await fetch(WORKER_URL, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${teacherToken}` },
+    body: JSON.stringify({ action, ...extra }),
+  });
+  const data = await response.json();
+  if (!response.ok || data.error) {
+    if (response.status === 401) logout();
+    throw new Error(data.error?.message || '教师服务请求失败。');
+  }
+  return data;
+}
 
 let allSubmissions = [];
 let currentTab = 'pending';
@@ -423,35 +432,51 @@ if (templates.length === 0) {
 }
 
 // ── Auth ──
-async function sha256(value) {
-  const bytes = new TextEncoder().encode(value);
-  const digest = await crypto.subtle.digest('SHA-256', bytes);
-  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
-}
-
 async function doLogin() {
-  const pwd = document.getElementById('loginPwd').value;
+  if (isLoadingSubmissions) return;
   const button = document.querySelector('.login-btn');
+  teacherToken = document.getElementById('loginPwd').value.trim();
   button.disabled = true;
   button.textContent = '验证中…';
-  let matches = false;
-  try { matches = await sha256(pwd) === TEACHER_PASSWORD_HASH; } catch {}
-  button.disabled = false;
-  button.textContent = '登录';
-  if (matches) {
+  try {
+    const data = await teacherRequest('listTeacherSubmissions');
+    allSubmissions = data.submissions;
+    nextOffset = data.nextOffset;
+    authGeneration++;
     document.getElementById('loginErr').style.display = 'none';
     document.getElementById('loginWrap').style.display = 'none';
     document.getElementById('app').style.display = 'block';
-    loadSubmissions();
-    renderTemplatesPage();
-  } else {
+    document.getElementById('loginPwd').value = '';
+    document.getElementById('connectionStatus').textContent = `✓ 已连接 · 已加载 ${allSubmissions.length} 篇`;
+    renderInbox(); updateCounts(); updateLoadMore(); renderTemplatesPage();
+  } catch (error) {
+    teacherToken = '';
+    document.getElementById('loginErr').textContent = error.message;
     document.getElementById('loginErr').style.display = 'block';
-  }
+  } finally { button.disabled = false; button.textContent = '登录'; }
 }
 function logout() {
+  authGeneration++;
+  teacherToken = '';
+  allSubmissions = [];
+  document.getElementById('progressTable').textContent = '';
+  document.getElementById('modalTitle').textContent = '';
+  document.getElementById('modalScores').textContent = '';
+  currentAnnotations = [];
+  currentSub = null;
+  nextOffset = null;
+  closeModal();
+  document.getElementById('subList').textContent = '';
+  document.getElementById('modalEssay').textContent = '';
+  document.getElementById('modalAiFeedback').textContent = '';
+  document.getElementById('annoList').textContent = '';
   document.getElementById('loginWrap').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginPwd').value = '';
+}
+
+function updateLoadMore() {
+  document.getElementById('loadMoreBtn').hidden = nextOffset === null;
 }
 
 // ── Navigation ──
@@ -464,33 +489,32 @@ function showPage(name) {
 }
 
 // ── Load submissions ──
-async function loadSubmissions() {
-  if (isLoadingSubmissions) return;
+async function loadSubmissions(append = false) {
+  if (!teacherToken || isLoadingSubmissions) return;
   isLoadingSubmissions = true;
+  const generation = authGeneration;
   const list = document.getElementById('subList');
   const status = document.getElementById('connectionStatus');
   const refresh = document.getElementById('refreshBtn');
-  list.innerHTML = '<div class="empty-state"><div class="spinner" style="border-color:#d7e9e3;border-top-color:var(--teal)"></div><div style="margin-top:.8rem">正在连接批改收件箱…</div></div>';
+  if (!append) list.innerHTML = '<div class="empty-state"><div class="spinner" style="border-color:#d7e9e3;border-top-color:var(--teal)"></div><div style="margin-top:.8rem">正在连接批改收件箱…</div></div>';
   status.className = 'connection-status';
   status.textContent = '连接中…';
   refresh.disabled = true;
   try {
-    const { data, error } = await sb
-      .from('submissions')
-      .select('*')
-      .in('mode', ['teacher', 'hybrid'])
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    allSubmissions = data || [];
+    const data = await teacherRequest('listTeacherSubmissions', { offset: append ? nextOffset : 0 });
+    if (generation !== authGeneration) return;
+    allSubmissions = append ? [...new Map([...allSubmissions, ...data.submissions].map(row => [String(row.id), row])).values()] : data.submissions;
+    nextOffset = data.nextOffset;
+    updateLoadMore();
     status.className = 'connection-status ok';
-    status.textContent = `✓ 已连接 · ${new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`;
+    status.textContent = `✓ 已连接 · 已加载 ${allSubmissions.length} 篇（计数与分析基于已加载记录）`;
     renderInbox();
     updateCounts();
   } catch (error) {
-    console.error(error);
+    if (generation !== authGeneration) return;
     status.className = 'connection-status error';
     status.textContent = '连接失败';
-    list.innerHTML = `<div class="empty-state error-state"><div class="empty-icon">⚠️</div><strong>无法读取教师收件箱</strong><div style="margin-top:.45rem;font-size:.82rem;line-height:1.6">${escapeHtml(error.message || '请检查网络、Supabase 表和访问权限。')}</div><button class="empty-action" onclick="loadSubmissions(true)">重新连接</button></div>`;
+    list.innerHTML = `<div class="empty-state error-state"><div class="empty-icon">⚠️</div><strong>无法读取教师收件箱</strong><div style="margin-top:.45rem;font-size:.82rem;line-height:1.6">${escapeHtml(error.message || '请检查网络、Supabase 表和访问权限。')}</div><button class="empty-action" onclick="loadSubmissions()">重新连接</button></div>`;
   } finally {
     isLoadingSubmissions = false;
     refresh.disabled = false;
@@ -570,7 +594,7 @@ function modeLabel(m) {
 
 // ── Modal ──
 function openModal(id) {
-  currentSub = allSubmissions.find(s => s.id === id);
+  currentSub = allSubmissions.find(s => String(s.id) === String(id));
   if (!currentSub) return;
   currentAnnotations = currentSub.teacher_annotations
     ? JSON.parse(JSON.stringify(currentSub.teacher_annotations))
@@ -631,10 +655,10 @@ function renderAnnoList() {
     return;
   }
   list.innerHTML = currentAnnotations.map(a => `
-    <div class="anno-item anno-border-${a.type}">
-      <div class="anno-item-type type-${a.type}">● ${a.type}</div>
+    <div class="anno-item anno-border-${escapeHtml(a.type)}">
+      <div class="anno-item-type type-${escapeHtml(a.type)}">● ${escapeHtml(a.type)}</div>
       ${escapeHtml(a.text)}
-      <button class="anno-del" onclick="deleteAnnotation(${a.id})">✕</button>
+      <button class="anno-del" onclick="deleteAnnotation(${Number(a.id) || 0})">✕</button>
     </div>`).join('');
 }
 
@@ -642,7 +666,7 @@ function renderAnnoList() {
 function renderModalTemplates() {
   const row = document.getElementById('modalTemplates');
   row.innerHTML = templates.slice(0, 6).map(t =>
-    `<span class="template-chip" onclick="insertTemplate('${escapeJsString(t.text)}','${escapeJsString(t.type)}')">${escapeHtml(t.type)}：${escapeHtml(t.text.slice(0,18))}…</span>`
+    `<span class="template-chip" onclick="insertTemplate('${escapeHtml(escapeJsString(t.text))}','${escapeHtml(escapeJsString(t.type))}')">${escapeHtml(t.type)}：${escapeHtml(t.text.slice(0,18))}…</span>`
   ).join('');
 }
 
@@ -679,36 +703,36 @@ function deleteTemplate(i) {
 }
 
 // ── Save & Return ──
-async function saveAnnotations() {
-  if (!currentSub) return;
+async function saveAnnotations(nextStatus = 'reviewed') {
+  if (!currentSub || !teacherToken) return false;
+  const submission = currentSub;
+  const generation = authGeneration;
   const status = document.getElementById('modalStatus');
+  const buttons = document.querySelectorAll('.modal-footer button');
+  buttons.forEach(button => button.disabled = true);
   status.textContent = '保存中…';
-  const { data, error } = await sb.from('submissions').update({
-    teacher_annotations: currentAnnotations,
-    status: 'reviewed',
-  }).eq('id', currentSub.id).select('id').maybeSingle();
-  if (error || !data) { status.textContent = '保存失败：' + (error?.message || '没有更新权限，请检查 Supabase RLS。'); return false; }
-  currentSub.teacher_annotations = currentAnnotations;
-  currentSub.status = 'reviewed';
-  allSubmissions = allSubmissions.map(s => s.id === currentSub.id ? currentSub : s);
-  updateCounts();
-  renderInbox();
-  status.textContent = '✓ 已保存';
-  return true;
+  try {
+    const data = await teacherRequest('saveTeacherAnnotations', {
+      submissionId: submission.id, annotations: currentAnnotations, status: nextStatus,
+    });
+    if (generation !== authGeneration) return false;
+    submission.teacher_annotations = data.submission.teacher_annotations;
+    submission.status = data.submission.status;
+    if (currentSub === submission) currentAnnotations = submission.teacher_annotations;
+    allSubmissions = allSubmissions.map(row => String(row.id) === String(submission.id) ? submission : row);
+    updateCounts(); renderInbox();
+    if (currentSub === submission) renderAnnoList();
+    status.textContent = nextStatus === 'returned' ? '✓ 已发回学生' : '✓ 已保存';
+    return true;
+  } catch (error) {
+    if (generation === authGeneration) status.textContent = '保存失败：' + error.message;
+    return false;
+  } finally { buttons.forEach(button => button.disabled = false); }
 }
 
 async function returnToStudent() {
-  if (!currentSub) return;
-  const saved = await saveAnnotations();
-  if (!saved) return;
-  const { data, error } = await sb.from('submissions').update({ status: 'returned' }).eq('id', currentSub.id).select('id').maybeSingle();
-  if (error || !data) { document.getElementById('modalStatus').textContent = '发送失败：没有更新权限'; return; }
-  currentSub.status = 'returned';
-  allSubmissions = allSubmissions.map(s => s.id === currentSub.id ? currentSub : s);
-  updateCounts();
-  renderInbox();
-  document.getElementById('modalStatus').textContent = '✓ 已发回学生';
-  setTimeout(closeModal, 1200);
+  const saved = await saveAnnotations('returned');
+  if (saved) setTimeout(closeModal, 1200);
 }
 
 // ── Analytics ──
@@ -734,7 +758,7 @@ function renderAnalytics() {
   document.getElementById('barChart').innerHTML = sorted.length
     ? sorted.map(([name,count]) => `
         <div class="bar-row">
-          <div class="bar-name">${name}</div>
+          <div class="bar-name">${escapeHtml(name)}</div>
           <div class="bar-wrap">
             <div class="bar-fill" style="width:${count/maxCount*100}%">
               <span>${count}</span>
@@ -760,7 +784,7 @@ function renderAnalytics() {
         const cls = diff > 0 ? 'delta-up' : diff < 0 ? 'delta-down' : 'delta-same';
         const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
         return `<tr>
-          <td>${p.draft1.student_name||'匿名'}</td>
+          <td>${escapeHtml(p.draft1.student_name||'匿名')}</td>
           <td>${s1}/30</td><td>${s2}/30</td>
           <td class="${cls}">${arrow} ${Math.abs(diff)}</td>
           <td>${modeLabel(p.draft1.mode)}</td>
