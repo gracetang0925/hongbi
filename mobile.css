@@ -1,0 +1,52 @@
+/* Global mobile access: the same paper-and-spruce writing desk, in two languages. */
+.access-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 18px;flex-wrap:wrap;font-size:.8rem;}
+.access-actions,.language-switch{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.access-bar button,.share-dialog button,.share-dialog a{min-height:44px;font:inherit;cursor:pointer;}
+.access-bar button{padding:7px 12px;background:var(--hb-card);color:var(--hb-spruce-dark);border:1px solid var(--hb-line-strong);border-radius:999px;}
+.language-switch button{border-color:transparent;background:transparent;}
+.language-switch button[aria-pressed="true"]{background:var(--hb-spruce);color:#fff;}
+.lesson-path{display:flex;gap:8px;list-style:none;margin:0 0 18px;color:#526775;font-size:.85rem;}
+.lesson-path li{flex:1;display:flex;align-items:center;gap:8px;}
+.lesson-path b{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;background:#e9f3ef;color:#24584b;}
+.access-note{font-size:.84rem;line-height:1.65;color:#526775;margin:0 0 18px;}
+.offline-note{padding:12px 14px;background:#fff4d8;border:1px solid #d7bd7d;border-radius:12px;margin-bottom:18px;color:#604a14;}
+.install-help{padding:14px 16px;border-left:3px solid var(--hb-spruce);background:#e9f3ef;margin-bottom:20px;line-height:1.8;font-size:.85rem;}
+.share-dialog{margin:auto;padding:28px;max-width:420px;width:calc(100% - 28px);max-height:90dvh;overflow:auto;border:1px solid #d8cbb8;border-radius:24px;background:#fffdfc;color:#22313a;box-shadow:0 24px 70px #22313a33;}
+.share-dialog::backdrop{background:#22313a99;}
+.share-dialog h2{font-size:1.3rem;color:#24584b;margin:0 36px 8px 0;}
+.share-dialog p{line-height:1.7;font-size:.9rem;}
+.share-dialog .dialog-close{position:absolute;right:12px;top:12px;width:44px;border:0;background:transparent;color:#22313a;font-size:1.5rem;}
+.share-qr{display:block;width:240px;max-width:100%;height:auto;margin:12px auto;}
+.share-link{width:100%;font:inherit;font-size:.8rem;border:1px solid #d8cbb8;background:#faf7f1;border-radius:9px;padding:12px;color:#22313a;margin:10px 0;}
+.share-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.share-actions button,.share-actions a{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid #2f6f5e;border-radius:12px;background:#e9f3ef;color:#24584b;text-decoration:none;}
+.share-status{min-height:1.7em;margin-top:10px;}
+.file-photo-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 14px;border:1px solid #c9ddd4;border-radius:12px;background:#fffdfc;color:#24584b;cursor:pointer;font:inherit;margin:10px 0;}
+.modal-box{max-height:90dvh;overflow:auto;}
+.modal-close{min-width:44px;min-height:44px;}
+.camera-privacy{font-size:.8rem;color:#526775;line-height:1.6;}
+.camera-error{color:#9d352f;}
+[hidden]{display:none!important;}
+.goal-btn b{font-weight:inherit;}
+.mode-tab .tab-title{display:inline;font:inherit;}
+.pwa-completion{min-height:1.6em;color:#24584b;margin:6px 0;font-size:.88rem;}
+button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #315f9e;outline-offset:3px;}
+@media(max-width:620px){
+  .access-bar{align-items:flex-start;}
+  .access-bar button{padding:6px 10px;}
+  .access-actions{gap:4px;}
+  .lesson-path{font-size:.78rem;gap:5px;}
+  .lesson-path li{gap:5px;}
+  .mode-tabs{flex-direction:column;}
+  .mode-tab{width:100%;min-width:0;min-height:70px;}
+  .student-input{min-width:0;}
+  .submit-row{bottom:max(.75rem,env(safe-area-inset-bottom));}
+  .xiaomo-companion{bottom:calc(180px + env(safe-area-inset-bottom));right:10px;width:82px;}
+  .xiaomo-character{width:82px;height:96px;}
+  .xiaomo-bubble{max-width:calc(100vw - 36px);}
+  .xiaomo-controls{gap:4px;}
+  .xiaomo-control{width:44px;height:44px;}
+  .sample-btn{min-height:44px;}
+  .file-photo-btn{width:100%;}
+  .share-dialog{padding:24px 18px;}
+}

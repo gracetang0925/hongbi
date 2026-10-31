@@ -16,6 +16,16 @@ HongBi is designed for Chinese-as-a-second-language learners worldwide—especia
 
 ## 当前 MVP / Current MVP
 
+### 手机扫码访问 / Scan to open
+
+打开手机相机扫描下方二维码，即可在浏览器使用红笔，无需微信账号。支持中英文界面、拍照／相册识别和“添加到桌面”。AI、OCR 与教师批注需要联网；首次加载后可离线打开编辑界面。原有网页入口继续可用。
+
+Scan with your phone camera to open HongBi in a browser. Choose English or Chinese, type or photograph your writing, and optionally add HongBi to your home screen. [Mobile access, installation and offline limits](docs/MOBILE_ACCESS.md).
+
+<img src="assets/hongbi-qr.png" width="220" height="220" alt="Scan to open HongBi / 扫码打开红笔">
+
+[English](https://gracetang0925.github.io/hongbi/?lang=en) · [中文](https://gracetang0925.github.io/hongbi/?lang=zh) · [下载二维码 / Download QR](assets/hongbi-qr.png)
+
 | 已实现 / Implemented | 学习价值 / Learner value |
 |---|---|
 | 输入作文或拍照识别手写稿 / Type or scan handwriting | 保留 OCR 写作入口 / Keeps the handwriting workflow |

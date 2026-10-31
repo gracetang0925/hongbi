@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 import { createContext, runInContext } from 'node:vm';
 import { feedback, record } from './fixtures.js';
 
-function pageContext(file) {
-  const nodes = new Map(), storage = new Map();
+function pageContext(file, initialStorage = {}) {
+  const nodes = new Map(), storage = new Map(Object.entries(initialStorage));
   const element = () => ({ textContent: '', innerHTML: '', value: '', checked: true, hidden: false, disabled: false,
     style: {}, classList: { add() {}, remove() {}, contains() { return false; } }, setAttribute() {}, scrollIntoView() {} });
   const document = { getElementById(id) { if (!nodes.has(id)) nodes.set(id, element()); return nodes.get(id); },
@@ -18,6 +18,17 @@ function pageContext(file) {
   for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) runInContext(script[1], context);
   return { context, nodes, storage, run: code => runInContext(code, context) };
 }
+
+test('reward counters survive but session capabilities never enter browser storage', () => {
+  const page = pageContext('index.html', { hongbiGardenRewardsV1: JSON.stringify({ seeds: 4, water: 2,
+    claimed: ['legacy-private-session:reward'] }) });
+  const session = page.run('SESSION_ID');
+  assert.deepEqual(JSON.parse(page.storage.get('hongbiGardenRewardsV1')), { seeds: 4, water: 2 });
+  assert.equal(page.run("awardLocalReward('seeds',1,'draft:1','reward')"), true);
+  assert.equal(page.run("awardLocalReward('seeds',1,'draft:1','reward')"), false);
+  assert.deepEqual(JSON.parse(page.storage.get('hongbiGardenRewardsV1')), { seeds: 5, water: 2 });
+  assert.ok(!JSON.stringify([...page.storage]).includes(session));
+});
 
 test('practice and teacher annotation HTML escape model/student input', async () => {
   const page = pageContext('index.html');
