@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "HongBi · 红笔华文写作",
+  "short_name": "HongBi 红笔",
+  "description": "Write Chinese, understand bilingual feedback, and revise with Xiao Mo.",
+  "lang": "en",
+  "start_url": "./?source=installed",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf7f1",
+  "theme_color": "#2f6f5e",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "assets/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

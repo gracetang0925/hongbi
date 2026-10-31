@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>华文写作批改工具</title>
+<meta name="theme-color" content="#2f6f5e">
+<meta name="description" content="Write Chinese, understand bilingual feedback, and revise with Xiao Mo. 红笔陪你写、理解、修改。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="HongBi 红笔">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/app-icon-192.png">
 <script src="config.js"></script>
+<script type="module" src="mobile.js"></script>
 <style>
 :root {
   --teal:#0F6E56; --teal-light:#e6f4f1; --teal-dark:#0a5240;
@@ -630,63 +637,87 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}
 }
 </style>
+<link rel="stylesheet" href="mobile.css">
 </head>
 <body>
-<div class="wrapper">
+<main class="wrapper">
+  <nav class="access-bar" aria-label="Language and app access">
+    <div class="language-switch" aria-label="Interface language">
+      <button type="button" data-language="zh" lang="zh-CN" aria-pressed="true">中文</button>
+      <button type="button" data-language="en" lang="en" aria-pressed="false">English</button>
+    </div>
+    <div class="access-actions">
+      <button type="button" id="shareApp"><span data-en="Share QR">分享二维码</span></button>
+      <button type="button" id="installApp" aria-expanded="false" aria-controls="installHelp"><span data-en="Add to home screen">添加到桌面</span></button>
+    </div>
+  </nav>
+  <div id="installHelp" class="install-help" hidden>
+    <p data-en="iPhone / iPad: open in Safari, tap Share, then Add to Home Screen.">iPhone / iPad：在 Safari 打开，点分享，再点“添加到主屏幕”。</p>
+    <p data-en="Android: open in Chrome, then choose Install app or Add to Home screen from its menu. Options vary by browser.">Android：在 Chrome 打开，在菜单中选择“安装应用”或“添加到主屏幕”。具体入口因浏览器而异。</p>
+    <p data-en="You can also keep using HongBi in your browser. No installation is needed.">也可以直接在浏览器使用红笔，无需安装。</p>
+  </div>
+  <p id="offlineNote" class="offline-note" role="status" hidden data-en="You're offline. You can keep writing here. Reconnect for AI feedback and photo recognition; keep this page open to retain your writing.">当前离线，可以继续写作。AI 反馈和照片识别需要联网；请保留此页面以保留文字。</p>
   <div class="header">
-    <h1>红笔 HongBi · 儿童华文写作</h1>
-    <p>小墨陪你发现问题、看懂原因，再亲手把作文写得更好。</p>
+    <h1 data-en="HongBi · Chinese writing">红笔 HongBi · 儿童华文写作</h1>
+    <p data-en="Write a little. Understand why. Make it your own — with Xiao Mo.">小墨陪你发现问题、看懂原因，再亲手把作文写得更好。</p>
   </div>
 
   <div class="garden-bar" aria-label="我的写作菜园">
-    <div class="garden-copy"><span>🌱</span><div><strong>我的写作菜园</strong><small>完成写作得种子，查看拼音得水滴</small></div></div>
+    <div class="garden-copy"><span>🌱</span><div><strong data-en="My writing garden">我的写作菜园</strong><small data-en="Seeds for writing, water for exploring pinyin">完成写作得种子，查看拼音得水滴</small></div></div>
     <div class="garden-stats">
-      <span class="reward-pill">🌰 种子 <b id="seedCount">0</b></span>
-      <span class="reward-pill">💧 水滴 <b id="waterCount">0</b></span>
+      <span class="reward-pill"><span data-en="🌰 Seeds">🌰 种子</span> <b id="seedCount">0</b></span>
+      <span class="reward-pill"><span data-en="💧 Water">💧 水滴</span> <b id="waterCount">0</b></span>
     </div>
   </div>
 
   <div class="learning-goal" aria-label="选择学习目标">
-    <button type="button" class="goal-btn active" id="goal-child" onclick="setLearningGoal('child')" aria-pressed="true">🌱 儿童成长模式<span>不评分，专注理解与修改</span></button>
-    <button type="button" class="goal-btn" id="goal-hsk" onclick="setLearningGoal('hsk')" aria-pressed="false">📝 HSK 备考模式<span>显示 AI 模拟评分与进步</span></button>
+    <button type="button" class="goal-btn active" id="goal-child" onclick="setLearningGoal('child')" aria-pressed="true"><b data-en="🌱 Grow as a writer">🌱 儿童成长模式</b><span data-en="No scores. Understand and revise.">不评分，专注理解与修改</span></button>
+    <button type="button" class="goal-btn" id="goal-hsk" onclick="setLearningGoal('hsk')" aria-pressed="false"><b data-en="📝 HSK practice">📝 HSK 备考模式</b><span data-en="Optional AI practice scores">显示 AI 模拟评分与进步</span></button>
   </div>
 
   <div class="student-bar">
-    <label>👤</label>
-    <input class="student-input" id="studentName" type="text" placeholder="请输入姓名或学号（必填）" />
+    <label for="studentName" data-en="Name / alias">姓名／昵称</label>
+    <input class="student-input" id="studentName" type="text" placeholder="请输入姓名或昵称（必填）" data-placeholder-en="Your name or nickname (required)" maxlength="80" autocomplete="off" />
   </div>
 
   <div class="mode-tabs">
     <button class="mode-tab active-teal" onclick="setMode('ai')" id="tab-ai" aria-pressed="true">
-      <span class="tab-icon">🤖</span>AI 反馈<div class="tab-desc">直接纠错，给出答案</div>
+      <span class="tab-icon">🤖</span><b class="tab-title" data-en="AI feedback">AI 反馈</b><div class="tab-desc" data-en="Suggestions and simple explanations">直接纠错，给出答案</div>
     </button>
     <button class="mode-tab" onclick="setMode('teacher')" id="tab-teacher" aria-pressed="false">
-      <span class="tab-icon">👩‍🏫</span>教师精批 <span class="paid-badge">付费</span><div class="tab-desc">AI 初审后进入教师队列</div>
+      <span class="tab-icon">👩‍🏫</span><b class="tab-title" data-en="Teacher review">教师精批</b> <span class="paid-badge" data-en="Paid">付费</span><div class="tab-desc" data-en="AI feedback, then the teacher queue">AI 初审后进入教师队列</div>
     </button>
     <button class="mode-tab" onclick="setMode('hybrid')" id="tab-hybrid" aria-pressed="false">
-      <span class="tab-icon">🤝</span>人机协同 <span class="paid-badge">付费</span><div class="tab-desc">AI 批改 + 教师深层建议</div>
+      <span class="tab-icon">🤝</span><b class="tab-title" data-en="AI + teacher">人机协同</b> <span class="paid-badge" data-en="Paid">付费</span><div class="tab-desc" data-en="AI suggestions with teacher guidance">AI 批改 + 教师深层建议</div>
     </button>
   </div>
 
+  <ol class="lesson-path" aria-label="Writing steps">
+    <li><b>1</b><span data-en="Write / photo">写／拍照</span></li>
+    <li><b>2</b><span data-en="Understand">看懂反馈</span></li>
+    <li><b>3</b><span data-en="Revise">自己改二稿</span></li>
+  </ol>
+  <p class="access-note" data-en="Use a nickname. Avoid including addresses, school details or contact information in a photo or essay.">可以使用昵称；拍照或写作时，请避开地址、学校详情和联系方式。</p>
   <div class="sample-row">
-    <span class="sample-label">试试样本 →</span>
-    <button class="sample-btn" onclick="loadSample(0)">我的家庭（初级）</button>
-    <button class="sample-btn" onclick="loadSample(1)">环境保护（中级）</button>
-    <button class="sample-btn" onclick="loadSample(2)">城市生活（中高级）</button>
+    <span class="sample-label" data-en="Try an example →">试试样本 →</span>
+    <button class="sample-btn" onclick="loadSample(0)" data-en="My family · beginner">我的家庭（初级）</button>
+    <button class="sample-btn" onclick="loadSample(1)" data-en="Our environment · intermediate">环境保护（中级）</button>
+    <button class="sample-btn" onclick="loadSample(2)" data-en="City life · upper intermediate">城市生活（中高级）</button>
   </div>
 
-  <label class="memory-choice"><input type="checkbox" id="useMemory" checked> 参考本次会话最近的问题，让练习更贴合我<br><small>关闭后本次不读取历史；“重新开始”会开启新会话。</small></label>
+  <label class="memory-choice"><input type="checkbox" id="useMemory" checked> <span data-en="Use recent feedback from this session to guide my practice">参考本次会话最近的问题，让练习更贴合我</span><br><small data-en="Switch off to skip history. Restart or reload to begin a new session.">关闭后本次不读取历史；“重新开始”或刷新会开启新会话。</small></label>
   <div class="input-wrap">
-    <div class="input-label"><span>粘贴或输入华文作文</span><span id="charCount">0 字</span></div>
-    <textarea id="essayInput" placeholder="在此输入华文作文……&#10;&#10;或点右下角「📷 扫描作文」拍照识别手写稿。" oninput="updateCount()"></textarea>
-    <button class="camera-btn" onclick="openCamera()">📷 扫描作文</button>
+    <div class="input-label"><span id="essayLabel" data-en="Type or paste your Chinese writing">粘贴或输入华文作文</span><span id="charCount">0 字</span></div>
+    <textarea id="essayInput" aria-labelledby="essayLabel" maxlength="6000" data-placeholder-en="Write in Chinese here, or choose Scan writing to take or select a photo." placeholder="在此输入华文作文……&#10;&#10;或点右下角「📷 扫描作文」拍照识别手写稿。" oninput="updateCount()"></textarea>
+    <button class="camera-btn" onclick="openCamera()"><span data-en="📷 Scan writing">📷 扫描作文</span></button>
   </div>
 
-  <div class="error-msg" id="errorMsg"></div>
+  <div class="error-msg" id="errorMsg" role="alert"></div>
+  <p class="pwa-completion" id="feedbackStatus" role="status" aria-live="polite"></p>
 
   <div class="submit-row">
-    <button class="submit-btn" id="submitBtn" onclick="getFeedback(1)"><span id="btnText">获取反馈</span></button>
-    <button class="clear-btn" onclick="clearAll()">清除</button>
+    <button class="submit-btn" id="submitBtn" onclick="getFeedback(1)"><span id="btnText" data-en="Get feedback">获取反馈</span></button>
+    <button class="clear-btn" onclick="clearAll()"><span data-en="Clear">清除</span></button>
   </div>
 
   <div class="loading" id="loading">
@@ -703,10 +734,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
     <div class="result-content" id="resultContent"></div>
     <div class="score-row" id="scoreRow"></div>
     <div class="action-row">
-      <button class="action-pill green" onclick="showDraft2()">📝 提交二稿</button>
-      <button class="action-pill" onclick="checkTeacherFeedback()">🔄 查看教师批注</button>
-      <button class="action-pill" onclick="copyResult('resultContent')">📋 复制</button>
-      <button class="action-pill" onclick="clearAll()">重新开始</button>
+      <button class="action-pill green" onclick="showDraft2()"><span data-en="📝 Revise draft 2">📝 提交二稿</span></button>
+      <button class="action-pill" onclick="checkTeacherFeedback()"><span data-en="🔄 Teacher notes">🔄 查看教师批注</span></button>
+      <button class="action-pill" onclick="copyResult('resultContent')"><span data-en="📋 Copy">📋 复制</span></button>
+      <button class="action-pill" onclick="clearAll()"><span data-en="Start again">重新开始</span></button>
     </div>
   </div>
 
@@ -714,19 +745,19 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
   <div class="teacher-section" id="teacherSection">
     <div class="teacher-header">
       <span>👩‍🏫</span>
-      <strong>教师深层批注</strong>
-      <span style="font-size:.8rem;color:var(--gold);margin-left:.3rem;">老师已为你批改</span>
+      <strong><span data-en="Teacher notes">教师深层批注</span></strong>
+      <span style="font-size:.8rem;color:var(--gold);margin-left:.3rem;"><span data-en="Your teacher has reviewed your writing">老师已为你批改</span></span>
     </div>
     <div class="teacher-body" id="teacherBody"></div>
   </div>
 
   <!-- Draft 2 -->
   <div class="draft2-section" id="draft2Section">
-    <div class="draft2-header"><span>📝</span><span>提交二稿 — 根据反馈修改后在此输入</span></div>
+    <div class="draft2-header"><span>📝</span><span data-en="Draft 2 — change only what you understand">提交二稿 — 只改你理解的地方，不用重写整篇</span></div>
     <div class="draft2-body">
-      <div class="input-label"><span>二稿内容</span><span id="charCount2">0 字</span></div>
-      <textarea id="essay2Input" placeholder="在此输入修改后的作文…" oninput="updateCount2()"></textarea>
-      <button class="draft2-submit" id="draft2Btn" onclick="getFeedback(2)">获取二稿反馈</button>
+      <div class="input-label"><span><span data-en="Your second draft">二稿内容</span></span><span id="charCount2">0 字</span></div>
+      <textarea id="essay2Input" aria-label="Your revised Chinese writing / 修改后的作文" maxlength="6000" data-placeholder-en="Change only what you understand. You do not need to rewrite everything." placeholder="只改你理解的地方，不用重写整篇。" oninput="updateCount2()"></textarea>
+      <button class="draft2-submit" id="draft2Btn" onclick="getFeedback(2)"><span data-en="Get draft 2 feedback">获取二稿反馈</span></button>
     </div>
   </div>
 
@@ -743,14 +774,14 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
   <!-- Comparison -->
   <div class="comparison" id="comparison">
     <div class="comp-box">
-      <div class="comp-title">🌿 一稿 vs 二稿 · 看见自己的成长</div>
+      <div class="comp-title"><span data-en="🌿 Draft 1 → draft 2 · Your writing is growing">🌿 一稿 vs 二稿 · 看见自己的成长</span></div>
       <div id="compBars"></div>
       <div class="comp-summary" id="compSummary"></div>
     </div>
   </div>
 
-  <div class="footer">华文写作批改工具 · Grace Tang · 2026</div>
-</div>
+  <div class="footer">HongBi · 红笔 · Grace Tang · 2026</div>
+</main>
 
 <div class="reward-toast" id="rewardToast" role="status" aria-live="polite"></div>
 
@@ -768,22 +799,45 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
 </aside>
 
 <!-- Camera modal -->
-<div class="modal-overlay" id="cameraModal">
+<div class="modal-overlay" id="cameraModal" role="dialog" aria-modal="true" aria-labelledby="cameraTitle" tabindex="-1">
   <div class="modal-box">
-    <div class="modal-title">📷 扫描作文<button class="modal-close" onclick="closeCamera()">✕</button></div>
+    <div class="modal-title"><span id="cameraTitle" data-en="Scan your writing">扫描作文</span><button aria-label="Close / 关闭" class="modal-close" onclick="closeCamera()">✕</button></div>
     <video id="cameraVideo" autoplay playsinline style="width:100%;border-radius:12px;background:#000;display:block;"></video>
     <canvas id="cameraCanvas" style="display:none;"></canvas>
-    <img id="cameraPreview" style="display:none;width:100%;border-radius:12px;margin-top:.8rem;" />
+    <img alt="Selected writing photo / 已选作文照片" id="cameraPreview" style="display:none;width:100%;border-radius:12px;margin-top:.8rem;" />
     <div class="cam-btns" id="camBtns">
       <button class="cam-btn cam-snap" onclick="snapPhoto()">📸 拍照</button>
       <button class="cam-btn cam-cancel" onclick="closeCamera()">取消</button>
     </div>
-    <div class="cam-loading" id="camLoading">🔍 正在识别文字，请稍候…</div>
-    <div class="cam-status" id="camStatus">正在启动摄像头…</div>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="selectPhoto(this.files[0]);this.value=''" hidden>
+    <button type="button" class="file-photo-btn" onclick="document.getElementById('photoInput').click()"><span data-en="Take a phone photo">手机拍照</span></button>
+    <input type="file" id="photoLibraryInput" accept="image/*" onchange="selectPhoto(this.files[0]);this.value=''" hidden>
+    <button type="button" class="file-photo-btn" onclick="document.getElementById('photoLibraryInput').click()"><span data-en="Choose a photo">选择照片</span></button>
+    <p class="camera-privacy" data-en="Your photo is sent for text recognition only after you choose Use this photo. Check the recognized text before submitting.">点击“使用这张”后才会发送照片识别。识别完成后，请检查文字再提交。</p>
+    <div class="cam-loading" id="camLoading" role="status">🔍 正在识别文字，请稍候…</div>
+    <div class="cam-status" id="camStatus" role="status">正在启动摄像头…</div>
   </div>
 </div>
 
+<dialog class="share-dialog" id="shareDialog" aria-labelledby="shareTitle">
+  <button type="button" class="dialog-close" id="closeShare" aria-label="Close / 关闭">×</button>
+  <h2 id="shareTitle" data-en="A little writing, anywhere">扫一扫，一起写华文</h2>
+  <p data-en="Open your phone camera, scan this QR code, then tap the link. HongBi opens in your browser — no WeChat account needed.">打开手机相机，扫描二维码并点击链接，即可在浏览器使用红笔，无需微信账号。</p>
+  <img class="share-qr" src="assets/hongbi-qr.png" width="360" height="360" alt="QR code linking to the public HongBi app / 红笔公开网址二维码">
+  <label for="shareLink" data-en="Public app link">红笔公开网址</label>
+  <input class="share-link" id="shareLink" type="url" readonly>
+  <div class="share-actions">
+    <button type="button" id="copyShareLink" data-en="Copy link">复制链接</button>
+    <a href="assets/hongbi-qr.png" download="hongbi-qr.png" data-en="Save QR">保存二维码</a>
+    <button type="button" id="nativeShare" data-en="Share…">分享…</button>
+  </div>
+  <p class="share-status" id="shareStatus" role="status"></p>
+</dialog>
 <script>
+function ui(zh, en) { return document.documentElement?.lang === 'en' ? en : zh; }
+function bilingual(zh, en) {
+  return `<span data-zh="${escapeHtml(zh)}" data-en="${escapeHtml(en)}">${escapeHtml(ui(zh, en))}</span>`;
+}
 const WORKER_URL = globalThis.HONGBI_CONFIG.workerUrl;
 let SESSION_ID = crypto.randomUUID();
 let sessionStudentName = null;
@@ -796,9 +850,9 @@ const SAMPLES = [
 ];
 
 const MODES = {
-  ai:      { label:'🐼 小墨 AI 反馈', badge:'badge-teal' },
-  teacher: { label:'👩‍🏫 教师精批 · 付费', badge:'badge-gold' },
-  hybrid:  { label:'🤝 人机协同 · 付费', badge:'badge-purple' },
+  ai:      { label:'🐼 小墨 AI 反馈', labelEn:'🐼 Xiao Mo · AI feedback', badge:'badge-teal' },
+  teacher: { label:'👩‍🏫 教师精批 · 付费', labelEn:'👩‍🏫 Teacher review · Paid', badge:'badge-gold' },
+  hybrid:  { label:'🤝 人机协同 · 付费', labelEn:'🤝 AI + teacher · Paid', badge:'badge-purple' },
 };
 
 let currentMode = 'ai';
@@ -812,6 +866,8 @@ let currentSubId = null;
 let rewardToastTimer = null;
 let xiaomoSpeechText = '嗨，我是小墨。写完以后，我会陪你一起找亮点、看问题。';
 let xiaomoBubbleOpen = true;
+let xiaomoDismissed = false;
+try { xiaomoDismissed = localStorage.getItem('hongbiXiaomoDismissedV1') === 'true'; } catch { /* Optional UI preference. */ }
 
 const REWARD_KEY = 'hongbiGardenRewardsV1';
 let gardenRewards = loadGardenRewards();
@@ -822,7 +878,9 @@ function loadGardenRewards() {
     return {
       seeds: Number.isFinite(saved.seeds) ? saved.seeds : 0,
       water: Number.isFinite(saved.water) ? saved.water : 0,
-      claimed: Array.isArray(saved.claimed) ? saved.claimed.slice(-200) : [],
+      // Claims are page-local; they contain session capabilities and must not
+      // survive in browser storage. Keep only the existing reward counters.
+      claimed: [],
     };
   } catch {
     return { seeds:0, water:0, claimed:[] };
@@ -830,7 +888,7 @@ function loadGardenRewards() {
 }
 
 function saveGardenRewards() {
-  try { localStorage.setItem(REWARD_KEY, JSON.stringify(gardenRewards)); } catch {}
+  try { localStorage.setItem(REWARD_KEY, JSON.stringify({ seeds: gardenRewards.seeds, water: gardenRewards.water })); } catch {}
 }
 
 function updateGardenUI() {
@@ -846,17 +904,22 @@ function showRewardToast(message) {
   rewardToastTimer = setTimeout(()=>toast.classList.remove('visible'), 2600);
 }
 
-function toggleXiaomo(force) {
+function toggleXiaomo(force, remember = true) {
+  if (!remember && force === true && xiaomoDismissed) return;
   const bubble = document.getElementById('xiaomoBubble');
   xiaomoBubbleOpen = typeof force === 'boolean' ? force : !xiaomoBubbleOpen;
   bubble.hidden = !xiaomoBubbleOpen;
+  if (remember) {
+    xiaomoDismissed = !xiaomoBubbleOpen;
+    try { localStorage.setItem('hongbiXiaomoDismissedV1', String(xiaomoDismissed)); } catch { /* Optional preference. */ }
+  }
 }
 
 function setXiaomoMessage(title, message, speech, celebrate = false) {
   document.getElementById('xiaomoBubbleTitle').textContent = title;
   document.getElementById('xiaomoBubbleText').textContent = message;
   xiaomoSpeechText = speech || `${title}。${message}`;
-  toggleXiaomo(true);
+  toggleXiaomo(true, false);
   const companion = document.getElementById('xiaomoCompanion');
   if (celebrate) {
     companion.classList.remove('celebrate');
@@ -888,17 +951,18 @@ function speakXiaomo() {
 function updateXiaomoFromFeedback(feedback, draft) {
   const firstIssue = feedback?.micro?.[0];
   if (firstIssue) {
-    const hint = firstIssue.pet_hint || `“${firstIssue.original}”这里可以再自然一点。`;
+    const chineseHint = firstIssue.pet_hint || `“${firstIssue.original}”这里可以再自然一点。`;
+    const hint = ui(chineseHint, firstIssue.explanation_en || 'Try one small change to your sentence.');
     const reason = firstIssue.explanation_zh || '';
     setXiaomoMessage(
-      draft === 2 ? '二稿有新进步！' : '我发现一个可以变好的地方',
+      draft === 2 ? ui('二稿有新进步！','You revised your writing!') : ui('我发现一个可以变好的地方','One thing to try next'),
       hint,
-      `${hint}${reason ? `。原因是：${reason}` : ''}`,
+      `${chineseHint}${reason ? `。原因是：${reason}` : ''}`,
       true
     );
   } else {
     const encouragement = feedback?.macro?.encouragement || '这次表达很清楚，继续保持！';
-    setXiaomoMessage('写得很棒！', encouragement, encouragement, true);
+    setXiaomoMessage(ui('写得很棒！','Keep writing!'), ui(encouragement, feedback?.macro?.strengths_en || 'You shared your ideas. Keep exploring.'), encouragement, true);
   }
 }
 
@@ -918,8 +982,8 @@ function togglePinyin(button, rewardId) {
   const willOpen = panel.hidden;
   panel.hidden = !willOpen;
   button.setAttribute('aria-expanded', String(willOpen));
-  button.textContent = willOpen ? '收起拼音' : '🔤 显示拼音';
-  if (willOpen) awardLocalReward('water', 1, `pinyin:${rewardId}`, '💧 你认真查看了拼音，获得 1 滴水！');
+  button.textContent = willOpen ? ui('收起拼音','Hide pinyin') : ui('🔤 显示拼音','🔤 Show pinyin');
+  if (willOpen) awardLocalReward('water', 1, `pinyin:${rewardId}`, ui('💧 你认真查看了拼音，获得 1 滴水！','💧 You explored the pinyin — one drop of water!'));
 }
 
 function setLearningGoal(goal) {
@@ -937,16 +1001,16 @@ function getScores(feedback) {
   const scores = feedback?.macro?.scores;
   if (!scores) return null;
   return [
-    { label:'准确性', val:scores.accuracy },
-    { label:'流利度', val:scores.fluency },
-    { label:'内容', val:scores.content },
+    { label:ui('准确性','Accuracy'), val:scores.accuracy },
+    { label:ui('流利度','Fluency'), val:scores.fluency },
+    { label:ui('内容','Content'), val:scores.content },
   ];
 }
 
 function renderScoreCards(feedback) {
   const scores = getScores(feedback);
   if (!scores) return '';
-  return `<div class="score-note">HSK 备考参考：这是 AI 生成的模拟练习评分，用来观察修改方向，不是官方 HSK 成绩。</div>${scores.map(score => `<div class="score-chip"><div class="score-label">${score.label}</div><div class="score-val">${score.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('')}`;
+  return `<div class="score-note">${bilingual('HSK 备考参考：这是 AI 生成的模拟练习评分，用来观察修改方向，不是官方 HSK 成绩。','AI practice scores — for revision only, not official HSK results.')}</div>${scores.map(score => `<div class="score-chip"><div class="score-label">${score.label}</div><div class="score-val">${score.val}<span style="font-size:13px;font-weight:400;">/10</span></div></div>`).join('')}`;
 }
 
 function updateGoalResults() {
@@ -974,17 +1038,17 @@ function setMode(m) {
   activeTab.classList.add(map[m]);
   activeTab.setAttribute('aria-pressed', 'true');
   if (m === 'teacher' || m === 'hybrid') {
-    setXiaomoMessage('这是付费服务', m === 'teacher' ? 'AI 初审后，作文会进入认证教师的批改队列。' : '你会先收到 AI 反馈，再等待认证教师补充深层建议。');
+    setXiaomoMessage(ui('这是付费服务','Teacher review · paid service'), m === 'teacher' ? ui('AI 初审后，作文会进入认证教师的批改队列。','AI feedback comes first, then your writing joins the teacher queue.') : ui('你会先收到 AI 反馈，再等待认证教师补充深层建议。','Read your AI feedback while you wait for teacher notes.'));
   } else {
-    setXiaomoMessage('小墨 AI 模式', '我会马上帮你找亮点、解释问题，儿童成长模式不显示总分。');
+    setXiaomoMessage(ui('小墨 AI 模式','Xiao Mo · AI feedback'), ui('我会马上帮你找亮点、解释问题，儿童成长模式不显示总分。','Find what works, understand a suggestion, then revise. Child mode has no score.'));
   }
 }
 function loadSample(i) { document.getElementById('essayInput').value = SAMPLES[i]; updateCount(); }
-function updateCount()  { document.getElementById('charCount').textContent  = document.getElementById('essayInput').value.length + ' 字'; }
-function updateCount2() { document.getElementById('charCount2').textContent = document.getElementById('essay2Input').value.length + ' 字'; }
+function updateCount()  { document.getElementById('charCount').textContent  = document.getElementById('essayInput').value.length + ui(' 字', ' characters'); }
+function updateCount2() { document.getElementById('charCount2').textContent = document.getElementById('essay2Input').value.length + ui(' 字', ' characters'); }
 function showError(m)   { const e=document.getElementById('errorMsg'); e.textContent=m; e.style.display='block'; }
 function hideError()    { document.getElementById('errorMsg').style.display='none'; }
-function showDraft2()   { document.getElementById('draft2Section').classList.add('visible'); document.getElementById('draft2Section').scrollIntoView({behavior:'smooth'}); }
+function showDraft2()   { document.getElementById('draft2Section').classList.add('visible'); document.getElementById('draft2Section').scrollIntoView({behavior:'smooth'}); document.getElementById('essay2Input').focus?.({preventScroll:true}); }
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -995,17 +1059,17 @@ function escapeHtml(value) {
 function renderPractice(practice, draft) {
   if (!practice) return '';
   return `<section class="practice-card">
-    <h3>🐼 小墨陪你练一句 · ${escapeHtml(practice.focus)}</h3>
+    <h3>${bilingual('🐼 小墨陪你练一句','🐼 Try one sentence')} · ${escapeHtml(practice.focus)}</h3>
     <p>${escapeHtml(practice.question_zh)}</p><p lang="en">${escapeHtml(practice.question_en)}</p>
-    <label for="practiceAnswer${draft}">先写下你的尝试</label>
-    <textarea id="practiceAnswer${draft}" maxlength="1000" placeholder="试着写一句，答案只留在当前页面。"></textarea>
+    <label for="practiceAnswer${draft}">${bilingual('先写下你的尝试','Your turn — try one sentence')}</label>
+    <textarea id="practiceAnswer${draft}" maxlength="1000" data-placeholder-en="Try one sentence. Your answer stays on this page." placeholder="试着写一句，答案只留在当前页面。"></textarea>
     <details><summary>需要一点提示 / Hint</summary><p>${escapeHtml(practice.hint_zh)}</p><p lang="en">${escapeHtml(practice.hint_en)}</p></details>
-    <button type="button" class="action-pill green" onclick="showPracticeExample(this,${draft})">对照参考写法</button>
+    <button type="button" class="action-pill green" onclick="showPracticeExample(this,${draft})">${bilingual('对照参考写法','Compare with an example')}</button>
     <div class="practice-status" role="status"></div>
-    <div class="practice-example" hidden><strong>一种参考写法</strong><p>${escapeHtml(practice.sample_answer)}</p>
+    <div class="practice-example" hidden><strong>${bilingual('一种参考写法','One possible answer')}</strong><p>${escapeHtml(practice.sample_answer)}</p>
       <p>${escapeHtml(practice.explanation_zh)}</p><p lang="en">${escapeHtml(practice.explanation_en)}</p>
-      <p class="practice-note">这是一种参考写法，不是自动评分。想想你的句子表达了什么，再把练过的表达用到二稿里。</p>
-      <button type="button" class="action-pill green" onclick="showDraft2()">把练习用到二稿</button>
+      <p class="practice-note">${bilingual('这是一种参考写法，不是自动评分。想想你的句子表达了什么，再把练过的表达用到二稿里。','This is an example, not a grade. Think about your own sentence, then use what you practised in draft 2.')}</p>
+      <button type="button" class="action-pill green" onclick="showDraft2()">${bilingual('把练习用到二稿','Use this in draft 2')}</button>
     </div>
   </section>`;
 }
@@ -1013,7 +1077,7 @@ function renderPractice(practice, draft) {
 function showPracticeExample(button, draft) {
   const card = button.closest('.practice-card');
   if (!document.getElementById('practiceAnswer' + draft).value.trim()) {
-    card.querySelector('.practice-status').textContent = '先试着写一句，再来对照。也可以先打开提示。';
+    card.querySelector('.practice-status').textContent = ui('先试着写一句，再来对照。也可以先打开提示。','Try a sentence first, or open the hint for a little help.');
     return;
   }
   card.querySelector('.practice-status').textContent = '';
@@ -1038,20 +1102,20 @@ function renderFeedback(feedback, draft) {
         return `<article class="error-card">
           <div class="error-card-head"><span class="error-number">${index + 1}</span><span class="error-type">${escapeHtml(item.type)}</span><span class="error-type-en" lang="en">${escapeHtml(typeEn)}</span></div>
           <div class="correction-row">
-            <div class="correction-box"><small>你的原文</small><p>${escapeHtml(item.original)}</p></div>
+            <div class="correction-box"><small>${bilingual('你的原文','Your sentence')}</small><p>${escapeHtml(item.original)}</p></div>
             <span class="correction-arrow">→</span>
-            <div class="correction-box corrected"><small>可以这样写</small><p>${escapeHtml(item.correction)}</p></div>
+            <div class="correction-box corrected"><small>${bilingual('可以这样写','Try this')}</small><p>${escapeHtml(item.correction)}</p></div>
           </div>
-          <div class="reason-card"><b>为什么？</b><div>${escapeHtml(explanationZh)}</div><div class="reason-en" lang="en"><b>Why?</b> ${escapeHtml(explanationEn)}</div></div>
+          <div class="reason-card"><b>${bilingual('为什么？','Why?')}</b><div>${escapeHtml(explanationZh)}</div><div class="reason-en" lang="en"><b>Why?</b> ${escapeHtml(explanationEn)}</div></div>
           <div class="pet-tip"><span>🐼</span><span>${escapeHtml(petHint)}</span></div>
-          <button type="button" class="pinyin-toggle" aria-expanded="false" onclick="togglePinyin(this,'${draft}-${index}')">🔤 显示拼音</button>
+          <button type="button" class="pinyin-toggle" aria-expanded="false" onclick="togglePinyin(this,'${draft}-${index}')">${bilingual('🔤 显示拼音','🔤 Show pinyin')}</button>
           <div class="pinyin-panel" hidden><b>Pinyin</b> · ${escapeHtml(pinyin)}</div>
         </article>`;
       }).join('')}</div>`
     : '<div class="no-errors">🌟 小墨没有发现需要优先修改的语言问题。继续保持清楚、自然的表达！</div>';
 
   return `<section>
-      <div class="pet-summary"><div class="pet-avatar"><img src="assets/xiaomo-panda.png" alt="" style="width:100%;height:100%;object-fit:contain;"></div><div><strong>小墨读完啦！</strong><p>${escapeHtml(macro.summary)}</p><p>${escapeHtml(macro.encouragement || '你已经完成了很重要的一步，我们一起看看怎样写得更清楚。')}</p></div></div>
+      <div class="pet-summary"><div class="pet-avatar"><img src="assets/xiaomo-panda.png" alt="" style="width:100%;height:100%;object-fit:contain;"></div><div><strong>${bilingual('小墨读完啦！','Xiao Mo has read your writing!')}</strong><p>${escapeHtml(macro.summary)}</p><p>${escapeHtml(macro.encouragement || '你已经完成了很重要的一步，我们一起看看怎样写得更清楚。')}</p></div></div>
       <h3>写得好的地方 · What works well</h3>
       <div class="strength-card"><strong>✓ ${escapeHtml(macro.strengths)}</strong><span class="strength-en" lang="en">${escapeHtml(macro.strengths_en || 'You communicated your idea clearly.')}</span></div>
       <h3>文章整体 · The big picture</h3>
@@ -1064,11 +1128,12 @@ async function getFeedback(draft) {
   if (feedbackPending) return;
   const essay = draft===1 ? document.getElementById('essayInput').value.trim() : document.getElementById('essay2Input').value.trim();
   const studentName = document.getElementById('studentName').value.trim();
-  if (!studentName) { showError('请先填写姓名或学号。'); return; }
-  if (!essay)       { showError('请先输入作文内容。'); return; }
-  if (essay.length > 6000) { showError('作文请控制在6000字以内。'); return; }
-  if (essay.length < 20) { showError('作文太短，请输入至少20个字。'); return; }
+  if (!studentName) { showError(ui('请先填写姓名或昵称。','Please enter a name or nickname first.')); return; }
+  if (!essay)       { showError(ui('请先输入作文内容。','Please write or scan your Chinese text first.')); return; }
+  if (essay.length > 6000) { showError(ui('作文请控制在6000字以内。','Please use no more than 6,000 characters.')); return; }
+  if (essay.length < 20) { showError(ui('作文太短，请输入至少20个字。','Please write at least 20 characters.')); return; }
   hideError();
+  document.getElementById('feedbackStatus').textContent = '';
   if (sessionStudentName !== null && sessionStudentName !== studentName) {
     clearAll();
     document.getElementById(draft === 1 ? 'essayInput' : 'essay2Input').value = essay;
@@ -1082,10 +1147,11 @@ async function getFeedback(draft) {
   const btnEl     = document.getElementById(draft===1?'submitBtn':'draft2Btn');
   const btnTextEl = document.getElementById(draft===1?'btnText':null);
   loadingEl.classList.add('visible');
+  document.getElementById('loadingText').textContent = ui('正在阅读作文…','Reading your writing…');
   btnEl.disabled = true;
-  if (btnTextEl) btnTextEl.textContent = '批改中…';
+  if (btnTextEl) { btnTextEl.removeAttribute?.('data-en'); btnTextEl.removeAttribute?.('data-zh'); btnTextEl.textContent = ui('批改中…', 'Reading your writing…'); }
 
-  const msgs = ['正在仔细阅读作文…','分析语法与用词…','整理批改意见…','即将完成…'];
+  const msgs = [ui('正在仔细阅读作文…','Reading your writing…'),ui('分析语法与用词…','Looking at words and sentences…'),ui('整理批改意见…','Preparing your feedback…'),ui('即将完成…','Still working — please keep this page open…')];
   let li=0;
   const t = setInterval(()=>{ document.getElementById('loadingText').textContent=msgs[li++%msgs.length]; },1800);
 
@@ -1103,19 +1169,20 @@ async function getFeedback(draft) {
     if (!res.ok || data.error) throw new Error(data.error?.message || '请求失败，请重试。');
     if (!data.feedback?.macro || !Array.isArray(data.feedback?.micro)) throw new Error('反馈格式无效，请重试。');
     const feedback = data.feedback;
+    document.getElementById('feedbackStatus').textContent = ui('反馈已完成，可以先看亮点，再试着改一句。','Feedback is ready. Start with what worked, then try one revision.');
     loadingEl.classList.remove('visible');
 
     if (draft===1) {
       submittedMode = requestMode;
       draft1Feedback = feedback;
       const badge = document.getElementById('modeBadge');
-      badge.textContent = mode.label; badge.className = 'mode-badge ' + mode.badge;
-      document.getElementById('resultMeta').textContent = `共${essay.length}字`;
+      badge.textContent = ui(mode.label,mode.labelEn); badge.setAttribute('data-zh',mode.label); badge.setAttribute('data-en',mode.labelEn); badge.className = 'mode-badge ' + mode.badge;
+      document.getElementById('resultMeta').textContent = ui(`共${essay.length}字`,`${essay.length} characters`);
       document.getElementById('resultContent').innerHTML = renderFeedback(feedback, draft);
       document.getElementById('resultSection').classList.add('visible');
       updateGoalResults();
       updateXiaomoFromFeedback(feedback, draft);
-      awardLocalReward('seeds', 1, 'draft:1', '🌰 完成一稿，获得 1 颗写作种子！');
+      awardLocalReward('seeds', 1, 'draft:1', ui('🌰 完成一稿，获得 1 颗写作种子！','🌰 First draft complete — one seed for your garden!'));
       if (data.storage?.teacherQueued && (requestMode === 'teacher' || requestMode === 'hybrid')) {
         setTimeout(()=>setXiaomoMessage('已进入教师队列', '你可以先根据 AI 提示修改；老师发回后，点击“查看教师批注”。', '作文已经进入教师队列。你可以先根据人工智能提示修改；老师发回后，点击查看教师批注。'), 1900);
       }
@@ -1123,27 +1190,27 @@ async function getFeedback(draft) {
     } else {
       draft2Feedback = feedback;
       const badge2 = document.getElementById('modeBadge2');
-      badge2.textContent = mode.label+'（二稿）'; badge2.className = 'mode-badge '+mode.badge;
-      document.getElementById('resultMeta2').textContent = `共${essay.length}字`;
+      badge2.textContent = ui(mode.label+'（二稿）',mode.labelEn+' · Draft 2'); badge2.setAttribute('data-zh',mode.label+'（二稿）'); badge2.setAttribute('data-en',mode.labelEn+' · Draft 2'); badge2.className = 'mode-badge '+mode.badge;
+      document.getElementById('resultMeta2').textContent = ui(`共${essay.length}字`,`${essay.length} characters`);
       document.getElementById('resultContent2').innerHTML = renderFeedback(feedback, draft);
       document.getElementById('result2Section').classList.add('visible');
       updateGoalResults();
       updateXiaomoFromFeedback(feedback, draft);
-      awardLocalReward('water', 2, 'draft:2', '💧 完成二稿，获得 2 滴水，菜苗长大了！');
+      awardLocalReward('water', 2, 'draft:2', ui('💧 完成二稿，获得 2 滴水，菜苗长大了！','💧 Second draft complete — your garden is growing!'));
       document.getElementById('result2Section').scrollIntoView({behavior:'smooth',block:'start'});
     }
     if (data.storage && !data.storage.saved) {
-      showError('AI 反馈已完成，但作文未能保存；如选择教师服务，本次尚未进入教师队列。请稍后重试。');
+      showError(ui('AI 反馈已完成，但作文未能保存；如选择教师服务，本次尚未进入教师队列。请稍后重试。','Your AI feedback is ready, but this submission was not saved or queued for a teacher. Please try again later.'));
     }
   } catch(err) {
     clearInterval(t);
     loadingEl.classList.remove('visible');
-    showError('错误：'+err.message);
+    showError(ui('暂时未能获取反馈，作文仍保留在输入框中。请稍后重新提交。详情：','Feedback is unavailable. Your writing is still here; please try again. Details: ')+err.message);
   }
   feedbackPending = false;
   document.getElementById('studentName').disabled = false;
   btnEl.disabled = false;
-  if (btnTextEl) btnTextEl.textContent = '获取反馈';
+  if (btnTextEl) { btnTextEl.textContent = ui('获取反馈', 'Get feedback'); btnTextEl.setAttribute('data-en','Get feedback'); btnTextEl.setAttribute('data-zh','获取反馈'); }
 }
 
 function showGrowthComparison(firstFeedback, secondFeedback) {
@@ -1183,9 +1250,9 @@ function showScoreComparison(firstFeedback, secondFeedback) {
 // Check teacher feedback
 async function checkTeacherFeedback() {
   const studentName = document.getElementById('studentName').value.trim();
-  if (!studentName) { alert('请先填写姓名。'); return; }
+  if (!studentName) { alert(ui('请先填写姓名。','Please enter a name or nickname.')); return; }
   if (!submittedMode || submittedMode === 'ai') {
-    setXiaomoMessage('教师批注是付费服务', '请在新作文开始前选择“教师精批”或“人机协同”，提交后才会进入教师队列。');
+    setXiaomoMessage(ui('教师批注是付费服务','Teacher notes are a paid service'), ui('请在新作文开始前选择“教师精批”或“人机协同”，提交后才会进入教师队列。','Choose Teacher review or AI + teacher before submitting a new piece of writing.'));
     return;
   }
   try {
@@ -1204,13 +1271,13 @@ async function checkTeacherFeedback() {
       document.getElementById('teacherSection').classList.add('visible');
       document.getElementById('teacherSection').scrollIntoView({behavior:'smooth'});
     } else {
-      alert('老师还未批注，请稍后再查看。');
+      alert(ui('老师还未批注，请稍后再查看。','Your teacher has not returned notes yet. Please check again later.'));
     }
-  } catch(e) { alert('查询失败，请稍后重试。'); }
+  } catch(e) { alert(ui('查询失败，请稍后重试。','Could not load teacher notes. Please try again.')); }
 }
 
 function copyResult(id) {
-  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>alert('已复制！'));
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>alert(ui('已复制！','Copied!')));
 }
 
 function clearAll() {
@@ -1225,83 +1292,162 @@ function clearAll() {
     document.getElementById(id).classList.remove('visible');
   });
   document.getElementById('loading').classList.remove('visible');
+  document.getElementById('feedbackStatus').textContent = '';
   draft1Feedback=null;
   draft2Feedback=null;
   submittedMode=null;
   updateGoalResults();
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-  setXiaomoMessage('准备好再开始', '写完以后，我会陪你一起找亮点、看问题。');
+  setXiaomoMessage(ui('准备好再开始','Ready when you are'), ui('写完以后，我会陪你一起找亮点、看问题。','Write a little. Then we can look at what works and what to try next.'));
 }
 
-// ── Camera ──
-async function openCamera() {
-  document.getElementById('cameraModal').classList.add('visible');
-  document.getElementById('cameraPreview').style.display='none';
-  document.getElementById('cameraVideo').style.display='block';
-  document.getElementById('camStatus').textContent='正在启动摄像头…';
-  document.getElementById('camBtns').innerHTML=`<button class="cam-btn cam-snap" onclick="snapPhoto()">📸 拍照</button><button class="cam-btn cam-cancel" onclick="closeCamera()">取消</button>`;
+// Camera/photo operations are scoped to the currently open dialog. A late
+// getUserMedia, decode or OCR response must not reopen it or overwrite writing.
+let cameraGeneration = 0;
+let ocrController = null;
+let cameraOpener = null;
+function stopCameraStream() {
+  if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
+  cameraStream = null;
+  document.getElementById('cameraVideo').srcObject = null;
+}
+function cameraButtons(captured) {
+  return captured
+    ? `<button class="cam-btn cam-retake" onclick="retakePhoto()">${bilingual('🔄 重拍','🔄 Retake')}</button><button class="cam-btn cam-use" onclick="usePhoto()">${bilingual('✓ 使用这张','✓ Use this photo')}</button>`
+    : `<button class="cam-btn cam-snap" onclick="snapPhoto()">${bilingual('📸 拍照','📸 Take photo')}</button><button class="cam-btn cam-cancel" onclick="closeCamera()">${bilingual('取消','Cancel')}</button>`;
+}
+async function openCamera(rememberOpener = true) {
+  const generation = ++cameraGeneration;
+  if (rememberOpener) cameraOpener = document.activeElement;
+  ocrController?.abort();
+  stopCameraStream();
+  capturedImage = null;
+  const modal = document.getElementById('cameraModal');
+  modal.classList.add('visible');
+  document.querySelector('main').inert = true;
+  modal.querySelector('.modal-close').focus();
+  document.getElementById('cameraPreview').style.display = 'none';
+  document.getElementById('cameraPreview').removeAttribute('src');
+  document.getElementById('cameraVideo').style.display = 'block';
+  document.getElementById('camLoading').style.display = 'none';
+  document.getElementById('camBtns').style.display = 'flex';
+  document.getElementById('camBtns').innerHTML = cameraButtons(false);
+  document.getElementById('camStatus').textContent = ui('正在启动摄像头…也可以选择手机拍照或相册。','Starting the camera… You can also use a phone photo or choose from your library.');
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:'environment'}, audio:false });
-    document.getElementById('cameraVideo').srcObject = cameraStream;
-    document.getElementById('camStatus').textContent='对准作文，点击拍照。';
-  } catch(e) {
-    document.getElementById('camStatus').textContent='无法启动摄像头：'+e.message;
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    if (generation !== cameraGeneration) { stream.getTracks().forEach(track => track.stop()); return; }
+    cameraStream = stream;
+    document.getElementById('cameraVideo').srcObject = stream;
+    document.getElementById('camStatus').textContent = ui('对准作文，点击拍照。','Point at your writing, then choose Take photo.');
+  } catch {
+    if (generation !== cameraGeneration) return;
+    document.getElementById('cameraVideo').style.display = 'none';
+    document.getElementById('camStatus').textContent = ui('无法打开实时相机。你仍可用下方“手机拍照”或“选择照片”，也可关闭后输入文字。','The live camera is unavailable. Use Take a phone photo or Choose a photo below, or close this window and type.');
   }
 }
-
-function snapPhoto() {
-  const video  = document.getElementById('cameraVideo');
+function photoSize(width, height) {
+  if (!(width > 0 && height > 0)) throw new Error('Invalid photo dimensions');
+  const scale = Math.min(1, 1600 / Math.max(width, height));
+  return { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) };
+}
+function previewPhoto(source, width, height) {
+  const size = photoSize(width, height);
   const canvas = document.getElementById('cameraCanvas');
-  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
+  canvas.width = size.width;
+  canvas.height = size.height;
+  canvas.getContext('2d').drawImage(source, 0, 0, size.width, size.height);
   capturedImage = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
-  document.getElementById('cameraPreview').src = 'data:image/jpeg;base64,'+capturedImage;
-  document.getElementById('cameraPreview').style.display='block';
-  document.getElementById('cameraVideo').style.display='none';
-  document.getElementById('camBtns').innerHTML=`<button class="cam-btn cam-retake" onclick="retakePhoto()">🔄 重拍</button><button class="cam-btn cam-use" onclick="usePhoto()">✓ 使用这张</button>`;
-  document.getElementById('camStatus').textContent='确认照片清晰后点「使用这张」。';
+  const preview = document.getElementById('cameraPreview');
+  preview.src = 'data:image/jpeg;base64,' + capturedImage;
+  preview.style.display = 'block';
+  document.getElementById('cameraVideo').style.display = 'none';
+  document.getElementById('camBtns').innerHTML = cameraButtons(true);
+  document.getElementById('camStatus').textContent = ui('确认照片清晰后点“使用这张”。','Check that the writing is clear, then choose Use this photo.');
+  stopCameraStream();
 }
-
-function retakePhoto() {
-  document.getElementById('cameraPreview').style.display='none';
-  document.getElementById('cameraVideo').style.display='block';
-  document.getElementById('camBtns').innerHTML=`<button class="cam-btn cam-snap" onclick="snapPhoto()">📸 拍照</button><button class="cam-btn cam-cancel" onclick="closeCamera()">取消</button>`;
-  capturedImage=null;
+function snapPhoto() {
+  const video = document.getElementById('cameraVideo');
+  if (!video.videoWidth || !video.videoHeight) {
+    document.getElementById('camStatus').textContent = ui('相机尚未就绪，请稍候或选择照片。','The camera is not ready yet. Wait a moment or choose a photo.');
+    return;
+  }
+  previewPhoto(video, video.videoWidth, video.videoHeight);
 }
-
+async function selectPhoto(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/') || file.size > 20 * 1024 * 1024) {
+    document.getElementById('camStatus').textContent = ui('请选择小于 20 MB 的图片，也可以重拍。','Choose an image smaller than 20 MB, or take another photo.');
+    return;
+  }
+  const generation = ++cameraGeneration;
+  ocrController?.abort();
+  stopCameraStream();
+  document.getElementById('camLoading').style.display = 'none';
+  document.getElementById('camBtns').style.display = 'flex';
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = url; });
+    if (generation !== cameraGeneration) return;
+    previewPhoto(image, image.naturalWidth, image.naturalHeight);
+  } catch {
+    if (generation === cameraGeneration) document.getElementById('camStatus').textContent = ui('此图片无法读取。请试用 JPG/PNG 照片，或改用文字输入。','This image could not be opened. Try a JPG/PNG photo, or type your writing.');
+  } finally { URL.revokeObjectURL(url); }
+}
+function retakePhoto() { return openCamera(false); }
 async function usePhoto() {
-  if (!capturedImage) return;
-  document.getElementById('camLoading').style.display='block';
-  document.getElementById('camBtns').style.display='none';
-  document.getElementById('camStatus').textContent='';
+  if (!capturedImage || ocrController) return;
+  const generation = cameraGeneration;
+  const controller = new AbortController();
+  ocrController = controller;
+  const timeout = setTimeout(() => controller.abort(), 75000);
+  document.getElementById('camLoading').style.display = 'block';
+  document.getElementById('camLoading').textContent = ui('正在识别文字，请保留此页面…','Reading the photo — please keep this page open…');
+  document.getElementById('camBtns').style.display = 'none';
+  document.getElementById('camStatus').textContent = '';
   try {
     const res = await fetch(WORKER_URL, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'ocr', imageData:capturedImage, mediaType:'image/jpeg' })
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
+      body: JSON.stringify({ action: 'ocr', imageData: capturedImage, mediaType: 'image/jpeg' })
     });
     const data = await res.json();
+    if (generation !== cameraGeneration) return;
+    if (!res.ok || data.error || !data.text?.trim() || data.text.includes('无法识别')) throw new Error('OCR unavailable');
+    const input = document.getElementById('essayInput');
+    if (input.value.trim() && !window.confirm(ui('用识别文字替换当前输入框里的作文吗？选择取消可保留原文。','Replace the writing already in the editor with the recognized text? Cancel to keep your current writing.'))) return;
+    input.value = data.text;
+    updateCount();
     closeCamera();
-    if (!res.ok || data.error) throw new Error(data.error?.message || '识别失败');
-    if (data.text && !data.text.includes('无法识别')) {
-      document.getElementById('essayInput').value = data.text;
-      updateCount();
-    } else {
-      alert(data.text || '识别失败，请重新拍摄。');
+    input.focus();
+    document.getElementById('feedbackStatus').textContent = ui('照片已识别。请先检查文字，再获取反馈。','Photo recognized. Check the text, then get feedback.');
+  } catch {
+    if (generation === cameraGeneration) document.getElementById('camStatus').textContent = ui('识别未完成，照片仍在。可以重新使用这张、重拍，或关闭后改用文字输入。','Recognition did not finish. Your photo is still here: retry, retake, or close this window and type instead.');
+  } finally {
+    clearTimeout(timeout);
+    if (ocrController === controller) ocrController = null;
+    if (generation === cameraGeneration) {
+      document.getElementById('camLoading').style.display = 'none';
+      document.getElementById('camBtns').style.display = 'flex';
     }
-  } catch(e) {
-    closeCamera();
-    alert('识别出错，请重试。');
   }
 }
-
 function closeCamera() {
-  if (cameraStream) { cameraStream.getTracks().forEach(t=>t.stop()); cameraStream=null; }
+  ++cameraGeneration;
+  ocrController?.abort();
+  ocrController = null;
+  stopCameraStream();
   document.getElementById('cameraModal').classList.remove('visible');
-  document.getElementById('camLoading').style.display='none';
-  document.getElementById('camBtns').style.display='flex';
-  capturedImage=null;
+  document.querySelector('main').inert = false;
+  document.getElementById('camLoading').style.display = 'none';
+  document.getElementById('camBtns').style.display = 'flex';
+  document.getElementById('cameraPreview').removeAttribute('src');
+  document.getElementById('cameraCanvas').width = 1;
+  document.getElementById('cameraCanvas').height = 1;
+  capturedImage = null;
+  cameraOpener?.focus?.();
 }
 
+saveGardenRewards(); // Also removes legacy persisted claim/session IDs.
 updateGardenUI();
 </script>
 </body>
