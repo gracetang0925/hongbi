@@ -1,6 +1,6 @@
 // Bump this version whenever the public app shell changes.
 const PREFIX = 'hongbi-public-';
-const CACHE = `${PREFIX}20261031-v1`;
+const CACHE = `${PREFIX}20261031-v2`;
 const BASE = new URL('./', self.location.href);
 const ASSETS = ['index.html', 'config.js', 'mobile.js', 'mobile-core.js', 'mobile.css',
   'manifest.webmanifest', 'assets/xiaomo-panda.png', 'assets/app-icon-192.png',

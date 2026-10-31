@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Try HongBi's teacher review workflow without signing in. Fictional essays, prewritten feedback, and a private in-page annotation sandbox.">
+  <title>HongBi · Teacher demo / 红笔教师演示</title>
+  <link rel="icon" href="assets/app-icon-192.png">
+  <link rel="stylesheet" href="teacher-demo.css">
+  <script type="module" src="teacher-demo.js"></script>
+</head>
+<body>
+  <a href="#reviewTitle" class="skip-link" data-zh="跳到作文阅览">Skip to essay review</a>
+  <header class="topbar">
+    <a class="brand" id="studentLink" href="index.html?lang=en" aria-label="HongBi student view">红笔 <span>HongBi</span></a>
+    <nav aria-label="Demo navigation">
+      <button type="button" data-language="zh" lang="zh-CN" aria-pressed="false">中文</button>
+      <button type="button" data-language="en" lang="en" aria-pressed="true">English</button>
+      <a id="teacherLink" href="teacher.html" data-zh="正式教师入口">Teacher sign-in</a>
+    </nav>
+  </header>
+  <main>
+    <div class="intro">
+      <div>
+        <p class="eyebrow" data-zh="公开演示 · 无需密钥">Public demo · No key needed</p>
+        <h1 data-zh="让反馈，走进下一稿。">Feedback for the next draft.</h1>
+        <p data-zh="体验教师如何读作文、给批注，再把思考交还给学习者。">Explore how a teacher reads, annotates, and gives the learner a next step.</p>
+      </div>
+      <button type="button" id="resetDemo" class="secondary" data-zh="重置演示">Reset demo</button>
+    </div>
+    <aside class="demo-notice" aria-label="Demo limits">
+      <strong data-zh="全部为虚构示例">Fictional examples only</strong>
+      <span data-zh="反馈已预设，不调用 AI。保存和模拟发回只影响本页，刷新即重置；请勿填写真实学生信息。">Feedback is prewritten; no AI calls. Saves and simulated returns stay on this page and reset on refresh. Please use fictional information.</span>
+    </aside>
+    <noscript>This interactive demo needs JavaScript. 本演示需要 JavaScript。</noscript>
+    <div class="workspace">
+      <aside class="queue" aria-labelledby="queueTitle">
+        <div class="section-heading"><h2 id="queueTitle" data-zh="示例作文">Sample essays</h2><span id="queueCount"></span></div>
+        <label for="searchDemo" data-zh="搜索作文">Search essays</label>
+        <input type="search" id="searchDemo" autocomplete="off" maxlength="100">
+        <label for="statusFilter" data-zh="批改状态">Review status</label>
+        <select id="statusFilter">
+          <option value="all" data-zh="全部">All</option>
+          <option value="pending" data-zh="待批改">To review</option>
+          <option value="draft" data-zh="已存草稿">Draft saved</option>
+          <option value="returned" data-zh="已模拟发回">Return simulated</option>
+        </select>
+        <ul id="essayQueue" class="essay-queue"></ul>
+        <p id="emptyQueue" class="muted" hidden data-zh="没有匹配的作文。试试其他词，或选择“全部”。">No matching essays. Try another word or choose “All”.</p>
+      </aside>
+      <section class="review" aria-labelledby="reviewTitle">
+        <div class="review-heading"><div><p id="reviewMeta" class="eyebrow"></p><h2 id="reviewTitle" tabindex="-1"></h2></div><span id="reviewStatus" class="status-tag"></span></div>
+        <div class="review-columns">
+          <div>
+            <h3 data-zh="学习者一稿">Learner’s first draft</h3>
+            <div id="essayText" class="writing-paper" lang="zh-CN"></div>
+            <p class="hint" data-zh="可以选中原文，把这句话带入批注。">Select text in the essay to use it in an annotation.</p>
+            <details class="sample-feedback" open>
+              <summary data-zh="预设 AI 反馈示例">Prewritten AI feedback example</summary>
+              <h4 data-zh="做得好的地方">A strength</h4><p id="sampleStrength"></p>
+              <h4 data-zh="内容与结构">Content & structure</h4><p id="sampleFocus"></p>
+              <h4 data-zh="语言观察">Language focus</h4><p id="sampleLanguage"></p>
+            </details>
+          </div>
+          <div class="annotation-panel">
+            <h3 data-zh="教师批注">Teacher annotations</h3>
+            <ol id="annotationList" class="annotation-list"></ol>
+            <p id="noAnnotations" class="muted" data-zh="先找到一个值得表扬或值得思考的地方，再试着写一条批注。">Find a strength or a place to think further, then try adding an annotation.</p>
+            <form id="annotationForm">
+              <label for="noteType" data-zh="批注类别">Annotation category</label>
+              <select id="noteType"></select>
+              <label for="noteQuote" data-zh="引用原文（可选）">Quote from the essay (optional)</label>
+              <textarea id="noteQuote" maxlength="400" rows="2"></textarea>
+              <label for="noteText" data-zh="给学习者的批注">Your annotation</label>
+              <textarea id="noteText" maxlength="1000" rows="4" required></textarea>
+              <div class="template-actions">
+                <button type="button" class="text-button" id="praiseTemplate" data-zh="填入表扬示例">Try praise</button>
+                <button type="button" class="text-button" id="questionTemplate" data-zh="填入提问示例">Try a question</button>
+              </div>
+              <button type="submit" class="secondary" id="addAnnotation" data-zh="添加批注">Add annotation</button>
+              <p id="formMessage" class="form-message" role="alert"></p>
+            </form>
+            <div class="review-actions">
+              <button type="button" class="secondary" id="saveDemo" data-zh="保存演示草稿">Save demo draft</button>
+              <button type="button" class="primary" id="returnDemo" data-zh="模拟发回">Simulate return</button>
+            </div>
+            <p id="demoStatus" class="save-status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer data-zh="这是工作流演示。真实学生作文只在受保护的教师后台开放。">This is a workflow demo. Real learner essays remain in the protected teacher workspace.</footer>
+  </main>
+</body>
+</html>
