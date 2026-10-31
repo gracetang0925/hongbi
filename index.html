@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>华文写作批改工具</title>
+<script src="config.js"></script>
 <style>
 :root {
   --teal:#0F6E56; --teal-light:#e6f4f1; --teal-dark:#0a5240;
@@ -93,6 +94,15 @@ textarea:focus{outline:none;border-color:var(--teal);}
 .action-pill:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light);}
 .action-pill.green{border-color:var(--green);color:var(--green);}
 .action-pill.green:hover{background:var(--green-light);}
+
+.memory-choice{display:block;margin:0 0 1rem;font-size:.84rem;line-height:1.7;color:var(--teal-dark)}
+.memory-choice small{color:#666}
+.practice-card{margin-top:1.2rem;padding:1rem;border:1px solid #b5e2c8;border-radius:12px;background:var(--green-light)}
+.practice-card textarea{min-height:85px;padding:.7rem;margin:.5rem 0;background:white}
+.practice-card details{margin:.5rem 0;font-size:.88rem}
+.practice-card .practice-note{font-size:.8rem;color:#555;line-height:1.6}
+.practice-status{font-size:.85rem;color:var(--red);min-height:1.4em}
+.practice-example{margin-top:.8rem;border-top:1px solid #b5e2c8;padding-top:.7rem}
 
 /* Teacher annotations */
 .teacher-section{display:none;margin-top:1rem;background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
@@ -285,6 +295,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
     <button class="sample-btn" onclick="loadSample(2)">城市生活（中高级）</button>
   </div>
 
+  <label class="memory-choice"><input type="checkbox" id="useMemory" checked> 参考本次会话最近的问题，让练习更贴合我<br><small>关闭后本次不读取历史；“重新开始”会开启新会话。</small></label>
   <div class="input-wrap">
     <div class="input-label"><span>粘贴或输入华文作文</span><span id="charCount">0 字</span></div>
     <textarea id="essayInput" placeholder="在此输入华文作文……&#10;&#10;或点右下角「📷 扫描作文」拍照识别手写稿。" oninput="updateCount()"></textarea>
@@ -393,8 +404,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 </div>
 
 <script>
-const WORKER_URL = "https://chinese-feedback-proxy.tangxiazhen94.workers.dev";
-const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const WORKER_URL = globalThis.HONGBI_CONFIG.workerUrl;
+let SESSION_ID = crypto.randomUUID();
+let sessionStudentName = null;
+let feedbackPending = false;
 
 const SAMPLES = [
   `我的家庭有四个人。我的爸爸是一个医生，他每天都很忙。我的妈妈在家里工作，她很爱我。我有一个哥哥，他比我大三岁，我们经常一起玩游戏。我很爱我的家庭，我们的关系很好。周末的时候，我们一家人会去公园散步或者去餐厅吃饭。`,
@@ -599,6 +612,35 @@ function escapeHtml(value) {
   })[ch]);
 }
 
+function renderPractice(practice, draft) {
+  if (!practice) return '';
+  return `<section class="practice-card">
+    <h3>🐼 小墨陪你练一句 · ${escapeHtml(practice.focus)}</h3>
+    <p>${escapeHtml(practice.question_zh)}</p><p lang="en">${escapeHtml(practice.question_en)}</p>
+    <label for="practiceAnswer${draft}">先写下你的尝试</label>
+    <textarea id="practiceAnswer${draft}" maxlength="1000" placeholder="试着写一句，答案只留在当前页面。"></textarea>
+    <details><summary>需要一点提示 / Hint</summary><p>${escapeHtml(practice.hint_zh)}</p><p lang="en">${escapeHtml(practice.hint_en)}</p></details>
+    <button type="button" class="action-pill green" onclick="showPracticeExample(this,${draft})">对照参考写法</button>
+    <div class="practice-status" role="status"></div>
+    <div class="practice-example" hidden><strong>一种参考写法</strong><p>${escapeHtml(practice.sample_answer)}</p>
+      <p>${escapeHtml(practice.explanation_zh)}</p><p lang="en">${escapeHtml(practice.explanation_en)}</p>
+      <p class="practice-note">这是一种参考写法，不是自动评分。想想你的句子表达了什么，再把练过的表达用到二稿里。</p>
+      <button type="button" class="action-pill green" onclick="showDraft2()">把练习用到二稿</button>
+    </div>
+  </section>`;
+}
+
+function showPracticeExample(button, draft) {
+  const card = button.closest('.practice-card');
+  if (!document.getElementById('practiceAnswer' + draft).value.trim()) {
+    card.querySelector('.practice-status').textContent = '先试着写一句，再来对照。也可以先打开提示。';
+    return;
+  }
+  card.querySelector('.practice-status').textContent = '';
+  card.querySelector('.practice-example').hidden = false;
+  button.setAttribute('aria-expanded', 'true');
+}
+
 function renderFeedback(feedback, draft) {
   const macro = feedback.macro;
   const errors = feedback.micro || [];
@@ -635,16 +677,26 @@ function renderFeedback(feedback, draft) {
       <h3>文章整体 · The big picture</h3>
       <p><strong>内容：</strong>${escapeHtml(macro.content)}<br><strong>结构：</strong>${escapeHtml(macro.structure)}<br><strong>连贯性：</strong>${escapeHtml(macro.coherence)}</p>
     </section>
-    <section><h3>小墨发现的问题 · Let's revise</h3>${microHtml}</section>`;
+    <section><h3>小墨发现的问题 · Let's revise</h3>${microHtml}</section>${renderPractice(feedback.practice, draft)}`;
 }
 
 async function getFeedback(draft) {
+  if (feedbackPending) return;
   const essay = draft===1 ? document.getElementById('essayInput').value.trim() : document.getElementById('essay2Input').value.trim();
   const studentName = document.getElementById('studentName').value.trim();
   if (!studentName) { showError('请先填写姓名或学号。'); return; }
   if (!essay)       { showError('请先输入作文内容。'); return; }
+  if (essay.length > 6000) { showError('作文请控制在6000字以内。'); return; }
   if (essay.length < 20) { showError('作文太短，请输入至少20个字。'); return; }
   hideError();
+  if (sessionStudentName !== null && sessionStudentName !== studentName) {
+    clearAll();
+    document.getElementById(draft === 1 ? 'essayInput' : 'essay2Input').value = essay;
+  }
+  sessionStudentName = studentName;
+  feedbackPending = true;
+  document.getElementById('studentName').disabled = true;
+  const requestMode = currentMode;
 
   const loadingEl = document.getElementById('loading');
   const btnEl     = document.getElementById(draft===1?'submitBtn':'draft2Btn');
@@ -657,13 +709,13 @@ async function getFeedback(draft) {
   let li=0;
   const t = setInterval(()=>{ document.getElementById('loadingText').textContent=msgs[li++%msgs.length]; },1800);
 
-  const mode = MODES[currentMode];
+  const mode = MODES[requestMode];
   try {
     const res = await fetch(WORKER_URL, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        action:'feedback', essay, mode:currentMode, goal:currentGoal,
-        logData:{ sessionId:SESSION_ID, studentName, draft, mode:currentMode, essay }
+        action:'feedback', essay, mode:requestMode, goal:currentGoal, useMemory:document.getElementById('useMemory').checked,
+        logData:{ sessionId:SESSION_ID, studentName, draft }
       })
     });
     clearInterval(t);
@@ -674,7 +726,7 @@ async function getFeedback(draft) {
     loadingEl.classList.remove('visible');
 
     if (draft===1) {
-      submittedMode = currentMode;
+      submittedMode = requestMode;
       draft1Feedback = feedback;
       const badge = document.getElementById('modeBadge');
       badge.textContent = mode.label; badge.className = 'mode-badge ' + mode.badge;
@@ -684,7 +736,7 @@ async function getFeedback(draft) {
       updateGoalResults();
       updateXiaomoFromFeedback(feedback, draft);
       awardLocalReward('seeds', 1, 'draft:1', '🌰 完成一稿，获得 1 颗写作种子！');
-      if (currentMode === 'teacher' || currentMode === 'hybrid') {
+      if (data.storage?.teacherQueued && (requestMode === 'teacher' || requestMode === 'hybrid')) {
         setTimeout(()=>setXiaomoMessage('已进入教师队列', '你可以先根据 AI 提示修改；老师发回后，点击“查看教师批注”。', '作文已经进入教师队列。你可以先根据人工智能提示修改；老师发回后，点击查看教师批注。'), 1900);
       }
       document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
@@ -700,11 +752,16 @@ async function getFeedback(draft) {
       awardLocalReward('water', 2, 'draft:2', '💧 完成二稿，获得 2 滴水，菜苗长大了！');
       document.getElementById('result2Section').scrollIntoView({behavior:'smooth',block:'start'});
     }
+    if (data.storage && !data.storage.saved) {
+      showError('AI 反馈已完成，但作文未能保存；如选择教师服务，本次尚未进入教师队列。请稍后重试。');
+    }
   } catch(err) {
     clearInterval(t);
     loadingEl.classList.remove('visible');
     showError('错误：'+err.message);
   }
+  feedbackPending = false;
+  document.getElementById('studentName').disabled = false;
   btnEl.disabled = false;
   if (btnTextEl) btnTextEl.textContent = '获取反馈';
 }
@@ -714,7 +771,7 @@ function showGrowthComparison(firstFeedback, secondFeedback) {
   const secondIssues = secondFeedback.micro?.length || 0;
   const resolved = Math.max(0, firstIssues - secondIssues);
   const message = resolved > 0
-    ? `你在二稿里减少了 ${resolved} 个需要优先修改的问题。`
+    ? `这次反馈列出的重点问题少了 ${resolved} 个。我们继续练习，把表达用熟。`
     : '你完成了二稿并重新检查了自己的表达，这就是写作成长。';
   document.getElementById('compBars').innerHTML = `<div class="growth-result"><span class="growth-icon">🥬</span><strong>菜苗又长高了一点！</strong><p>${escapeHtml(message)}</p></div>`;
   document.getElementById('compSummary').textContent = '没有分数，只有你真正完成的每一次修改。';
@@ -757,11 +814,12 @@ async function checkTeacherFeedback() {
       body: JSON.stringify({ action:'getTeacherFeedback', sessionId: SESSION_ID })
     });
     const data = await res.json();
-    if (data.annotations && data.annotations.length > 0) {
+    if (!res.ok || data.error) throw new Error(data.error?.message || '查询失败');
+    if (Array.isArray(data.annotations) && data.annotations.length > 0) {
       const body = document.getElementById('teacherBody');
       body.innerHTML = data.annotations.map(a => `
         <div class="anno-item">
-          <span class="anno-tag tag-${a.type}">${a.type}</span><br>${a.text}
+          <span class="anno-tag tag-${escapeHtml(a.type)}">${escapeHtml(a.type)}</span><br>${escapeHtml(a.text)}
         </div>`).join('');
       document.getElementById('teacherSection').classList.add('visible');
       document.getElementById('teacherSection').scrollIntoView({behavior:'smooth'});
@@ -776,6 +834,11 @@ function copyResult(id) {
 }
 
 function clearAll() {
+  if (feedbackPending) return;
+  SESSION_ID = crypto.randomUUID();
+  sessionStudentName = null;
+  document.getElementById('essay2Input').value = '';
+  updateCount2();
   document.getElementById('essayInput').value='';
   updateCount(); hideError();
   ['resultSection','result2Section','draft2Section','comparison','teacherSection'].forEach(id=>{
@@ -838,6 +901,7 @@ async function usePhoto() {
     });
     const data = await res.json();
     closeCamera();
+    if (!res.ok || data.error) throw new Error(data.error?.message || '识别失败');
     if (data.text && !data.text.includes('无法识别')) {
       document.getElementById('essayInput').value = data.text;
       updateCount();

@@ -1,0 +1,11 @@
+import { readFileSync } from 'node:fs';
+import { Script } from 'node:vm';
+import { execFileSync } from 'node:child_process';
+for (const path of ['worker.js', 'lib/feedback.js', 'config.js']) execFileSync(process.execPath, ['--check', path]);
+for (const path of ['index.html', 'teacher.html']) {
+  const html = readFileSync(path, 'utf8');
+  for (const match of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) {
+    new Script(match[1], { filename: path });
+  }
+}
+console.log('Worker, modules and page scripts passed syntax checks.');
