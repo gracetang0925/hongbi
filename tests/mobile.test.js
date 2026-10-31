@@ -53,7 +53,7 @@ test('manifest is scoped to the repo and all icons exist at their stated dimensi
 
 test('service worker never intercepts teacher pages, APIs, POSTs or unknown files', () => {
   const worker = serviceWorker();
-  for (const url of [`${PUBLIC_APP_URL}teacher.html`, 'https://test.worker.dev', `${PUBLIC_APP_URL}private.json`]) {
+  for (const url of [`${PUBLIC_APP_URL}teacher.html`, `${PUBLIC_APP_URL}teacher-demo.html`, `${PUBLIC_APP_URL}teacher-demo.js`, 'https://test.worker.dev', `${PUBLIC_APP_URL}private.json`]) {
     assert.equal(worker.dispatch(url, 'GET', 'navigate'), undefined);
   }
   assert.equal(worker.dispatch(PUBLIC_APP_URL, 'POST', 'navigate'), undefined);

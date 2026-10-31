@@ -3,7 +3,7 @@
 > 让孩子把学过的中文，真正写出来。  
 > Helping learners turn the Chinese they know into writing they can be proud of.
 
-[在线体验 Live demo](https://gracetang0925.github.io/hongbi/) · [学生端 Learner view](https://gracetang0925.github.io/hongbi/) · [教师端 Teacher view](https://gracetang0925.github.io/hongbi/teacher.html) · [学生端演示视频 Learner demo video](#学生端演示视频--learner-demo-video)
+[在线体验 Live demo](https://gracetang0925.github.io/hongbi/) · [免密教师演示 Public teacher demo](https://gracetang0925.github.io/hongbi/teacher-demo.html?lang=en) · [教师后台 Teacher sign-in](https://gracetang0925.github.io/hongbi/teacher.html) · [学生端演示视频 Learner demo video](#学生端演示视频--learner-demo-video)
 
 ![HongBi current product and coming-soon vision](assets/hongbi-product-overview-v2.svg)
 
@@ -149,6 +149,10 @@ flowchart LR
 ```
 
 ## 教师端 MVP 与待上线愿景 / Teacher MVP and coming-soon vision
+
+**给访客与 recruiter：**[免密教师演示](https://gracetang0925.github.io/hongbi/teacher-demo.html?lang=en)使用虚构作文和预设反馈，可以阅览、添加批注、保存演示草稿及模拟发回。操作只在本页生效，不调用 AI，不产生模型调用费。真实学生端的 AI 批改和 OCR 仍由 Worker 密钥所属的 OpenAI 项目计费。演示不代表三组实验已经实施或产品学习效果已得到验证。[演示边界与费用说明](docs/PUBLIC_TEACHER_DEMO.md)。
+
+**For visitors and recruiters:** the public teacher demo needs no key. Explore fictional essays, prewritten feedback, annotation templates and simulated returns. Edits stay in page memory; no model calls are made. Real student feedback and OCR remain billable to the OpenAI project associated with the Worker key.
 
 教师端已具备可试用的付费文字批改流程：付费作文进入待批改队列，教师可查看连接状态、搜索和刷新作文，使用文字批注与评语模板，保存草稿并把反馈发回学生。当前使用 Worker 验证的教师邀请令牌，不是正式账号系统。
 
