@@ -1,0 +1,4 @@
+# Student feedback is public, like the existing Worker feedback endpoint.
+# This relay allows only three student actions; teacher routes remain protected.
+[functions.student-relay]
+verify_jwt = false

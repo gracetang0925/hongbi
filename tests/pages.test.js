@@ -10,11 +10,12 @@ function pageContext(file, initialStorage = {}) {
     style: {}, classList: { add() {}, remove() {}, contains() { return false; } }, setAttribute() {}, scrollIntoView() {} });
   const document = { getElementById(id) { if (!nodes.has(id)) nodes.set(id, element()); return nodes.get(id); },
     querySelector() { return element(); }, querySelectorAll() { return []; } };
-  const context = createContext({ document, crypto, TextEncoder, console,
+  const context = createContext({ document, crypto, TextEncoder, console, AbortController,
     localStorage: { getItem(key) { return storage.get(key) ?? null; }, setItem(key, value) { storage.set(key, value); } },
     setInterval() {}, setTimeout() {}, clearTimeout() {}, clearInterval() {},
     HONGBI_CONFIG: { workerUrl: 'https://test.worker.dev' }, window: {}, alert() {}, feedback, record });
   const html = readFileSync(file, 'utf8');
+  if (file === 'index.html') runInContext(readFileSync('student-api.js', 'utf8'), context);
   for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) runInContext(script[1], context);
   return { context, nodes, storage, run: code => runInContext(code, context) };
 }
@@ -65,6 +66,20 @@ test('teacher background refresh stays idle before login', async () => {
   page.context.fetch = async () => { requests++; throw new Error('should not call'); };
   await page.run('loadSubmissions()');
   assert.equal(requests, 0);
+});
+
+test('Safari body-stream failures preserve writing and explain how to check the connection', async () => {
+  const page = pageContext('index.html');
+  page.run("document.getElementById('studentName').value='虚构测试'; document.getElementById('essayInput').value='这是一篇足够长的虚构作文，用来检查网络断开时会不会保留原文。'");
+  const original = page.nodes.get('essayInput').value;
+  let posts = 0;
+  page.context.fetch = async () => { posts++; return { ok: true, json: async () => { throw new TypeError('Load failed'); } }; };
+  await page.run('getFeedback(1)');
+  assert.equal(posts, 1);
+  assert.equal(page.nodes.get('essayInput').value, original);
+  assert.match(page.nodes.get('errorMsg').textContent, /检查连接/);
+  assert.doesNotMatch(page.nodes.get('errorMsg').textContent, /Load failed/);
+  assert.equal(page.nodes.get('connectionBtn').disabled, false);
 });
 
 test('teacher login uses the Worker and keeps the token out of local storage', async () => {

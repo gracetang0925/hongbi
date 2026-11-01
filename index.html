@@ -10,7 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="HongBi 红笔">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/app-icon-192.png">
-<script src="config.js"></script>
+<script src="config.js?v=20261101-relay"></script>
+<script src="student-api.js"></script>
 <script type="module" src="mobile.js"></script>
 <style>
 :root {
@@ -715,6 +716,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
 
   <div class="error-msg" id="errorMsg" role="alert"></div>
   <p class="pwa-completion" id="feedbackStatus" role="status" aria-live="polite"></p>
+  <div class="connection-tools">
+    <button type="button" id="connectionBtn" onclick="checkFeedbackConnection()" data-en="Check connection">检查连接</button>
+    <span id="connectionStatus" role="status" aria-live="polite" data-en="Feedback connects automatically through an available route.">提交前会自动选择可连接的批改入口。</span>
+  </div>
 
   <div class="submit-row">
     <button class="submit-btn" id="submitBtn" onclick="getFeedback(1)"><span id="btnText" data-en="Get feedback">获取反馈</span></button>
@@ -839,7 +844,6 @@ function ui(zh, en) { return document.documentElement?.lang === 'en' ? en : zh; 
 function bilingual(zh, en) {
   return `<span data-zh="${escapeHtml(zh)}" data-en="${escapeHtml(en)}">${escapeHtml(ui(zh, en))}</span>`;
 }
-const WORKER_URL = globalThis.HONGBI_CONFIG.workerUrl;
 let SESSION_ID = crypto.randomUUID();
 let sessionStudentName = null;
 let feedbackPending = false;
@@ -1141,6 +1145,7 @@ async function getFeedback(draft) {
   }
   sessionStudentName = studentName;
   feedbackPending = true;
+  document.getElementById('connectionBtn').disabled = true;
   document.getElementById('studentName').disabled = true;
   const requestMode = currentMode;
 
@@ -1158,12 +1163,9 @@ async function getFeedback(draft) {
 
   const mode = MODES[requestMode];
   try {
-    const res = await fetch(WORKER_URL, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
+    const res = await globalThis.HONGBI_API.request({
         action:'feedback', essay, mode:requestMode, goal:currentGoal, useMemory:document.getElementById('useMemory').checked,
         logData:{ sessionId:SESSION_ID, studentName, draft }
-      })
     });
     clearInterval(t);
     const data = await res.json();
@@ -1206,9 +1208,10 @@ async function getFeedback(draft) {
   } catch(err) {
     clearInterval(t);
     loadingEl.classList.remove('visible');
-    showError(ui('暂时未能获取反馈，作文仍保留在输入框中。请稍后重新提交。详情：','Feedback is unavailable. Your writing is still here; please try again. Details: ')+err.message);
+    showError(feedbackErrorMessage(err));
   }
   feedbackPending = false;
+  document.getElementById('connectionBtn').disabled = false;
   document.getElementById('studentName').disabled = false;
   btnEl.disabled = false;
   if (btnTextEl) { btnTextEl.textContent = ui('获取反馈', 'Get feedback'); btnTextEl.setAttribute('data-en','Get feedback'); btnTextEl.setAttribute('data-zh','获取反馈'); }
@@ -1249,6 +1252,25 @@ function showScoreComparison(firstFeedback, secondFeedback) {
 }
 
 // Check teacher feedback
+function feedbackErrorMessage(error) {
+  if (error.code === 'NO_CONNECTION') return ui('无法连接批改服务。作文仍保留，请点“检查连接”，或切换网络后重试。', 'Cannot connect to feedback. Your writing is still here. Choose “Check connection” or try another network.');
+  if (error.code === 'CONNECTION_INTERRUPTED' || /load failed|failed to fetch|networkerror|network request failed|network connection was lost/i.test(error.message || '')) return ui('批改连接中断，暂时无法确认结果。作文仍保留；请检查连接后再主动重试。系统不会自动重复提交。', 'The connection was interrupted; the result is unconfirmed. Your writing is still here. Check the connection before retrying. Nothing is resubmitted automatically.');
+  return ui('暂时未能获取反馈，作文仍保留。详情：', 'Feedback is unavailable. Your writing is still here. Details: ') + error.message;
+}
+async function checkFeedbackConnection() {
+  const button = document.getElementById('connectionBtn');
+  const status = document.getElementById('connectionStatus');
+  button.disabled = true;
+  status.removeAttribute?.('data-en');
+  status.removeAttribute?.('data-zh');
+  status.textContent = ui('正在检查连接…', 'Checking the connection…');
+  try {
+    await globalThis.HONGBI_API.checkConnection();
+    status.textContent = ui('已连接，可以提交作文。检查连接不会调用 AI。', 'Connected. You can submit your writing. Connection checks do not call AI.');
+  } catch {
+    status.textContent = ui('暂时无法连接，请切换 Wi-Fi／移动网络后再检查。作文会保留在当前页面。', 'Cannot connect yet. Switch Wi-Fi / mobile networks and check again. Keep this page open to retain your writing.');
+  } finally { button.disabled = false; }
+}
 async function checkTeacherFeedback() {
   const studentName = document.getElementById('studentName').value.trim();
   if (!studentName) { alert(ui('请先填写姓名。','Please enter a name or nickname.')); return; }
@@ -1257,10 +1279,7 @@ async function checkTeacherFeedback() {
     return;
   }
   try {
-    const res = await fetch(`${WORKER_URL}`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'getTeacherFeedback', sessionId: SESSION_ID })
-    });
+    const res = await globalThis.HONGBI_API.request({ action:'getTeacherFeedback', sessionId: SESSION_ID });
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.error?.message || '查询失败');
     if (Array.isArray(data.annotations) && data.annotations.length > 0) {
@@ -1407,10 +1426,7 @@ async function usePhoto() {
   document.getElementById('camBtns').style.display = 'none';
   document.getElementById('camStatus').textContent = '';
   try {
-    const res = await fetch(WORKER_URL, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
-      body: JSON.stringify({ action: 'ocr', imageData: capturedImage, mediaType: 'image/jpeg' })
-    });
+    const res = await globalThis.HONGBI_API.request({ action: 'ocr', imageData: capturedImage, mediaType: 'image/jpeg' }, { signal: controller.signal });
     const data = await res.json();
     if (generation !== cameraGeneration) return;
     if (!res.ok || data.error || !data.text?.trim() || data.text.includes('无法识别')) throw new Error('OCR unavailable');
