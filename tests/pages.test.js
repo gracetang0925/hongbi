@@ -10,11 +10,12 @@ function pageContext(file, initialStorage = {}) {
     style: {}, classList: { add() {}, remove() {}, contains() { return false; } }, setAttribute() {}, scrollIntoView() {} });
   const document = { getElementById(id) { if (!nodes.has(id)) nodes.set(id, element()); return nodes.get(id); },
     querySelector() { return element(); }, querySelectorAll() { return []; } };
-  const context = createContext({ document, crypto, TextEncoder, console,
+  const context = createContext({ document, crypto, TextEncoder, console, AbortController,
     localStorage: { getItem(key) { return storage.get(key) ?? null; }, setItem(key, value) { storage.set(key, value); } },
     setInterval() {}, setTimeout() {}, clearTimeout() {}, clearInterval() {},
     HONGBI_CONFIG: { workerUrl: 'https://test.worker.dev' }, window: {}, alert() {}, feedback, record });
   const html = readFileSync(file, 'utf8');
+  if (file === 'index.html') runInContext(readFileSync('student-api.js', 'utf8'), context);
   for (const script of html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)) runInContext(script[1], context);
   return { context, nodes, storage, run: code => runInContext(code, context) };
 }

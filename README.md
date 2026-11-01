@@ -26,6 +26,8 @@ Scan with your phone camera to open HongBi in a browser. Choose English or Chine
 
 [English](https://gracetang0925.github.io/hongbi/?lang=en) · [中文](https://gracetang0925.github.io/hongbi/?lang=zh) · [下载二维码 / Download QR](assets/hongbi-qr.png)
 
+学生端在提交前自动检查两个连接入口，并选择可达入口；可点“检查连接”测试，不会调用 AI。如果提交后连接中断，系统保留原文并等待手动重试。[连接方式与部署说明 / Connection and deployment](docs/STUDENT_CONNECTION.md)。不同地区和运营商仍需实际网络验证。
+
 | 已实现 / Implemented | 学习价值 / Learner value |
 |---|---|
 | 输入作文或拍照识别手写稿 / Type or scan handwriting | 保留 OCR 写作入口 / Keeps the handwriting workflow |

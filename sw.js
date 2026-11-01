@@ -1,8 +1,8 @@
 // Bump this version whenever the public app shell changes.
 const PREFIX = 'hongbi-public-';
-const CACHE = `${PREFIX}20261031-v2`;
+const CACHE = `${PREFIX}20261101-v1`;
 const BASE = new URL('./', self.location.href);
-const ASSETS = ['index.html', 'config.js', 'mobile.js', 'mobile-core.js', 'mobile.css',
+const ASSETS = ['index.html', 'config.js?v=20261101-relay', 'student-api.js', 'mobile.js', 'mobile-core.js', 'mobile.css',
   'manifest.webmanifest', 'assets/xiaomo-panda.png', 'assets/app-icon-192.png',
   'assets/app-icon-512.png', 'assets/hongbi-qr.png'];
 const PUBLIC_URLS = new Set(ASSETS.map(path => new URL(path, BASE).href));
