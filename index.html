@@ -1254,7 +1254,7 @@ function showScoreComparison(firstFeedback, secondFeedback) {
 // Check teacher feedback
 function feedbackErrorMessage(error) {
   if (error.code === 'NO_CONNECTION') return ui('无法连接批改服务。作文仍保留，请点“检查连接”，或切换网络后重试。', 'Cannot connect to feedback. Your writing is still here. Choose “Check connection” or try another network.');
-  if (error.code === 'CONNECTION_INTERRUPTED') return ui('批改连接中断，暂时无法确认结果。作文仍保留；请检查连接后再主动重试。系统不会自动重复提交。', 'The connection was interrupted; the result is unconfirmed. Your writing is still here. Check the connection before retrying. Nothing is resubmitted automatically.');
+  if (error.code === 'CONNECTION_INTERRUPTED' || /load failed|failed to fetch|networkerror|network request failed|network connection was lost/i.test(error.message || '')) return ui('批改连接中断，暂时无法确认结果。作文仍保留；请检查连接后再主动重试。系统不会自动重复提交。', 'The connection was interrupted; the result is unconfirmed. Your writing is still here. Check the connection before retrying. Nothing is resubmitted automatically.');
   return ui('暂时未能获取反馈，作文仍保留。详情：', 'Feedback is unavailable. Your writing is still here. Details: ') + error.message;
 }
 async function checkFeedbackConnection() {

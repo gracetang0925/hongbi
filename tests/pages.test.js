@@ -68,6 +68,20 @@ test('teacher background refresh stays idle before login', async () => {
   assert.equal(requests, 0);
 });
 
+test('Safari body-stream failures preserve writing and explain how to check the connection', async () => {
+  const page = pageContext('index.html');
+  page.run("document.getElementById('studentName').value='虚构测试'; document.getElementById('essayInput').value='这是一篇足够长的虚构作文，用来检查网络断开时会不会保留原文。'");
+  const original = page.nodes.get('essayInput').value;
+  let posts = 0;
+  page.context.fetch = async () => { posts++; return { ok: true, json: async () => { throw new TypeError('Load failed'); } }; };
+  await page.run('getFeedback(1)');
+  assert.equal(posts, 1);
+  assert.equal(page.nodes.get('essayInput').value, original);
+  assert.match(page.nodes.get('errorMsg').textContent, /检查连接/);
+  assert.doesNotMatch(page.nodes.get('errorMsg').textContent, /Load failed/);
+  assert.equal(page.nodes.get('connectionBtn').disabled, false);
+});
+
 test('teacher login uses the Worker and keeps the token out of local storage', async () => {
   const page = pageContext('teacher.html');
   page.nodes.set('loginPwd', { value: 'private-invite-token' });
